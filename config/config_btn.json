@@ -1,13 +1,5 @@
 {
-  "construction_ponctuelle": [
-    {
-      "sous_type": "etat_de_l_objet",
-      "valeur": "En projet",
-      "nom_btn": "En projet",
-      "icon": "",
-      "autre_valeur": {}
-    }
-  ],
+  "construction_ponctuelle": [],
   "surface_hydrographique": [
     {
       "sous_type": "nature",
@@ -27,12 +19,190 @@
   "troncon_hydrographique": [
     {
       "sous_type": "nature",
+      "valeur": "Aqueduc",
+      "nom_btn": "Aqueduc",
+      "icon": "Acces_interdit.ico",
+      "autre_valeur": {}
+    },
+    {
+      "sous_type": "nature",
       "valeur": "Canal",
       "nom_btn": "Canal",
       "icon": "",
       "autre_valeur": {
-        "etat_de_l_objet": "En projet"
+        "nature": "Delta"
       }
+    },
+    {
+      "sous_type": "nature",
+      "valeur": "Conduit buse",
+      "nom_btn": "Conduit buse",
+      "icon": "",
+      "autre_valeur": {}
+    },
+    {
+      "sous_type": "nature",
+      "valeur": "Conduit forcé",
+      "nom_btn": "Conduit forcé",
+      "icon": "",
+      "autre_valeur": {}
+    },
+    {
+      "sous_type": "nature",
+      "valeur": "Delta",
+      "nom_btn": "Delta",
+      "icon": "",
+      "autre_valeur": {}
+    },
+    {
+      "sous_type": "nature",
+      "valeur": "Ecoulement canalisé",
+      "nom_btn": "Ecoulement canalisé",
+      "icon": "",
+      "autre_valeur": {}
+    },
+    {
+      "sous_type": "nature",
+      "valeur": "Ecoulement endoréique",
+      "nom_btn": "Ecoulement endoréique",
+      "icon": "",
+      "autre_valeur": {}
+    },
+    {
+      "sous_type": "nature",
+      "valeur": "Ecoulement hyporhéique",
+      "nom_btn": "Ecoulement hyporhéique",
+      "icon": "",
+      "autre_valeur": {}
+    },
+    {
+      "sous_type": "nature",
+      "valeur": "Ecoulement karstique",
+      "nom_btn": "Ecoulement karstique",
+      "icon": "",
+      "autre_valeur": {}
+    },
+    {
+      "sous_type": "nature",
+      "valeur": "Ecoulement naturel",
+      "nom_btn": "Ecoulement naturel",
+      "icon": "",
+      "autre_valeur": {}
+    },
+    {
+      "sous_type": "nature",
+      "valeur": "Ecoulement phréatique",
+      "nom_btn": "Ecoulement phréatique",
+      "icon": "",
+      "autre_valeur": {}
+    },
+    {
+      "sous_type": "nature",
+      "valeur": "Estuaire",
+      "nom_btn": "Estuaire",
+      "icon": "",
+      "autre_valeur": {}
+    },
+    {
+      "sous_type": "nature",
+      "valeur": "Glacier, névé",
+      "nom_btn": "Glacier, névé",
+      "icon": "",
+      "autre_valeur": {}
+    },
+    {
+      "sous_type": "nature",
+      "valeur": "Inconnue",
+      "nom_btn": "Inconnue",
+      "icon": "",
+      "autre_valeur": {}
+    },
+    {
+      "sous_type": "nature",
+      "valeur": "Lac",
+      "nom_btn": "Lac",
+      "icon": "",
+      "autre_valeur": {}
+    },
+    {
+      "sous_type": "nature",
+      "valeur": "Lagune",
+      "nom_btn": "Lagune",
+      "icon": "",
+      "autre_valeur": {}
+    },
+    {
+      "sous_type": "nature",
+      "valeur": "Mangrove",
+      "nom_btn": "Mangrove",
+      "icon": "",
+      "autre_valeur": {}
+    },
+    {
+      "sous_type": "nature",
+      "valeur": "Marais",
+      "nom_btn": "Marais",
+      "icon": "",
+      "autre_valeur": {}
+    },
+    {
+      "sous_type": "nature",
+      "valeur": "Mare",
+      "nom_btn": "Mare",
+      "icon": "",
+      "autre_valeur": {}
+    },
+    {
+      "sous_type": "nature",
+      "valeur": "Plan d'eau de gravière",
+      "nom_btn": "Plan d'eau de gravière",
+      "icon": "",
+      "autre_valeur": {}
+    },
+    {
+      "sous_type": "nature",
+      "valeur": "Plan d'eau de mine",
+      "nom_btn": "Plan d'eau de mine",
+      "icon": "",
+      "autre_valeur": {}
+    },
+    {
+      "sous_type": "nature",
+      "valeur": "Ravine",
+      "nom_btn": "Ravine",
+      "icon": "",
+      "autre_valeur": {}
     }
-  ]
+  ],
+  "troncon_de_route": [
+    {
+      "sous_type": "nature",
+      "valeur": "Chemin",
+      "nom_btn": "Chemin",
+      "icon": "Acces_libre.ico",
+      "autre_valeur": {}
+    },
+    {
+      "sous_type": "nature",
+      "valeur": "Route empierrée",
+      "nom_btn": "Route empierrée",
+      "icon": "",
+      "autre_valeur": {}
+    },
+    {
+      "sous_type": "nature",
+      "valeur": "Route à 1 chaussée",
+      "nom_btn": "Route à 1 chaussée",
+      "icon": "",
+      "autre_valeur": {}
+    },
+    {
+      "sous_type": "nature",
+      "valeur": "Sentier",
+      "nom_btn": "Sentier",
+      "icon": "",
+      "autre_valeur": {}
+    }
+  ],
+  "terrain_de_sport": []
 }

@@ -39,7 +39,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>icons/icon_principal.PNG</normaloff>icons/icon_principal.PNG</iconset>
+    <normaloff>../../../../../../../../../.designer/backup/icons/icon_principal.PNG</normaloff>../../../../../../../../../.designer/backup/icons/icon_principal.PNG</iconset>
   </property>
   <widget class="QPushButton" name="pushButtonOk">
    <property name="geometry">
@@ -250,7 +250,7 @@
     <item>
      <widget class="QLabel" name="label_icon_sel">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
@@ -357,7 +357,7 @@
    <property name="title">
     <string>Déplacer le bouton</string>
    </property>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>50</x>

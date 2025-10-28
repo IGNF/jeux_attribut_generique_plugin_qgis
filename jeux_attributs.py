@@ -28,8 +28,6 @@ from PyQt5.QtWidgets import QDialog, QListWidgetItem, QPushButton, QListView, QV
 from PyQt5.uic import loadUi
 import json
 
-from qgis._core import QgsMessageLog, Qgis
-
 # Initialize Qt resources from file resources.py
 # Import the code for the dialog
 
@@ -54,6 +52,9 @@ class JeuxAttributs:
 
     def __init__(self, iface):
         # choix de l'icône
+
+        self.taille_icone_dans_listview = None
+        self.taille_btn = None
         self.button_ok = None
         self.listview = None
         self.new_index_btn = None
@@ -62,6 +63,7 @@ class JeuxAttributs:
         self.sstype_btn_sel = None
 
         self.dlg_sel_champ_val = None
+        self.dlg_sel_champ_val_AUTRE = None
         self.dlg_config_btn = None
         self.dlg = None
         self.dlg_icon = None
@@ -75,6 +77,7 @@ class JeuxAttributs:
         self.model = None
         self.pathiconbtnclicked = None
         self.pathjson = os.path.join(os.path.dirname(__file__),"config", "config_btn.json")
+        self.pathjsonparametre = os.path.join(os.path.dirname(__file__), "config", "parametres.json")
         self.pathicon_config = os.path.join(os.path.dirname(__file__), "icons", "config.png")
         self.pathicon_interface = os.path.join(os.path.dirname(__file__), "icons", "icon_principal.png")
         self.path_repicon_btn = os.path.join(os.path.dirname(__file__),"config", "icons_btn")
@@ -86,6 +89,8 @@ class JeuxAttributs:
         self.first_start = None
 
     def show_dlg_config_btn(self,btn):
+
+
         self.clicked_button = btn
         # recuperation des infos du boutons cliqué grace au tooltip qui contient : sstype, valeur
         tooltip = self.clicked_button.toolTip()
@@ -134,7 +139,7 @@ class JeuxAttributs:
         self.dlg_config_btn.tableView_autre_valeur.setColumnWidth(0, 200)
         self.dlg_config_btn.tableView_autre_valeur.setColumnWidth(1, 100)
 
-        # ****************** config widget deplacement
+        # ****************** config widget déplacement
         nb_btn_tolayer = len(self.dico_layer_attrval[self.layer.name()])
         self.dlg_config_btn.spinBoxPosition.setRange(1,nb_btn_tolayer)
         self.dlg_config_btn.spinBoxPosition.setValue(self.getposbtn()+1)
@@ -174,7 +179,7 @@ class JeuxAttributs:
         # recuperation de la selection
         model = self.dlg_config_btn.tableView_autre_valeur.model()
         selection_model = self.dlg_config_btn.tableView_autre_valeur.selectionModel()
-        # index des lignes selectionnées
+        # index des lignes sélectionnées
         selected_indexes = selection_model.selectedRows()
 
         for index in selected_indexes:
@@ -212,7 +217,7 @@ class JeuxAttributs:
             self.dlg_config_btn.labelAvertissement.setText("")
 
     def valide_config_btn(self,sstype,valeur):
-        # print(f"valide_config_btn : {sstype}, {valeur}")
+        print(f"valide_config_btn : {sstype}, {valeur}")
         self.valide_nom_btn(sstype,valeur)
 
         if self.dlg_config_btn.radioButtonText.isChecked():
@@ -221,8 +226,6 @@ class JeuxAttributs:
                 return
             else:
                 self.clicked_button.setText(self.dlg_config_btn.lineEditNomBtn.text())
-                # self.clicked_button.setIcon(QIcon())
-                # self.clicked_button.adjustSize()
 
         elif self.dlg_config_btn.radioButtonIcon.isChecked():
             if self.pathiconbtnclicked is None:
@@ -245,6 +248,11 @@ class JeuxAttributs:
         self.dlg_sel_champ_val_AUTRE.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.WindowCloseButtonHint)
         self.dlg_sel_champ_val_AUTRE.comboBoxchamps.clear()
         self.dlg_sel_champ_val_AUTRE.listattributs.clear()
+
+        # on masque le lineedit de la taille des boutons
+        self.dlg_sel_champ_val_AUTRE.lineEditTailleBtn.hide()
+        self.dlg_sel_champ_val_AUTRE.label_taille_btn.hide()
+
         self.init_combo_choix_champ(self.dlg_sel_champ_val_AUTRE)
         self.dlg_sel_champ_val_AUTRE.exec_()
 
@@ -256,23 +264,23 @@ class JeuxAttributs:
                 break
 
     def valide_icone(self,sstype,valeur):
-        # sauvegarde de l'icon le dictionnaire
+        # sauvegarde de l'icône le dictionnaire
         if self.pathiconbtnclicked:
             filico = os.path.basename(self.pathiconbtnclicked)
             self.dlg_config_btn.lineEdit_icone.setText(filico)
         else:
             filico = ""
-        # ajout de l'icone dans le dictionnaire et suppression du nom
+        # ajout de l'icône dans le dictionnaire et suppression du nom
         for item in self.dico_layer_attrval.get(self.layer.name(), []):
             if item.get("sous_type") == sstype and item.get("valeur") == valeur:
                 # Exemple : mise à jour de l'icône du bouton
                 item["icon"] = filico
                 # item["nom_btn"] = ""
                 break
-        # on actualise l'icone a afficher apres le nom de l'icone
+        # on actualise l'icône a afficher apres le nom de l'icône
         # path = os.path.join(self.path_repicon_btn, icon_str)
         pixmap = QPixmap(self.pathiconbtnclicked)
-        pixmap = pixmap.scaled(20, 20, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        pixmap = pixmap.scaled(30, 30, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.dlg_config_btn.label_icon_sel.setPixmap(pixmap)
 
     def valide_dlg_icone(self,sstype,valeur):
@@ -306,8 +314,9 @@ class JeuxAttributs:
         for filename in os.listdir(self.path_repicon_btn):
             if filename.lower().endswith(".ico"):
                 path = os.path.join(self.path_repicon_btn, filename)
-                # pixmap = QPixmap(path).scaled(30, 30)
-                pixmap = QPixmap(path)
+                taille = int(self.taille_icone_dans_listview)
+                pixmap = QPixmap(path).scaled(taille, taille)
+                # pixmap = QPixmap(path)
                 icon = QIcon(pixmap)
 
                 item = QStandardItem(icon, filename)
@@ -342,14 +351,15 @@ class JeuxAttributs:
         dlg.listattributs.clear()
 
         layer_field = self.layer.fields().field(champ)
-        # Vérifier le type d’éditeur
+        # Vérifier le type d’éditeur liste de dico (troncon_hydro) ou dico (autre)
+        # pourquoi la structure est différente ???
         editor_setup = layer_field.editorWidgetSetup()
         valeurs_possibles = []
         for v in editor_setup.config().values():
             # cas de liste de dictionnaire → on dépile
             if isinstance(v, dict):
                 valeurs_possibles.extend(v.values())  # récupérer les vrais libellés
-            # cas où c'est une liste : cf troncon hydro
+            # Cas où c'est une liste : cf. tronçon hydro
             elif isinstance(v, list):
                 # Cas d’une liste → on ajoute chaque élément
                 for elem in v:
@@ -396,6 +406,7 @@ class JeuxAttributs:
         self.dlg_sel_champ_val.comboBoxchamps.clear()
         self.dlg_sel_champ_val.listattributs.clear()
         self.init_combo_choix_champ(self.dlg_sel_champ_val)
+
         self.dlg_sel_champ_val.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.WindowCloseButtonHint)
         self.dlg_sel_champ_val.exec_()
 
@@ -422,9 +433,14 @@ class JeuxAttributs:
     # ajout du bouton de paramétrage
     def initLayout(self):
         btn_add = QPushButton()
-        btn_add.setIcon(QIcon(self.pathicon_config))
-        btn_add.setFixedWidth(20)
-        btn_add.setFixedHeight(20)
+        btn_add.setFixedWidth(self.taille_btn)
+        btn_add.setFixedHeight(self.taille_btn)
+        pixmap = QPixmap(self.pathicon_config)
+        pixmap = pixmap.scaled(self.taille_btn, self.taille_btn, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        icon = QIcon(pixmap)
+        btn_add.setIconSize(pixmap.size())
+        btn_add.setIcon(icon)
+
         # self.btn_add.setStyleSheet("background-color: lightblue;")
         btn_add.clicked.connect(self.show_choix_attr_val)
 
@@ -438,7 +454,7 @@ class JeuxAttributs:
             if cle == layer:
                 for item in elements:
                      list_sstype_valeur.append((item.get("sous_type"),item.get("valeur")))
-        # liste de tupples
+        # liste de tuples
         return list_sstype_valeur
 
     def get_icon_from_dico(self,layer,sous_type,valeur):
@@ -463,10 +479,11 @@ class JeuxAttributs:
             if layer == self.layer.name():
                 champ_val = self.get_sstype_valeur_from_dico(self.layer.name(),self.dico_layer_attrval)
                 for sstype,valeur in champ_val:
-                    iconstr = self.get_icon_from_dico(self.layer.name(),sstype,valeur)
-                    path_icon = os.path.join(self.path_repicon_btn, iconstr)
+                    icon_str = self.get_icon_from_dico(self.layer.name(),sstype,valeur)
+                    path_icon = os.path.join(self.path_repicon_btn, icon_str)
                     nom_json = self.get_nombtn_from_dico(self.layer.name(),sstype,valeur)
                     widget = QPushButton(valeur)
+                    widget.setFixedHeight(self.taille_btn)
                     # initialisation du filtre clic droit
                     filtre = FiltreClicDroit(self)
                     self.liste_filtres.append(filtre)
@@ -474,21 +491,28 @@ class JeuxAttributs:
 
                     widget.setToolTip(f"{sstype}{SEPARATION_TOOLTIP}{valeur}")
 
-                    # widget.setFixedWidth(button_width)
-                    widget.setFixedHeight(20)
 
-                    # si icon present dans json on affiche l'icon
+                    # si icon present dans json on affiche l'icône
                     # et on vide le nom du btn meme s'il est renseigné
-                    if iconstr != "":
-                        widget.setIcon(QIcon(path_icon))
+                    if icon_str != "":
+                        # l'image ne doit etre plus petite que le bouton sinon elle le recouvre
+                        # et on ne peut plus cliquer dessus
+                        taille_icon = self.taille_btn* 0.85
+                        widget.setFixedHeight(self.taille_btn)
+                        widget.setFixedWidth(self.taille_btn)
+                        pixmap = QPixmap(path_icon)
+                        pixmap = pixmap.scaled(int(taille_icon), int(taille_icon), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                        icon = QIcon(pixmap)
+                        widget.setIconSize(pixmap.size())
+                        widget.setIcon(icon)
                         widget.setText("")
                     else:
                         widget.setText(nom_json)
 
-                    # connexion d'un evenement clic pour chaque btn
+                    # connexion d'un événement clic pour chaque btn
                     widget.clicked.connect(lambda checked, v=valeur, c=sstype: self.clic_btn(v, c))
                     self.layout_boutons.addWidget(widget)
-                    # Recalcul dynamique de la taille du dialog
+                    # Recalcule dynamique de la taille du dialog
                     self.layout_boutons.invalidate()
                     self.layout_boutons.activate()
                     # astuce : attendre la fin de la boucle d'événement avant de recalculer la taille
@@ -501,7 +525,7 @@ class JeuxAttributs:
         # tableview en lecture seule
         self.dlg_config_btn.tableView_autre_valeur.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
-        # selection de ligne entiere
+        # sélection de lignes entières
         self.dlg_config_btn.tableView_autre_valeur.setSelectionBehavior(QTableView.SelectRows)
         self.dlg_config_btn.tableView_autre_valeur.setSelectionMode(QTableView.SingleSelection)
 
@@ -588,11 +612,42 @@ class JeuxAttributs:
         # écriture du nouveau btn dans le json
         self.save_json()
 
+        # sauvegarde des parametres (taille btn)
+        self.save_json_parametres()
+
         self.clear_layout(self.layout_boutons)
         self.liste_filtres = []
         self.initLayout()
         self.load_json()
         self.ajout_btn_from_json()
+
+    def save_json_parametres(self):
+        taille_btn = int(self.dlg_sel_champ_val.lineEditTailleBtn.text())
+        # Si le fichier n’existe pas → création directe
+        if not os.path.exists(self.pathjsonparametre):
+            elements = {"taille_des_boutons": taille_btn,
+                        "taille_icone_dans_listview": 30}
+            with open(self.pathjsonparametre, "w", encoding="utf-8") as f:
+                json.dump(elements, f, ensure_ascii=False, indent=2)
+            return
+
+        # Si le fichier existe, on le charge et on met à jour les paramètres
+        try:
+            with open(self.pathjsonparametre, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except json.JSONDecodeError:
+            data = {}
+
+        # Conserve la valeur actuelle de "taille_icone_dans_listview" (sinon 30)
+        taille_icone = data.get("taille_icone_dans_listview", 30)
+        # Met à jour uniquement la taille des boutons
+        data["taille_des_boutons"] = taille_btn
+        data["taille_icone_dans_listview"] = taille_icone
+
+        # sauvegarde
+        with open(self.pathjsonparametre, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+
 
     def save_json(self):
         if not self.layer:
@@ -633,15 +688,35 @@ class JeuxAttributs:
         except Exception as e:
             print(f"Erreur lors de la sauvegarde JSON : {e}")
 
+    def load_json_parametre(self):
+        print("load_json_parametre")
+        if os.path.exists(self.pathjsonparametre):
+            try:
+                with open(self.pathjsonparametre, "r") as f:
+                    params = json.load(f)
+            except (json.JSONDecodeError,OSError):
+                print("Erreur lors du chargement du fichier JSON — contenu invalide.")
+                params = {}
+            self.taille_btn = params.get("taille_des_boutons",30) # 30 → valeur par défaut
+            self.taille_icone_dans_listview = params.get("taille_icone_dans_listview",30)
+            self.dlg_sel_champ_val.lineEditTailleBtn.setText(str(self.taille_btn))
+        else:
+            print("Le fichier de paramètres JSON n'existe pas.")
+            # Valeur par défaut si le fichier n’existe pas
+            self.taille_btn = 45
+            self.taille_icone_dans_listview = 30
+            self.dlg_sel_champ_val.lineEditTailleBtn.setText(str(self.taille_btn))
+
+
     def load_json(self):
         if os.path.exists(self.pathjson):
             with open(self.pathjson, "r", encoding="utf-8") as f:
                 data = json.load(f)
         else:
-            print("Le fichier JSON n'existe pas.")
+            print("Le fichier de configuration des boutons JSON n'existe pas.")
             return
 
-        #  si on recupere bien un dictionnaire issu du json
+        #  si on récupère bien un dictionnaire issu du json
         if not isinstance(data, dict):
             print("Format JSON incorrect : ce doit être un dictionnaire")
             return
@@ -680,7 +755,7 @@ class JeuxAttributs:
     def clic_btn(self,val,champ_courant):
         print(f"CLIC BOUTON ,champ courant - val = {champ_courant}-{val}")
         self.layer.startEditing()
-        # changement : champs-valeur du bouton selectionné
+        # changement : champs-valeur du bouton sélectionné
         id_champ = self.layer.fields().indexFromName(champ_courant)
         for sel in self.layer.selectedFeatures():
             self.layer.changeAttributeValue(sel.id(), id_champ,val)
@@ -689,7 +764,7 @@ class JeuxAttributs:
         # tooltip = self.clicked_button.toolTip()
         # sstype, valeur = tooltip.split(SEPARATION_TOOLTIP)
         autre_sstype_valeur = {}
-        # parcourt du dico pour ioler le dictionnaire des sstype_valeur à modifier
+        # parcourt du dico pour isoler le dictionnaire des sstype_valeur à modifier
         for item in self.dico_layer_attrval.get(self.layer.name(), []):
             if item.get("sous_type") == champ_courant and item.get("valeur") == val:
                 # Exemple : mise à jour du nom du bouton
@@ -723,6 +798,7 @@ class JeuxAttributs:
             pass  # déjà déconnecté
 
     def run(self):
+        print("run")
         """Run method that performs all the real work"""
 
         # Create the dialog with elements (after translation) and keep reference
@@ -754,7 +830,7 @@ class JeuxAttributs:
 
         # connexion des slots : self.dlg_config_btn
         self.dlg_config_btn.pushButtonDeplacer.clicked.connect(self.deplace_btn)
-        # gestion de la suppression de la ligne selectionnée (valeur autre)
+        # gestion de la suppression de la ligne sélectionnée (valeur autre)
         self.dlg_config_btn.pushButton_suppr_row.clicked.connect(self.suppr_ligne_tableview)
         self.dlg_config_btn.pushButtonOk.clicked.connect(
             lambda: self.valide_config_btn(self.sstype_btn_sel, self.valeur_btn_sel))
@@ -771,15 +847,16 @@ class JeuxAttributs:
 
         self.layer = self.iface.activeLayer()
         self.layout_boutons = LayoutFluide(self.dlg)
+        self.load_json_parametre() # a faire AVANT init layout
         self.initLayout()
         self.load_json()
         self.ajout_btn_from_json()
 
         # EVENEMENT DE CHANGEMENT DE LAYER ACTIF
-        # s'assurer de ne pas connecter plusieurs fois
+        # s'assurer de ne pas connecter plusieurs fois, mais juste 1 fois
         try:
             self.iface.layerTreeView().currentLayerChanged.disconnect(self.on_active_layer_changed)
-        except Exception:
+        except TypeError:
             pass
         self.iface.layerTreeView().currentLayerChanged.connect(self.on_active_layer_changed)
 
