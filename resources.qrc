@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/plugins/assistant_complexe" >
-        <file>icon.png</file>
-    </qresource>
-</RCC>

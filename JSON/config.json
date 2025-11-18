@@ -1,0 +1,79 @@
+{
+  "troncon_de_route": {
+    "cleabs": [],
+    "restriction_de_longueur": [],
+    "cpx_numero": [],
+    "nom_voie_ban_gauche": [],
+    "nom_voie_ban_droite": [],
+    "date_creation": [],
+    "date_modification": [],
+    "etat_de_l_objet": [
+      "En construction",
+      "En projet",
+      "En service"
+    ],
+    "fictif": [
+      "NULL",
+      "0",
+      "1"
+    ],
+    "importance": [
+      "NULL",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6"
+    ],
+    "acces_vehicule_leger": [
+      "A péage",
+      "Libre",
+      "Physiquement impossible",
+      "Restreint aux ayants droit"
+    ]
+  },
+  "batiment": {
+    "nature": [
+      "Arc de triomphe",
+      "Arène ou théâtre antique",
+      "Chapelle"
+    ]
+  },
+  "troncon_hydrographique": {
+    "fictif": [
+      "NULL",
+      "0",
+      "1"
+    ],
+    "etat_de_l_objet": [
+      "Disparu",
+      "En construction",
+      "En projet",
+      "En service"
+    ],
+    "persistance": [
+      "NULL",
+      "Ephémère",
+      "Inconnue",
+      "Intermittent",
+      "Permanent",
+      "Sec"
+    ],
+    "origine": [
+      "NULL",
+      "Artificielle",
+      "Inconnue",
+      "Naturelle aménagée",
+      "Naturelle non aménagée"
+    ],
+    "type_de_bras": [
+      "NULL",
+      "Inconnu",
+      "Mort",
+      "Principal",
+      "Sans objet",
+      "Secondaire"
+    ]
+  }
+}

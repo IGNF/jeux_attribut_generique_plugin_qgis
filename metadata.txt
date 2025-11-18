@@ -3,14 +3,14 @@
 # This file should be included when you package your plugin.# Mandatory items:
 
 [general]
-name=(IGN) Jeux d'attributs
+name=IGN Jeux d'attributs générique
 qgisMinimumVersion=3.0
-description=Jeux d'attributs
-version=0.1
-author=Gérôme PECHEUR (IGN)
+description=plugin generique
+version=1.0
+author=Gérôme PECHEUR
 email=gerome.pecheur@ign.fr
 
-about=Ce plugin permet la modification sémantique
+about=Ce plugin est un jeux d'attributs générique. Il permet la modification sémantique
 
 tracker=http://bugs
 repository=http://repo

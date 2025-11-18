@@ -1,28 +1,7 @@
 <component name="ProjectDictionaryState">
   <dictionary name="project">
     <words>
-      <w>attrval</w>
-      <w>bcoche</w>
-      <w>boxchamps</w>
-      <w>evenement</w>
-      <w>filico</w>
-      <w>getposbtn</w>
-      <w>icone</w>
-      <w>icones</w>
-      <w>inittableview</w>
-      <w>nombtn</w>
-      <w>parametre</w>
-      <w>parametres</w>
-      <w>pathicon</w>
-      <w>pathiconbtnclicked</w>
-      <w>pathjson</w>
-      <w>pathjsonparametre</w>
-      <w>repicon</w>
-      <w>selattributs</w>
-      <w>sstype</w>
-      <w>suppr</w>
-      <w>tolayer</w>
-      <w>troncon</w>
+      <w>changeattributs</w>
     </words>
   </dictionary>
 </component>
