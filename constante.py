@@ -4,7 +4,7 @@ TITRE = "Jeux d'attributs générique"
 
 SEPARATION_TOOLTIP = "\t\U0001F846\t"
 
-TAILLE_BTN = 25
+TAILLE_BTN = 20
 
 PATH_REP = f"{os.path.dirname(__file__)}"
 PATHICON = os.path.join(os.path.dirname(__file__),"icons" ,"icon_principal.png")

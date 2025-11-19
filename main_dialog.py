@@ -255,7 +255,10 @@ class MainDialog(QDialog):
 
     def add_widget(self,champ,valeurs,typewidget):
         # formatage du nom des champs (suppr des _)
-        champ_format = champ.replace("_", " ").replace("l ", "l'").replace("d ", "d'").capitalize() + " :  "
+        text_label = champ.replace("_", " ").replace("l ", "l'").replace("d ", "d'").capitalize() + " :  "
+        style = "<span style= 'color: #b63d3d; font-weight: bold'>"
+        champ_format = QLabel(f"{style}{text_label}</span>")
+
         hlayout = QHBoxLayout()
         hlayout.setSpacing(1)
 
@@ -281,6 +284,7 @@ class MainDialog(QDialog):
             lineedit.setReadOnly(read_only)
             lineedit.setEnabled(not read_only)
             lineedit.setFixedWidth(180)
+            lineedit.setFixedHeight(TAILLE_BTN)
             lineedit.setProperty("champ", champ)
             # valeur = "" pour gérer l'aspect du widget
             lineedit.setProperty("valeur", "")
@@ -295,6 +299,7 @@ class MainDialog(QDialog):
             for val in valeurs[:self.nb_widget_par_ligne]:
                 btn = QPushButton(str(val))
                 btn.setEnabled(not read_only)
+                btn.setFixedHeight(TAILLE_BTN)
                 btn.setProperty("champ",champ)
                 btn.setProperty("valeur", val)
                 btn.setProperty("iswidgetjson", True)
@@ -310,6 +315,7 @@ class MainDialog(QDialog):
             if len(valeurs) == self.nb_widget_par_ligne + 1:
                 val = valeurs[-1]
                 btn = QPushButton(str(val))
+                btn.setFixedHeight(TAILLE_BTN)
                 btn.setProperty("champ",champ)
                 btn.setProperty("valeur", val)
                 btn.setProperty("iswidgetjson", True)
@@ -324,6 +330,7 @@ class MainDialog(QDialog):
 
                 combo.addItems([str(val) for val in valeurs[self.nb_widget_par_ligne:]])
 
+                combo.setFixedHeight(TAILLE_BTN)
                 combo.setProperty("champ", champ)
                 combo.setProperty("valeur", combo.currentText())
                 combo.setProperty("iswidgetjson", True)
@@ -400,7 +407,7 @@ class MainDialog(QDialog):
                     # sauvegarde des valeurs des linedit pour gérer le rétablissement de la valeur si pas bonne
                     self.dico_val_linedit[champ] = val_unique
                     widget.setText(str(val_unique))
-                    widget.setStyleSheet(f"font-weight: bold;background-color: {self.color_btn_commun}")
+                    widget.setStyleSheet(f"background-color: {self.color_btn_commun}")
 
                 if isinstance(widget, QDateTimeEdit):
                     val_sans_ms = val_unique.split(".")[0]
@@ -413,19 +420,20 @@ class MainDialog(QDialog):
                 widget = get_widget_by_champ_valeur(self, champ)
                 if isinstance(widget, QLineEdit):
                     widget.setText("***")  # afficher *** pour ambiguïté
-                    widget.setStyleSheet("font-weight: bold;background-color: None")
+                    # widget.setStyleSheet("font-weight: bold;background-color: None")
+                    widget.setStyleSheet("background-color: None")
                     self.dico_val_linedit[champ] = "***"
 
                 elif isinstance(widget, QDateTimeEdit):
                     widget.setDateTime(QDateTime(QDate(1900, 1, 1), QTime(0, 0, 0)))
-                    widget.setStyleSheet("font-weight: bold;background-color: None")
+                    widget.setStyleSheet("background-color: None")
 
                 elif isinstance(widget, QComboBox):
                     self.set_color_itemcombo(champ,None,None)
-                    widget.setStyleSheet("font-weight: bold;background-color: None")
+                    widget.setStyleSheet("background-color: None")
 
                 elif isinstance(widget, QPushButton):
-                    widget.setStyleSheet("font-weight: bold;background-color: None")
+                    widget.setStyleSheet("background-color: None")
 
     # changer la couleur du bouton sauf celui qui est en self.color_btn_commun
     def set_color_btn(self,champ,val,color = None):
@@ -434,22 +442,22 @@ class MainDialog(QDialog):
         for w in self.findChildren(QWidget):
             style = w.styleSheet()
             if w.property("champ") == champ:
-                if style != f"font-weight: bold;background-color: {self.color_btn_commun}":
+                if style != f"background-color: {self.color_btn_commun}":
                     # Remet la couleur par défaut
-                    w.setStyleSheet("font-weight: bold;background-color: None")
+                    w.setStyleSheet("background-color: None")
 
         # on met le widget concerné a color donné en parametre s'il est pas en color : self.color_btn_commun
-        if widget.styleSheet() != f"font-weight: bold;background-color: {self.color_btn_commun}":
-            widget.setStyleSheet(f"font-weight: bold;background-color: {color}")
+        if widget.styleSheet() != f"background-color: {self.color_btn_commun}":
+            widget.setStyleSheet(f"background-color: {color}")
 
     def set_all_btn_color(self,champ,color):
         widgets = get_widgets_by_champ(self,champ)
         for wid in widgets:
             # print(wid.property("valeur"))
             style = wid.styleSheet()
-            if style == f"font-weight: bold;background-color: {self.color_btn_commun}":
+            if style == f"background-color: {self.color_btn_commun}":
                 continue
-            wid.setStyleSheet(f"font-weight: bold;background-color: {color}")
+            wid.setStyleSheet(f"background-color: {color}")
 
     # TODO : a faire : ne pas changer si l'item est deja a self.color_btn_commun
     def set_all_item_color(self,champ,color):
@@ -488,15 +496,15 @@ class MainDialog(QDialog):
         # ce qui est toujours le cas apres get_attributs_communs
         # on ne garde la couleur commune que si l'item a la couleur commune.
         if combo.currentText() == val:
-                combo.setStyleSheet(f"QComboBox {{ font-weight: bold;background-color: {color}; }}")
+                combo.setStyleSheet(f"QComboBox {{ background-color: {color}; }}")
         else:
-            combo.setStyleSheet("QComboBox { font-weight: bold;background-color: white; }")
+            combo.setStyleSheet("QComboBox { background-color: white; }")
 
 
     # slot textedit
     def textedit_sel(self, champ, val):
         widget = get_widget_by_champ_valeur(self,champ,val)
-        widget.setStyleSheet(f"font-weight: bold;background-color: {self.color_btn_sel}")
+        widget.setStyleSheet(f"background-color: {self.color_btn_sel}")
 
         index_champs = self.layer.fields().indexOf(champ)
         if val != "***":
@@ -511,7 +519,7 @@ class MainDialog(QDialog):
         if contraintes:
             QMessageBox.warning(self, "Contraintes", text_err)
             widget.setText(self.dico_val_linedit[champ])
-            widget.setStyleSheet(f"font-weight: bold;background-color: {self.color_btn_commun}")
+            widget.setStyleSheet(f"background-color: {self.color_btn_commun}")
 
     # slot bouton
     def bouton_sel(self, champ, val):
@@ -619,7 +627,11 @@ class MainDialog(QDialog):
         dlgAProposDe = QDialog()
         loadUi(os.path.dirname(__file__) + "/aproposde.ui", dlgAProposDe)
         dlgAProposDe.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.WindowCloseButtonHint)
+        dlgAProposDe.pushButtonAffichedoc.clicked.connect(afficheDoc)
         dlgAProposDe.exec_()
+
+
+
 
     def show_param(self):
         self.dlgParam = ParamDialog()

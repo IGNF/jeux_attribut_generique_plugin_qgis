@@ -82,9 +82,9 @@ class FiltreDialog(QDialog):
 
         brush_noeditable = QBrush()
         brush_noeditable.setStyle(Qt.SolidPattern)
-        brush_noeditable.setColor(QColor(255, 80, 80))
+        brush_noeditable.setColor(QColor(255, 40, 40))
 
-        self.label_noeditable.setStyleSheet("color: rgb(255,80,80)")  # bleu
+        self.label_noeditable.setStyleSheet("color: rgb(255,40,40)")
 
         for champ, valeurs in dico_champs_val.items():
             # test si champ est editable ou pas

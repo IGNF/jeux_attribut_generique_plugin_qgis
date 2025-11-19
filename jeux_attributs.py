@@ -140,17 +140,17 @@ class JeuxAttribut:
                 # Remet la couleur par défaut
                 if isinstance(w, QLineEdit):
                     w.clear()
-                    w.setStyleSheet("font-weight: bold;background-color: None")
+                    w.setStyleSheet("background-color: None")
                 elif isinstance(w, QPushButton):
-                    w.setStyleSheet("font-weight: bold;background-color: None")
+                    w.setStyleSheet("background-color: None")
                     # w.setStyleSheet("background-color: None")
 
                 elif isinstance(w, QDateTimeEdit):
-                    w.setStyleSheet("font-weight: bold;background-color: None")
+                    w.setStyleSheet("background-color: None")
 
                 elif isinstance(w, QComboBox):
                     # combo
-                    w.setStyleSheet("font-weight: bold;background-color: None")
+                    w.setStyleSheet("background-color: None")
                     model = w.model()
                     # items du combo
                     for i in range(model.rowCount()):
@@ -216,7 +216,6 @@ class JeuxAttribut:
             self.iface.mapCanvas().selectionChanged.disconnect(self.actualiserSelection)
         except TypeError:
             pass  # aucune connexion existante
-
 
         self.iface.mapCanvas().selectionChanged.connect(self.actualiserSelection)
         self.actualiserSelection()

@@ -1,11 +1,8 @@
 {
   "troncon_de_route": {
     "cleabs": [],
-    "restriction_de_longueur": [],
     "cpx_numero": [],
-    "nom_voie_ban_gauche": [],
-    "nom_voie_ban_droite": [],
-    "date_creation": [],
+    "cpx_classement_administratif": [],
     "date_modification": [],
     "etat_de_l_objet": [
       "En construction",
@@ -17,6 +14,18 @@
       "0",
       "1"
     ],
+    "nature": [
+      "Bac ou liaison maritime",
+      "Bretelle",
+      "Chemin",
+      "Escalier",
+      "Rond-point",
+      "Route empierrée",
+      "Route à 1 chaussée",
+      "Route à 2 chaussées",
+      "Sentier",
+      "Type autoroutier"
+    ],
     "importance": [
       "NULL",
       "1",
@@ -25,12 +34,6 @@
       "4",
       "5",
       "6"
-    ],
-    "acces_vehicule_leger": [
-      "A péage",
-      "Libre",
-      "Physiquement impossible",
-      "Restreint aux ayants droit"
     ]
   },
   "batiment": {
