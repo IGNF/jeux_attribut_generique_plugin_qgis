@@ -171,11 +171,13 @@ class MainDialog(QDialog):
 
     def affiche_sens_num(self):
         if self.is_affiche_sens_num:
-            self.layer.loadNamedStyle(os.path.join(PATH_REP ,"sauvegarde_style_initial.qml"),categories=QgsMapLayer.StyleCategory.Symbology)
+            # chargement de la symbologie ET des etiquettes
+            self.layer.loadNamedStyle(os.path.join(PATH_REP ,"sauvegarde_style_initial.qml"),categories=QgsMapLayer.StyleCategory.Symbology| QgsMapLayer.Labeling)
             self.is_affiche_sens_num = False
         else:
-            self.layer.saveNamedStyle(os.path.join(PATH_REP ,"sauvegarde_style_initial.qml"),categories=QgsMapLayer.StyleCategory.Symbology)
-            self.layer.loadNamedStyle(os.path.join(PATH_REP ,"style_sens_numerisation.qml"),categories=QgsMapLayer.StyleCategory.Symbology)
+            # sauvegarde de la symbologie ET des etiquettes
+            self.layer.saveNamedStyle(os.path.join(PATH_REP ,"sauvegarde_style_initial.qml"),categories=QgsMapLayer.StyleCategory.Symbology| QgsMapLayer.Labeling)
+            self.layer.loadNamedStyle(os.path.join(PATH_REP ,"style_sens_numerisation.qml"),categories=QgsMapLayer.StyleCategory.Symbology| QgsMapLayer.Labeling)
             self.is_affiche_sens_num = True
         self.layer.triggerRepaint()
 
