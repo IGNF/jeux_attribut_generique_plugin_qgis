@@ -173,10 +173,10 @@ def clear_layout(layout):
             clear_layout(item.layout())
 
 def afficheDoc():
-    if not os.path.isfile(os.path.join(os.path.dirname(__file__),"jeux d'attributs.docx")):
+    if not os.path.isfile(os.path.join(os.path.dirname(__file__),"jeux d'attributs.pdf")):
         afficheerreur("La documentation est introuvable", "Information")
     else:
-        os.popen(os.path.join(os.path.dirname(__file__),"jeux d'attributs.docx"))
+        os.popen(os.path.join(os.path.dirname(__file__),"jeux d'attributs.pdf"))
 
 def afficheerreur(text, titre=TITRE):
     msg = QMessageBox()

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>354</width>
-    <height>185</height>
+    <width>420</width>
+    <height>180</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,14 +18,14 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>354</width>
-    <height>185</height>
+    <width>420</width>
+    <height>180</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>354</width>
-    <height>185</height>
+    <width>420</width>
+    <height>180</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -34,8 +34,8 @@
   <widget class="QPushButton" name="pushButtonOk">
    <property name="geometry">
     <rect>
-     <x>250</x>
-     <y>150</y>
+     <x>160</x>
+     <y>140</y>
      <width>93</width>
      <height>28</height>
     </rect>
@@ -47,9 +47,9 @@
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>21</x>
+     <x>11</x>
      <y>10</y>
-     <width>321</width>
+     <width>401</width>
      <height>112</height>
     </rect>
    </property>
@@ -68,7 +68,7 @@
      <widget class="QLabel" name="label_3">
       <property name="maximumSize">
        <size>
-        <width>220</width>
+        <width>500</width>
         <height>16777215</height>
        </size>
       </property>
@@ -90,12 +90,12 @@
       </property>
       <property name="maximumSize">
        <size>
-        <width>220</width>
+        <width>500</width>
         <height>16777215</height>
        </size>
       </property>
       <property name="text">
-       <string>Couleur du widget sélectionné :</string>
+       <string>Couleur des widgests pour les valeurs de la sélection :</string>
       </property>
      </widget>
     </item>
@@ -118,7 +118,7 @@
       </property>
       <property name="maximumSize">
        <size>
-        <width>220</width>
+        <width>500</width>
         <height>16777215</height>
        </size>
       </property>

@@ -6,89 +6,76 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>424</width>
+    <width>450</width>
     <height>460</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>424</width>
+    <width>450</width>
     <height>460</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>424</width>
+    <width>450</width>
     <height>460</height>
    </size>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QTreeView" name="treeView">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>70</y>
-     <width>401</width>
-     <height>341</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButtonOk">
-   <property name="geometry">
-    <rect>
-     <x>270</x>
-     <y>420</y>
-     <width>141</width>
-     <height>28</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Ajouter la sélection</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label">
+  <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>411</width>
-     <height>16</height>
+     <width>431</width>
+     <height>441</height>
     </rect>
    </property>
-   <property name="text">
-    <string>Ajouter des boutons correspondant aux champs et types sélectionnés</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignCenter</set>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_noeditable">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>410</y>
-     <width>231</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>* champ non éditable ,  juste en lecture</string>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="checkBox_alldecocher">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>50</y>
-     <width>121</width>
-     <height>17</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Tout décocher</string>
-   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0" colspan="2">
+     <widget class="QLabel" name="label">
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Ajouter des widgets correspondant aux champs et types sélectionnés</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QCheckBox" name="checkBox_alldecocher">
+      <property name="text">
+       <string>Tout décocher</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="label_noeditable">
+      <property name="text">
+       <string>* champ non éditable ,  juste en lecture</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QPushButton" name="pushButtonOk">
+      <property name="text">
+       <string>Actualiser la sélection</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0" colspan="2">
+     <widget class="QTreeView" name="treeView"/>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>

@@ -1,6 +1,5 @@
 {
   "troncon_de_route": {
-    "cleabs": [],
     "cpx_numero": [],
     "cpx_classement_administratif": [],
     "date_modification": [],
@@ -10,18 +9,18 @@
       "En service"
     ],
     "fictif": [
+      "1",
       "NULL",
-      "0",
-      "1"
+      "0"
     ],
     "nature": [
-      "Bac ou liaison maritime",
-      "Bretelle",
-      "Chemin",
-      "Escalier",
-      "Rond-point",
       "Route empierrée",
       "Route à 1 chaussée",
+      "Bac ou liaison maritime",
+      "Chemin",
+      "Bretelle",
+      "Escalier",
+      "Rond-point",
       "Route à 2 chaussées",
       "Sentier",
       "Type autoroutier"
