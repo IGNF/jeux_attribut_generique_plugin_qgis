@@ -66,7 +66,7 @@ class MainDialog(QDialog):
         self.color_btn_sel = self.dico_param.get("couleur_btn_selection", "#2ab51a")
         self.color_btn_commun = self.dico_param.get("couleur_btn_commun", "#ff8080")
 
-        self.setWindowTitle(TITRE)
+        self.setWindowTitle(f"{TITRE} {VERSION}")
         self.setWindowIcon(QIcon(PATHICON))
         self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.WindowCloseButtonHint)
 
@@ -629,6 +629,7 @@ class MainDialog(QDialog):
         dlgAProposDe = QDialog()
         loadUi(os.path.dirname(__file__) + "/aproposde.ui", dlgAProposDe)
         dlgAProposDe.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.WindowCloseButtonHint)
+        dlgAProposDe.setWindowTitle(f"{TITRE} {VERSION}")
         dlgAProposDe.pushButtonAffichedoc.clicked.connect(afficheDoc)
         dlgAProposDe.exec_()
 

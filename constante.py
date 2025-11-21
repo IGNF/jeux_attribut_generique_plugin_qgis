@@ -1,6 +1,7 @@
 import os
 
 TITRE = "Jeux d'attributs générique"
+VERSION = "v1.0.0"
 
 SEPARATION_TOOLTIP = "\t\U0001F846\t"
 
