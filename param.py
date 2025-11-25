@@ -1,9 +1,9 @@
 import json
 
-from PyQt5.QtGui import QIcon, QColor
+from PyQt5.QtGui import QIcon, QColor, QRegularExpressionValidator
 from PyQt5.QtWidgets import QDialog
 from PyQt5.uic import loadUi
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QRegularExpression
 
 from .constante import *
 
@@ -24,7 +24,8 @@ class ParamDialog(QDialog):
             "couleur_btn_valider": "#df920d",
             "couleur_btn_selection": "#d0e60c",
             # "couleur_btn_defaut": "None",
-            "couleur_btn_commun": "#00b729"
+            "couleur_btn_commun": "#00b729",
+            "taille_btn": 30
         }
 
         dico_fichier = self.load_param_json()
@@ -37,18 +38,31 @@ class ParamDialog(QDialog):
 
         self.spinBoxNbwidget.setRange(0,5)
 
+        # regex pour la contrainte de saisi de la taille des btn
+        regex = QRegularExpression(r"^(1[5-9]|[2-5][0-9]|60)$")
+        validator = QRegularExpressionValidator(regex, self.lineEdit_taille_btn)
+        self.lineEdit_taille_btn.setValidator(validator)
+        # masque le warning
+        self.label_warning.hide()
+
         self.init_parametre()
 
-        # redefini dorenevant dans main dialogue pour appliquer les modif a la volée
+        # redéfini dorénavant dans main dialogue pour appliquer les modifs à la volée
         # self.pushButtonOk.clicked.connect(self.ok)
 
+        # événement spinBoxNbwidget change
         self.spinBoxNbwidget.valueChanged.connect(self.spinbox_change)
+        # événement color change
         for btn_color in list_btn_color:
             btn_color.colorChanged.connect(lambda _, b=btn_color: self.color_change(b))
+
+        # événement edit_taille_btn change
+        self.lineEdit_taille_btn.textChanged.connect(self.taille_btn_change)
 
     def init_parametre(self):
         valeur_spin = self.dico_param.get("nb_btn_ligne",3)
         self.spinBoxNbwidget.setValue(valeur_spin)
+        self.lineEdit_taille_btn.setText(str(self.dico_param.get("taille_btn",30)))
 
 
     def color_change(self,btn):
@@ -70,6 +84,19 @@ class ParamDialog(QDialog):
     def spinbox_change(self, value):
         # self.nb_widg_par_ligne = value
         self.dico_param["nb_btn_ligne"] = value
+
+    def taille_btn_change(self):
+        taille = self.lineEdit_taille_btn.text()
+        if taille == "":
+            return  # on ne fait rien tant que vide
+        if self.lineEdit_taille_btn.hasAcceptableInput():
+            self.label_warning.hide()
+            self.lineEdit_taille_btn.setStyleSheet("")
+            self.dico_param["taille_btn"] = int(self.lineEdit_taille_btn.text())
+        else:
+            self.label_warning.show()
+            self.lineEdit_taille_btn.setStyleSheet("background-color: #ffa8a8")
+
 
     def load_param_json(self):
         """Charge le fichier JSON des paramètres s’il existe."""

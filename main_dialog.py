@@ -1,13 +1,11 @@
-import os
 
-from PyQt5.QtCore import Qt, QObject, QEvent, QPoint, QTimer, QSize, QDateTime, QDate, QTime
-from PyQt5.QtGui import QIcon, QStandardItem, QColor, QStandardItemModel
-from PyQt5.QtWidgets import QDialog, QFormLayout, QDialogButtonBox, QHBoxLayout, QPushButton, QVBoxLayout, QComboBox, \
-    QSizePolicy, QLineEdit, QLabel, QFrame, QAbstractItemView, QInputDialog, QPlainTextEdit, QDateTimeEdit, QCheckBox
+
+from PyQt5.QtCore import QObject, QEvent, QSize, QDate, QTime
+from PyQt5.QtGui import QIcon, QColor
+from PyQt5.QtWidgets import QDialog, QFormLayout, QHBoxLayout, QVBoxLayout,QSizePolicy, QFrame, QInputDialog
 from PyQt5.uic import loadUi
-from qgis._core import QgsVectorDataProvider, QgsMapLayer
-from qgis.core import QgsFieldConstraints, QgsAttributeEditorField, QgsAttributeEditorContainer, QgsExpression, \
-    QgsExpressionContext, QgsExpressionContextUtils ,Qgis
+from qgis._core import QgsMapLayer
+from qgis.core import  QgsExpression,QgsExpressionContext, QgsExpressionContextUtils ,Qgis
 
 
 from .filtre import FiltreDialog
@@ -65,6 +63,7 @@ class MainDialog(QDialog):
         self.color_btn_valider = self.dico_param.get("couleur_btn_valider", "#e648e7")
         self.color_btn_sel = self.dico_param.get("couleur_btn_selection", "#2ab51a")
         self.color_btn_commun = self.dico_param.get("couleur_btn_commun", "#ff8080")
+        self.taille_btn = self.dico_param.get("taille_btn", 30)
 
         self.setWindowTitle(f"{TITRE} {VERSION}")
         self.setWindowIcon(QIcon(PATHICON))
@@ -80,7 +79,7 @@ class MainDialog(QDialog):
         # ajout du bouton filtre
         self.btn_filtre = QPushButton()
         self.btn_filtre.setIcon(QIcon(PATHICON_FILTRE))
-        self.btn_filtre.setFixedSize(TAILLE_BTN, TAILLE_BTN)
+        self.btn_filtre.setFixedSize(TAILLE_BTN_DEFAUT, TAILLE_BTN_DEFAUT)
         self.btn_filtre.setIconSize(QSize(self.btn_filtre.width() - 8, self.btn_filtre.height() - 8))
         self.btn_filtre.setToolTip("Ajouter/supprimer des boutons")
         layout_widget_permanent.addWidget(self.btn_filtre)
@@ -88,14 +87,14 @@ class MainDialog(QDialog):
         # bouton parametre
         self.btn_param = QPushButton()
         self.btn_param.setIcon(QIcon(PATHICON_PARAM))
-        self.btn_param.setFixedSize(TAILLE_BTN, TAILLE_BTN)
-        self.btn_param.setIconSize(QSize(self.btn_filtre.width() - 8, self.btn_filtre.height() - 8))
+        self.btn_param.setFixedSize(TAILLE_BTN_DEFAUT, TAILLE_BTN_DEFAUT)
+        self.btn_param.setIconSize(QSize(self.btn_param.width() - 8, self.btn_param.height() - 8))
         self.btn_param.setToolTip("Modifier les couleurs et le nombre de boutons par ligne")
         layout_widget_permanent.addWidget(self.btn_param)
 
         # bouton sens de numérisation
         self.btn_sens_num = QPushButton()
-        self.btn_sens_num.setFixedSize(TAILLE_BTN, TAILLE_BTN)
+        self.btn_sens_num.setFixedSize(TAILLE_BTN_DEFAUT, TAILLE_BTN_DEFAUT)
         self.btn_sens_num.setIconSize(QSize(self.btn_sens_num.width()-2,self.btn_sens_num.height()-2))
         self.btn_sens_num.setIcon(QIcon(PATHICON_SENS_NUM))
         self.btn_sens_num.setToolTip("Afficher / Masquer le sens de numérisation")
@@ -104,36 +103,37 @@ class MainDialog(QDialog):
         # bouton chemin plus court
         self.btn_che_court = QPushButton()
         self.btn_che_court.setIcon(QIcon(PATHICON_CHE_COURT))
-        self.btn_che_court.setFixedSize(TAILLE_BTN, TAILLE_BTN)
-        self.btn_che_court.setIconSize(QSize(self.btn_filtre.width() - 8, self.btn_filtre.height() - 8))
+        self.btn_che_court.setFixedSize(TAILLE_BTN_DEFAUT, TAILLE_BTN_DEFAUT)
+        self.btn_che_court.setIconSize(QSize(self.btn_che_court.width() - 8, self.btn_che_court.height() - 8))
         self.btn_che_court.setToolTip("Chemin le plus court")
         layout_widget_permanent.addWidget(self.btn_che_court)
 
         # ajout du bouton apropos
         self.btn_apropos = QPushButton("?")
-        self.btn_apropos.setFixedSize(TAILLE_BTN, TAILLE_BTN)
-        self.btn_apropos.setIconSize(QSize(self.btn_filtre.width() - 8, self.btn_filtre.height() - 8))
+        self.btn_apropos.setFixedSize(TAILLE_BTN_DEFAUT, TAILLE_BTN_DEFAUT)
+        self.btn_apropos.setIconSize(QSize(self.btn_apropos.width() - 8, self.btn_apropos.height() - 8))
+        self.btn_apropos.setToolTip("A propos de")
         layout_widget_permanent.addWidget(self.btn_apropos)
 
         # Ajout du bouton "valider"
         layout_widget_permanent.addStretch()
         self.btn_valider = QPushButton("Valider les modifications")
-        self.btn_valider.setFixedSize(150, TAILLE_BTN)
-        self.btn_valider.setIconSize(QSize(self.btn_filtre.width() - 8, self.btn_filtre.height() - 8))
+        self.btn_valider.setFixedSize(150, TAILLE_BTN_DEFAUT)
+        self.btn_valider.setIconSize(QSize(self.btn_valider.width() - 8, self.btn_valider.height() - 8))
         self.btn_valider.setStyleSheet(f"font-weight: bold;background-color: {self.color_btn_valider}")
         layout_widget_permanent.addWidget(self.btn_valider)
 
         # bouton importer/exporter
         self.btn_importer = QPushButton()
         self.btn_importer.setIcon(QIcon(PATHICON_IMPORT))
-        self.btn_importer.setFixedSize(TAILLE_BTN, TAILLE_BTN)
-        self.btn_importer.setIconSize(QSize(self.btn_filtre.width() - 8, self.btn_filtre.height() - 8))
+        self.btn_importer.setFixedSize(TAILLE_BTN_DEFAUT, TAILLE_BTN_DEFAUT)
+        self.btn_importer.setIconSize(QSize(self.btn_importer.width() - 8, self.btn_importer.height() - 8))
         self.btn_importer.setToolTip("Importer la configuration")
         layout_widget_permanent.addWidget(self.btn_importer)
         self.btn_exporter = QPushButton()
         self.btn_exporter.setIcon(QIcon(PATHICON_EXPORT))
-        self.btn_exporter.setFixedSize(TAILLE_BTN, TAILLE_BTN)
-        self.btn_exporter.setIconSize(QSize(self.btn_filtre.width() - 8, self.btn_filtre.height() - 8))
+        self.btn_exporter.setFixedSize(TAILLE_BTN_DEFAUT, TAILLE_BTN_DEFAUT)
+        self.btn_exporter.setIconSize(QSize(self.btn_exporter.width() - 8, self.btn_exporter.height() - 8))
         self.btn_exporter.setToolTip("Exporter la configuration")
         layout_widget_permanent.addWidget(self.btn_exporter)
         layout_widget_permanent.addStretch()
@@ -145,7 +145,7 @@ class MainDialog(QDialog):
         self.formlayout = QFormLayout()
         self.formlayout.setSpacing(1)
 
-        # ajout des 2 layout (permanant et layout des btn) separé par une ligne
+        # ajout des 2 layouts (permanent et layout des btn) separés par une ligne
         main_layout.addLayout(self.formlayout)
         # --- AJOUT DE LA LIGNE HORIZONTALE ---
         line = QFrame()
@@ -286,7 +286,7 @@ class MainDialog(QDialog):
             lineedit.setReadOnly(read_only)
             lineedit.setEnabled(not read_only)
             lineedit.setFixedWidth(180)
-            lineedit.setFixedHeight(TAILLE_BTN)
+            lineedit.setFixedHeight(self.taille_btn)
             lineedit.setProperty("champ", champ)
             # valeur = "" pour gérer l'aspect du widget
             lineedit.setProperty("valeur", "")
@@ -301,7 +301,7 @@ class MainDialog(QDialog):
             for val in valeurs[:self.nb_widget_par_ligne]:
                 btn = QPushButton(str(val))
                 btn.setEnabled(not read_only)
-                btn.setFixedHeight(TAILLE_BTN)
+                btn.setFixedHeight(self.taille_btn)
                 btn.setProperty("champ",champ)
                 btn.setProperty("valeur", val)
                 btn.setProperty("iswidgetjson", True)
@@ -317,7 +317,7 @@ class MainDialog(QDialog):
             if len(valeurs) == self.nb_widget_par_ligne + 1:
                 val = valeurs[-1]
                 btn = QPushButton(str(val))
-                btn.setFixedHeight(TAILLE_BTN)
+                btn.setFixedHeight(self.taille_btn)
                 btn.setProperty("champ",champ)
                 btn.setProperty("valeur", val)
                 btn.setProperty("iswidgetjson", True)
@@ -332,7 +332,7 @@ class MainDialog(QDialog):
 
                 combo.addItems([str(val) for val in valeurs[self.nb_widget_par_ligne:]])
 
-                combo.setFixedHeight(TAILLE_BTN)
+                combo.setFixedHeight(self.taille_btn)
                 combo.setProperty("champ", champ)
                 combo.setProperty("valeur", combo.currentText())
                 combo.setProperty("iswidgetjson", True)
@@ -649,6 +649,7 @@ class MainDialog(QDialog):
         self.color_btn_valider = self.dico_param.get("couleur_btn_valider", "#df920d")
         self.color_btn_sel = self.dico_param.get("couleur_btn_selection", "#2ab51a")
         self.color_btn_commun = self.dico_param.get("couleur_btn_commun", "#ff8080")
+        self.taille_btn = self.dico_param.get("taille_btn", 30)
 
         # on recharge les btn pour prendre en compte le changement du nb de btn par ligne et les couleurs
         self.plugin.add_all_widget()

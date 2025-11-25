@@ -5,7 +5,7 @@ VERSION = "v1.0.0"
 
 SEPARATION_TOOLTIP = "\t\U0001F846\t"
 
-TAILLE_BTN = 20
+TAILLE_BTN_DEFAUT = 30
 
 PATH_REP = f"{os.path.dirname(__file__)}"
 PATHICON = os.path.join(os.path.dirname(__file__),"icons" ,"icon_principal.png")
