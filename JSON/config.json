@@ -1,17 +1,17 @@
 {
   "troncon_de_route": {
+    "restriction_de_longueur": [],
+    "borne_debut_droite": [],
+    "insee_commune_gauche": [],
+    "insee_commune_droite": [],
+    "alias_gauche": [],
+    "alias_droit": [],
+    "liens_vers_route_nommee": [],
     "cpx_numero": [],
-    "cpx_classement_administratif": [],
-    "date_modification": [],
+    "nom_collaboratif_droite": [],
+    "pente_maximale_dfci": [],
     "etat_de_l_objet": [
-      "En construction",
-      "En projet",
       "En service"
-    ],
-    "fictif": [
-      "NULL",
-      "0",
-      "1"
     ],
     "nature": [
       "Bac ou liaison maritime",
@@ -24,61 +24,10 @@
       "Route à 2 chaussées",
       "Sentier",
       "Type autoroutier"
-    ],
-    "importance": [
-      "NULL",
-      "1",
-      "2",
-      "3",
-      "4",
-      "5",
-      "6"
-    ],
-    "acces_pieton": [
-      "NULL"
     ]
   },
-  "batiment": {
-    "nature": [
-      "Arc de triomphe",
-      "Arène ou théâtre antique",
-      "Chapelle"
-    ]
-  },
-  "troncon_hydrographique": {
-    "fictif": [
-      "NULL",
-      "0",
-      "1"
-    ],
-    "etat_de_l_objet": [
-      "Disparu",
-      "En construction",
-      "En projet",
-      "En service"
-    ],
-    "persistance": [
-      "NULL",
-      "Ephémère",
-      "Inconnue",
-      "Intermittent",
-      "Permanent",
-      "Sec"
-    ],
-    "origine": [
-      "NULL",
-      "Artificielle",
-      "Inconnue",
-      "Naturelle aménagée",
-      "Naturelle non aménagée"
-    ],
-    "type_de_bras": [
-      "NULL",
-      "Inconnu",
-      "Mort",
-      "Principal",
-      "Sans objet",
-      "Secondaire"
-    ]
+  "route_numerotee_ou_nommee": {
+    "geometrie": [],
+    "date_creation": []
   }
 }

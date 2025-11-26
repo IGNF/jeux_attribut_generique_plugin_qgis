@@ -63,7 +63,7 @@ class MainDialog(QDialog):
         self.color_btn_valider = self.dico_param.get("couleur_btn_valider", "#e648e7")
         self.color_btn_sel = self.dico_param.get("couleur_btn_selection", "#2ab51a")
         self.color_btn_commun = self.dico_param.get("couleur_btn_commun", "#ff8080")
-        self.taille_btn = self.dico_param.get("taille_btn", 30)
+        self.taille_btn = self.dico_param.get("taille_btn", TAILLE_BTN_CHAMP_PAR_DEFAUT)
 
         self.setWindowTitle(f"{TITRE} {VERSION}")
         self.setWindowIcon(QIcon(PATHICON))
@@ -109,7 +109,8 @@ class MainDialog(QDialog):
         layout_widget_permanent.addWidget(self.btn_che_court)
 
         # ajout du bouton apropos
-        self.btn_apropos = QPushButton("?")
+        self.btn_apropos = QPushButton()
+        self.btn_apropos.setIcon(QIcon(PATHICON_APROPOS))
         self.btn_apropos.setFixedSize(TAILLE_BTN_DEFAUT, TAILLE_BTN_DEFAUT)
         self.btn_apropos.setIconSize(QSize(self.btn_apropos.width() - 8, self.btn_apropos.height() - 8))
         self.btn_apropos.setToolTip("A propos de")
@@ -232,6 +233,9 @@ class MainDialog(QDialog):
         champ = obj.property("champ")
         valeur = obj.property("valeur")
         self.deplace_btn_to_json(champ,valeur)
+        # actualisation de l'interface
+        self.plugin.dico_filtre = loadjson(self.layer.name())
+        self.plugin.add_all_widget()
 
 
     def clic_droit_combobox(self,obj,event):
@@ -252,7 +256,6 @@ class MainDialog(QDialog):
                 self.plugin.add_all_widget()
                 QTimer.singleShot(0, self.plugin.actualiserSelection)
                 return True
-
         return False
 
     def add_widget(self,champ,valeurs,typewidget):
@@ -385,14 +388,12 @@ class MainDialog(QDialog):
                 val_unique = liste_valeur_sel[0]
                 widget = get_widget_by_champ_valeur(self, champ,val_unique)
                 # on initialise les items des combos a "blanc".
-                # print(f"val unique : champ - valeur = {champ}-{val_unique}")
                 # si c'est un bouton
                 if isinstance(widget, QPushButton):
                     self.set_all_item_color(champ,None)
                     self.set_color_btn(champ,val_unique,self.color_btn_commun)
                 # si c'est un combobox
                 if isinstance(widget, QComboBox):
-                    # print("la valeur est dans le combo")
                     # Vérifie si la valeur existe déjà dans le combo
                     index = widget.findText(val_unique)
                     if index != -1:
@@ -409,6 +410,7 @@ class MainDialog(QDialog):
                     # sauvegarde des valeurs des linedit pour gérer le rétablissement de la valeur si pas bonne
                     self.dico_val_linedit[champ] = val_unique
                     widget.setText(str(val_unique))
+                    print("on met en couleur les lineedit")
                     widget.setStyleSheet(f"background-color: {self.color_btn_commun}")
 
                 if isinstance(widget, QDateTimeEdit):
@@ -455,7 +457,6 @@ class MainDialog(QDialog):
     def set_all_btn_color(self,champ,color):
         widgets = get_widgets_by_champ(self,champ)
         for wid in widgets:
-            # print(wid.property("valeur"))
             style = wid.styleSheet()
             if style == f"background-color: {self.color_btn_commun}":
                 continue
@@ -474,7 +475,6 @@ class MainDialog(QDialog):
 
     # on modifie la couleur SAUF si l'item a la couleur : self.color_btn_commun'
     def set_color_itemcombo(self,champ,val=None,color = None):
-        # print(f"set_color_itemcombo : {champ} : {val}")
         # on initilaise tous les item a color blanc
         combo = get_widget_by_champ_valeur(self, champ,val)
         if combo is None:
@@ -516,16 +516,20 @@ class MainDialog(QDialog):
     def on_perte_focus(self,champ,val):
         widget = get_widget_by_champ_valeur(self, champ, val)
         contraintes = self.verification_contraintes(champ, widget)
-        text_err = f"<span style='color: red'><b>Les valeurs saisies ne sont pas conformes aux contraintes :</b></span><br/><br/>"
-        text_err += f"<span style='color: blue'><b>{champ}:</b></span><br/>{contraintes}<br/>"
         if contraintes:
-            QMessageBox.warning(self, "Contraintes", text_err)
+            contraintes = contraintes.replace("@value", champ)
+            affichercontraintes(contraintes, "Contraintes")
             widget.setText(self.dico_val_linedit[champ])
             widget.setStyleSheet(f"background-color: {self.color_btn_commun}")
 
+            # remettre dans : self.widget_clique[index_champs]
+            # l'ancienne valeur
+            index_champs = self.layer.fields().indexOf(champ)
+            self.widget_clique[index_champs] = self.dico_val_linedit[champ]
+
     # slot bouton
     def bouton_sel(self, champ, val):
-        self.set_color_btn(champ, val,self.color_btn_sel)
+        self.set_color_btn(champ, val, self.color_btn_sel)
 
         # initialisation d'un dico pour gérer le changeattributs
         index_champs = self.layer.fields().indexOf(champ)
@@ -553,7 +557,6 @@ class MainDialog(QDialog):
                 constraints = field.constraints()
                 # Récupère les infos de contraintes
                 expression = constraints.constraintExpression()
-                # print("Expression de contrainte :", expression or "(aucune)")
                 return {"expression" : expression or ""}
         return None
 
@@ -569,48 +572,38 @@ class MainDialog(QDialog):
         expr_str = contraintes["expression"].replace(f'"{champ}"', '@value')
         # Crée l'expression QGIS
         expr = QgsExpression(expr_str)
+        # expr = QgsExpression(contraintes["expression"])
         # Crée un contexte pour évaluer l'expression
         context = QgsExpressionContext()
         layer_scope = QgsExpressionContextUtils.layerScope(self.layer)
         context.appendScope(layer_scope)
 
-        # ⚡ Ajout des variables dans le scope
+        # Ajout des variables dans le scope
         layer_scope.setVariable("value", valeur)  # @value
-        layer_scope.setVariable("@value", valeur)  # pour les expressions qui utilisent @value
+        # layer_scope.setVariable("@value", valeur)  # pour les expressions qui utilisent @value
         layer_scope.setVariable(champ, valeur)  # si l'expression fait référence au champ par son nom
 
         res = expr.evaluate(context)
         if not res:
-            print(f"⚠️ Valeur '{valeur}' invalide selon la contrainte : {expr.expression()}")
+            # print(f"⚠️ Valeur '{valeur}' invalide selon la contrainte : {expr.expression()}")
             return  expr.expression()
         else:
-            print(f"✅ Valeur '{valeur}' valide selon la contrainte.")
+            # print(f"✅ Valeur '{valeur}' valide selon la contrainte.")
             return  ""
 
     def valide_modif(self):
-        # for linedit,valeur in self.dico_val_linedit.items():
-        #     print(f"linedit avant modif = , {linedit} --{valeur}")
-
-        contraintes = ""
-        text_err = f"<span style='color: red'><b>Les valeurs saisies ne sont pas conformes aux contraintes :</b></span><br/><br/>"
-        for champ,contraintes in self.get_contraintes.items():
-            text_err += f"<span style='color: blue'><b>{champ}:</b></span><br/>{contraintes}<br/>"
-        if contraintes:
-            QMessageBox.warning(self, "Contraintes", text_err)
-            return
-
         self.layer.startEditing()
         compteur = 0
         for sel in self.layer.selectedFeatures():
             for index_champ,nouvelle_valeur in self.widget_clique.items():
                 ancienne_valeur_sel = sel.attribute(index_champ)
                 if ancienne_valeur_sel != nouvelle_valeur:
-                    print(f"VALIDATION : {ancienne_valeur_sel} --> {nouvelle_valeur}")
                     self.layer.changeAttributeValue(sel.id(), index_champ, nouvelle_valeur)
                     compteur += 1
 
-        message = f"Les modifications ont été effectués sur : {compteur} entité(s)"
-        self.iface.messageBar().pushMessage("Info", message, level=Qgis.Info, duration=5)
+        if (compteur !=0):
+            message = f"Les modifications ont été effectués sur : {compteur} entité(s)"
+            self.iface.messageBar().pushMessage("Info", message, level=Qgis.Info, duration=5)
 
         self.widget_clique.clear()
         self.dico_val_linedit.clear()
@@ -624,6 +617,7 @@ class MainDialog(QDialog):
             self.dico_filtre = self.dlgFiltre.getcheckitem()
             # Rafraîchir les widgets selon les filtres
             self.add_widget_from_filtre()
+            QTimer.singleShot(0, self.plugin.actualiserSelection)
 
     def apropos(self):
         dlgAProposDe = QDialog()
@@ -633,14 +627,11 @@ class MainDialog(QDialog):
         dlgAProposDe.pushButtonAffichedoc.clicked.connect(afficheDoc)
         dlgAProposDe.exec_()
 
-
-
-
     def show_param(self):
         self.dlgParam = ParamDialog()
         # connecte le bouton OK du dialog à la mise à jour en direct
         self.dlgParam.pushButtonOk.clicked.connect(self.applique_parametres)
-        self.dlgParam.show() #  seulement si l'utilisateur valide
+        self.dlgParam.exec_()
 
     def applique_parametres(self):
         # recharge le dictionnaire mis à jour
@@ -649,9 +640,10 @@ class MainDialog(QDialog):
         self.color_btn_valider = self.dico_param.get("couleur_btn_valider", "#df920d")
         self.color_btn_sel = self.dico_param.get("couleur_btn_selection", "#2ab51a")
         self.color_btn_commun = self.dico_param.get("couleur_btn_commun", "#ff8080")
-        self.taille_btn = self.dico_param.get("taille_btn", 30)
+        self.taille_btn = self.dico_param.get("taille_btn", TAILLE_BTN_CHAMP_PAR_DEFAUT)
 
         # on recharge les btn pour prendre en compte le changement du nb de btn par ligne et les couleurs
+        self.plugin.dico_filtre = loadjson(self.layer.name())
         self.plugin.add_all_widget()
         # mettre à jour à la volée la couleur du bouton valider les modifs
         self.btn_valider.setStyleSheet(f"font-weight: bold;background-color: {self.color_btn_valider}")

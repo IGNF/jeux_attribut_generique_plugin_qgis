@@ -25,7 +25,7 @@ class ParamDialog(QDialog):
             "couleur_btn_selection": "#d0e60c",
             # "couleur_btn_defaut": "None",
             "couleur_btn_commun": "#00b729",
-            "taille_btn": 30
+            "taille_btn": TAILLE_BTN_CHAMP_PAR_DEFAUT
         }
 
         dico_fichier = self.load_param_json()
@@ -62,7 +62,7 @@ class ParamDialog(QDialog):
     def init_parametre(self):
         valeur_spin = self.dico_param.get("nb_btn_ligne",3)
         self.spinBoxNbwidget.setValue(valeur_spin)
-        self.lineEdit_taille_btn.setText(str(self.dico_param.get("taille_btn",30)))
+        self.lineEdit_taille_btn.setText(str(self.dico_param.get("taille_btn",TAILLE_BTN_CHAMP_PAR_DEFAUT)))
 
 
     def color_change(self,btn):

@@ -1,9 +1,9 @@
 import os
 
 from PyQt5.QtGui import QIcon, QStandardItemModel, QStandardItem, QBrush, QColor
-from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QDialog, QApplication
 from PyQt5.uic import loadUi
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QSortFilterProxyModel
 
 import json
 
@@ -22,29 +22,34 @@ class FiltreDialog(QDialog):
 
         self.layer = layer
 
+        self.nb_champ = 0
+
+        self.lineEdit_recherche.textChanged.connect(self.filtre_tree)
 
         self.ini_treeview()
-        self.checkBox_alldecocher.stateChanged.connect(self.checkbox_changed)
+        self.radioButton_alldecoche.toggled.connect(self.all_decocher)
+        self.radioButton_allcoche.toggled.connect(self.all_cocher)
         self.pushButtonOk.clicked.connect(self.ok)
 
-    def checkbox_changed(self,etat):
-        if etat == Qt.Checked:
-            print("on decoche")
-            model = self.treeView.model()
-            # enfants
-            for row in range(model.rowCount()):
-                item_parent = model.item(row, 0)
-                # if item_parent is not None:
-                # item_parent.setCheckState(Qt.Unchecked)
-                for i in range(item_parent.rowCount()):
-                    child = item_parent.child(i, 0)
-                    child.setCheckState(Qt.Unchecked)
+    def all_decocher(self):
+        self.nb_champ = 0
+        for row in range(self.model.rowCount()):
+            item_parent = self.model.item(row, 0)
+            item_parent.setCheckState(Qt.Unchecked)
 
-            # parent
-            for row in range(model.rowCount()):
-                item_parent = model.item(row, 0)
-                item_parent.setCheckState(Qt.Unchecked)
+            for i in range(item_parent.rowCount()):
+                child = item_parent.child(i, 0)
+                child.setCheckState(Qt.Unchecked)
 
+
+    def all_cocher(self):
+        self.nb_champ = self.model.rowCount()
+        for row in range(self.model.rowCount()):
+            item_parent = self.model.item(row, 0)
+            item_parent.setCheckState(Qt.Checked)
+            for i in range(item_parent.rowCount()):
+                child = item_parent.child(i, 0)
+                child.setCheckState(Qt.Checked)
 
 
     def ini_treeview(self):
@@ -59,10 +64,10 @@ class FiltreDialog(QDialog):
                 valeurs = get_valeur(self.layer, champ)
                 dico_champs_val[champ] = valeurs
 
-        model = QStandardItemModel()
+        self.model = QStandardItemModel()
         # slot pour gerer le fait de decocher les item enfants en fct du parent
-        model.itemChanged.connect(self.on_item_changed)
-        model.setHorizontalHeaderLabels(["Champ / valeur"])
+        self.model.itemChanged.connect(self.on_item_changed)
+        self.model.setHorizontalHeaderLabels(["Champ / valeur"])
 
         brushfond1 = QBrush()
         brushfond1.setStyle(Qt.SolidPattern)
@@ -113,24 +118,45 @@ class FiltreDialog(QDialog):
                 for val in valeurs:
                     val_item = QStandardItem(str(val))
                     val_item.setEditable(False)
-                    val_item.setForeground(brushtext2)
                     val_item.setBackground(brushfond2)
+                    if read_only:
+                        val_item.setForeground(brush_noeditable)
+                    else:
+                        val_item.setForeground(brushtext2)
                     val_item.setCheckable(True)
                     # Si la valeur est cochée dans le JSON → cocher
                     if champ in filtre_layer and val in filtre_layer[champ]:
                         val_item.setCheckState(Qt.Checked)
                     champ_item.appendRow(val_item)
-            model.appendRow(champ_item)
+            self.model.appendRow(champ_item)
 
-        self.treeView.setModel(model)
-        # self.treeView.expandAll()
+        # PROXY (pour la recherche)
+        self.proxy_model = QSortFilterProxyModel()
+        self.proxy_model.setSourceModel(self.model)
+        self.proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
+        self.proxy_model.setFilterKeyColumn(0)  # on filtre sur la première colonne
+
+        # Important pour treeView avec hiérarchie
+        self.proxy_model.setRecursiveFilteringEnabled(True)
+
+        # Lier proxy à la vue
+        self.treeView.setModel(self.proxy_model)
+
+    def filtre_tree(self, texte):
+        self.proxy_model.setFilterRegularExpression(texte)
+        text = self.lineEdit_recherche.text()
+        if text == "":
+            self.treeView.collapseAll()
+        else:
+            self.treeView.expandAll()
 
     def on_item_changed(self, item):
-        model = self.treeView.model()
-        model.blockSignals(True)
+        # model = self.treeView.model()
+        self.model.blockSignals(True)
 
         state = item.checkState()
 
+        # on coche un parent
         if item.hasChildren():
             # Si le parent est décoché, décocher tous les enfants
             if state == Qt.Unchecked:
@@ -138,32 +164,32 @@ class FiltreDialog(QDialog):
                     child = item.child(i)
                     child.setCheckState(Qt.Unchecked)
 
-        # else:
-        #     # Si c’est un enfant, cocher le parent si au moins un enfant est coché
-        #     parent = item.parent()
-        #     if parent:
-        #         for i in range(parent.rowCount()):
-        #             if parent.child(i).checkState() == Qt.Checked:
-        #                 parent.setCheckState(Qt.Checked)
-        #                 break
+            # Si le parent est coché -> cocher tous les enfants (optionnel)
+            elif state == Qt.Checked:
+                for i in range(item.rowCount()):
+                    child = item.child(i)
+                    child.setCheckState(Qt.Checked)
 
-        model.blockSignals(False)
+        # on coche un enfant -->  le parent se coche
+        else:
+            parent = item.parent()
+            if parent:
+                # Si au moins un enfant est coché -> cocher le parent
+                any_checked = any(
+                    parent.child(i).checkState() == Qt.Checked
+                    for i in range(parent.rowCount())
+                )
+                parent.setCheckState(Qt.Checked if any_checked else Qt.Unchecked)
 
-        # else:
-        #     # Si c’est un enfant (valeur)
-        #     parent = item.parent()
-        #     if parent is not None:
-        #         # Vérifie si au moins une valeur est cochée
-        #         any_checked = any(parent.child(i).checkState() == Qt.Checked for i in range(parent.rowCount()))
-        #
-        #         # 🔒 Bloquer pendant la mise à jour du parent
-        #         model.blockSignals(True)
-        #         parent.setCheckState(Qt.Checked if any_checked else Qt.Unchecked)
-        #         model.blockSignals(False)
+        self.model.blockSignals(False)
+
+        self.proxy_model.invalidate()  # recalcul du filtre
+        self.treeView.viewport().update()
 
 
     def getcheckitem(self):
-        model = self.treeView.model()
+        # model = self.treeView.model()
+        model = self.model
         dico_checked = {}
 
         # Parcourir tous les champs (nœuds racine)
@@ -214,6 +240,12 @@ class FiltreDialog(QDialog):
     def ok(self):
         # tester si on a bien cliqué dans une valeur si on clic dans un champ
         # si valeur vide → on retire le champ
+        if self.nb_champ >NB_CHAMP_MAX:
+            text = f"Vous voulez ajouter trop de valeurs , la fenêtre va dépasser de l'écran {CLIN_OEIL}<br>"
+            text += f"La limite est de <span style='color: red'><b>{NB_CHAMP_MAX} </b></span>valeurs<br>"
+            text += f"Vous voulez en afficher : <span style='color: red'><b>{self.nb_champ}</b></span>"
+            afficheerreur(text,"Trop de champs ajoutés")
+            return
 
         # sauvegarde de la config
         self.sauvjson()

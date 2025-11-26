@@ -32,6 +32,9 @@
    <string>Dialog</string>
   </property>
   <widget class="QPushButton" name="pushButtonOk">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>160</x>
@@ -40,8 +43,14 @@
      <height>28</height>
     </rect>
    </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="text">
-    <string>Valider</string>
+    <string>Actualiser</string>
    </property>
   </widget>
   <widget class="QWidget" name="layoutWidget">
@@ -49,15 +58,97 @@
     <rect>
      <x>11</x>
      <y>10</y>
-     <width>391</width>
-     <height>114</height>
+     <width>361</width>
+     <height>126</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
     <item row="2" column="1">
      <widget class="QgsColorButton" name="mColorButton_btn_sel"/>
     </item>
-    <item row="3" column="0">
+    <item row="0" column="1">
+     <widget class="QSpinBox" name="spinBoxNbwidget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>50</width>
+        <height>16777215</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Nombre de widgets par ligne :</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_2">
+      <property name="minimumSize">
+       <size>
+        <width>220</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>500</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Couleur des attributs à modifier :</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QLineEdit" name="lineEdit_taille_btn">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>30</width>
+        <height>16777215</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="label_taille_btn">
+        <property name="text">
+         <string>Hauteur des widgets (entre 15 et  60)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_warning">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap>icons/warning.png</pixmap>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="1" column="0">
      <widget class="QLabel" name="label_4">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -84,11 +175,11 @@
        </size>
       </property>
       <property name="text">
-       <string>Couleur des widgets pour les attributs commus :</string>
+       <string>Couleur des attributs communs :</string>
       </property>
      </widget>
     </item>
-    <item row="1" column="0">
+    <item row="3" column="0">
      <widget class="QLabel" name="label_3">
       <property name="maximumSize">
        <size>
@@ -101,94 +192,13 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="1">
-     <widget class="QSpinBox" name="spinBoxNbwidget">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>50</width>
-        <height>16777215</height>
-       </size>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>Nombre de widgets par ligne :</string>
-      </property>
-     </widget>
-    </item>
     <item row="1" column="1">
-     <widget class="QgsColorButton" name="mColorButton_btn_valider"/>
-    </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="label_2">
-      <property name="minimumSize">
-       <size>
-        <width>220</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>500</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Couleur des widgests pour les valeurs de la sélection :</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="1">
      <widget class="QgsColorButton" name="mColorButton_btn_commun"/>
     </item>
-    <item row="4" column="0">
-     <widget class="QLabel" name="label_taille_btn">
-      <property name="text">
-       <string>Taille des widgets (entre 15 et  60)</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="1">
-     <widget class="QLineEdit" name="lineEdit_taille_btn">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>30</width>
-        <height>16777215</height>
-       </size>
-      </property>
-     </widget>
+    <item row="3" column="1">
+     <widget class="QgsColorButton" name="mColorButton_btn_valider"/>
     </item>
    </layout>
-  </widget>
-  <widget class="QLabel" name="label_warning">
-   <property name="geometry">
-    <rect>
-     <x>395</x>
-     <y>106</y>
-     <width>16</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="pixmap">
-    <pixmap>icons/warning.png</pixmap>
-   </property>
   </widget>
  </widget>
  <customwidgets>

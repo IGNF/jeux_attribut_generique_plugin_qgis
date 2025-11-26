@@ -1,7 +1,7 @@
 {
-  "nb_btn_ligne": 3,
-  "couleur_btn_valider": "#da681c",
-  "couleur_btn_selection": "#4c74e6",
-  "couleur_btn_commun": "#00dc08",
+  "nb_btn_ligne": 4,
+  "couleur_btn_valider": "#df920d",
+  "couleur_btn_selection": "#d0e60c",
+  "couleur_btn_commun": "#00b729",
   "taille_btn": 20
 }

@@ -3,7 +3,9 @@ import os.path
 import shutil
 
 from PyQt5.QtCore import QTimer, QDateTime
-from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QComboBox, QFileDialog, QPushButton, QDateTimeEdit
+from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QComboBox, QFileDialog, QPushButton, QDateTimeEdit, QDialog, \
+    QGridLayout, QTextEdit
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.PyQt.QtCore import Qt
 from qgis._core import QgsProject
@@ -79,7 +81,8 @@ def get_champs(layer):
         type_champ = layer.editorWidgetSetup(index).type()
         if type_champ not in dico_type_champs:
             dico_type_champs[type_champ] = []
-        dico_type_champs[type_champ].append(field.name())
+        if field.name() not in CHAMP_NON_PRIS_EN_COMPTE:
+            dico_type_champs[type_champ].append(field.name())
     return dico_type_champs
 
 # retourne les valeurs possibles d'un champ
@@ -182,7 +185,9 @@ def afficheerreur(text, titre=TITRE):
     msg = QMessageBox()
     msg.setIcon(QMessageBox.Warning)
     msg.setWindowTitle(titre)
+    msg.setWindowIcon(QIcon(PATHICON))
     msg.setStandardButtons(QMessageBox.Ok)
+    msg.setTextFormat(Qt.RichText)
     msg.setText(text)
     msg.setWindowFlags(Qt.WindowStaysOnTopHint|Qt.WindowCloseButtonHint)
     msg.exec()
@@ -194,6 +199,38 @@ def afficherinformation(text,titre = TITRE):
     msg.setStandardButtons(QMessageBox.Ok)
     msg.setText(text)
     msg.setWindowFlags(Qt.WindowStaysOnTopHint|Qt.WindowCloseButtonHint)
+    msg.exec()
+
+def affichercontraintes(text, titre=TITRE):
+    msg = QDialog()
+    msg.setWindowIcon(QIcon(PATHICON))
+    msg.setWindowTitle(titre)
+    # msg.setTextFormat(Qt.RichText)
+    # msg.setText(intitule)
+    layout = QGridLayout(msg)
+
+    # --- Icône Warning ---
+    icon_warning = QLabel()
+    icon = QMessageBox().standardIcon(QMessageBox.Warning)
+    icon_warning.setPixmap(icon)
+
+    # intitulé
+    intitule_widg = QLabel("Les valeurs saisies ne sont pas conformes aux contraintes :")
+    intitule_widg.setStyleSheet("color: red;font-weight: bold")
+
+    # text edit
+    text_edit = QTextEdit(msg)
+    text_edit.setReadOnly(True)
+    text = text.replace(" or "," or \n")
+    text_edit.setText(text)
+    # doc_height = text_edit.document().size().height()  # hauteur du contenu en "points"
+    text_edit.setFixedHeight(100)  # +5 pour un petit padding
+
+    layout.addWidget(icon_warning,0,0)
+    layout.addWidget(intitule_widg,0,1)
+    layout.addWidget(text_edit,1,1)
+
+    msg.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.WindowCloseButtonHint)
     msg.exec()
 
 

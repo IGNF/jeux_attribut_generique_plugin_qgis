@@ -73,6 +73,7 @@ class JeuxAttribut:
         self.dlg.adjustSize()
         self.dlg.setFixedSize(self.dlg.sizeHint())
 
+
     # retourne les champs en fonction de leur type
     def get_champs_by_type(self, type):
         """Retourne la liste des champs pour un type d'éditeur donné."""
@@ -110,7 +111,7 @@ class JeuxAttribut:
         # Synchroniser aussi avec le dialog principal
         self.dlg.dico_filtre = self.dico_filtre
 
-        clear_layout(self.dlg.formlayout)
+        # clear_layout(self.dlg.formlayout)
         self.add_all_widget()
 
         # self.dlg.get_attributs_sel_unique()
@@ -125,6 +126,7 @@ class JeuxAttribut:
             return
         # initialisation du nombre d'entités sélectionnées
         nb_sel = self.layer.selectedFeatureCount()
+        print("nb_sel = ",nb_sel)
         text = f"<b>Sélection = <span style ='color: red'> {nb_sel}</b></span>"
         self.dlg.label_nbsel.setText(text)
 
@@ -208,7 +210,7 @@ class JeuxAttribut:
         self.dlg.btn_che_court.clicked.connect(self.dlg.che_plus_court)
 
         self.add_all_widget()
-
+        self.dlg.get_attributs_communs()
         self.dlg.show()
 
         # deconnecter le signal avant de la reconnecter
