@@ -10,7 +10,7 @@ NB_CHAMP_MAX = 20
 TAILLE_BTN_DEFAUT = 30
 TAILLE_BTN_CHAMP_PAR_DEFAUT = 20
 
-CHAMP_NON_PRIS_EN_COMPTE = ["id_sqlite_1gnQg1s","cleabs","geometrie"]
+CHAMP_NON_PRIS_EN_COMPTE = ["id_sqlite_1gnQg1s","geometrie"]
 
 PATH_REP = f"{os.path.dirname(__file__)}"
 PATHICON = os.path.join(os.path.dirname(__file__),"icons" ,"icon_principal.png")

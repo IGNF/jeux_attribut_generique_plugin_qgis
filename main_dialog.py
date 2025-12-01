@@ -2,7 +2,7 @@
 
 from PyQt5.QtCore import QObject, QEvent, QSize, QDate, QTime
 from PyQt5.QtGui import QIcon, QColor
-from PyQt5.QtWidgets import QDialog, QFormLayout, QHBoxLayout, QVBoxLayout,QSizePolicy, QFrame, QInputDialog
+from PyQt5.QtWidgets import QDialog, QFormLayout, QHBoxLayout, QVBoxLayout, QSizePolicy, QFrame, QInputDialog, QCheckBox
 from PyQt5.uic import loadUi
 from qgis._core import QgsMapLayer
 from qgis.core import  QgsExpression,QgsExpressionContext, QgsExpressionContextUtils ,Qgis
@@ -12,6 +12,7 @@ from .filtre import FiltreDialog
 from .param import ParamDialog
 from .cheminpluscourt import *
 from .fonction import *
+from .formulaire import *
 
 class FiltreClicDroit(QObject):
     def __init__(self, class_parent):
@@ -19,6 +20,11 @@ class FiltreClicDroit(QObject):
         self.class_parent = class_parent
 
     def eventFilter(self, obj, event):
+        # if event.type() == QEvent.KeyPress:
+        #     if event.key() in (Qt.Key_Return, Qt.Key_Enter):
+        #         print("CLIC RETURN")
+        #         return True
+
         if event.type() == QEvent.MouseButtonPress and event.button() == Qt.RightButton:
             if isinstance(obj, QPushButton):
                 self.class_parent.clic_droit(obj)
@@ -26,7 +32,7 @@ class FiltreClicDroit(QObject):
                 # QMessageBox.warning(None, "fd","sdf")
             # Cas d’un clic droit sur un item du QComboBox
             # le clic se fait sur le viewport
-            elif isinstance(obj, QWidget):  # obj = viewport du QListView
+            elif isinstance(obj, QWidget):
                 self.class_parent.clic_droit_combobox(obj,event)
         return False
 
@@ -160,12 +166,19 @@ class MainDialog(QDialog):
 
         # Connexion des signaux
         self.btn_valider.clicked.connect(self.valide_modif)
+        self.btn_valider.setFocusPolicy(Qt.NoFocus)
         self.btn_filtre.clicked.connect(self.gestionfiltre)
+        self.btn_filtre.setFocusPolicy(Qt.NoFocus)
         self.btn_apropos.clicked.connect(self.apropos)
+        self.btn_apropos.setFocusPolicy(Qt.NoFocus)
         self.btn_param.clicked.connect(self.show_param)
+        self.btn_param.setFocusPolicy(Qt.NoFocus)
         self.btn_importer.clicked.connect(lambda:importer_json(self)) # self -> pour lier le qmessage au dlg pour passer devant
+        self.btn_importer.setFocusPolicy(Qt.NoFocus)
         self.btn_exporter.clicked.connect(lambda:exporter_json(self))
+        self.btn_exporter.setFocusPolicy(Qt.NoFocus)
         self.btn_sens_num.clicked.connect(self.affiche_sens_num)
+        self.btn_sens_num.setFocusPolicy(Qt.NoFocus)
 
         # le slot de "btn_che_court" est declaré dans jeux_attributs.py
         # btn_che_court.clicked.connect(self.che_plus_court)
@@ -268,9 +281,7 @@ class MainDialog(QDialog):
         hlayout.setSpacing(1)
 
         # test si le champ est editable ou pas
-        index = self.layer.fields().indexOf(champ)
-        form_config = self.layer.editFormConfig()
-        read_only = form_config.readOnly(index)
+        read_only = isreadonly(self.layer,champ)
 
         if typewidget == "DateTime":
             widgdatetime = QDateTimeEdit()
@@ -311,6 +322,7 @@ class MainDialog(QDialog):
                 btn.setToolTip(str(val))
                 btn.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Preferred)
                 hlayout.addWidget(btn)
+                btn.setFocusPolicy(Qt.NoFocus)
 
                 # gestion clic droit
                 btn.installEventFilter(self.filtre_clic_droit)
@@ -327,6 +339,7 @@ class MainDialog(QDialog):
                 btn.setToolTip(str(val))
                 btn.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Preferred)
                 hlayout.addWidget(btn)
+                btn.setFocusPolicy(Qt.NoFocus)
                 btn.clicked.connect(lambda _, c=champ ,v=val: self.bouton_sel(c, v))
 
             elif len(valeurs) > self.nb_widget_par_ligne + 1:
@@ -343,6 +356,7 @@ class MainDialog(QDialog):
                 self.combo_widgets[champ] = combo
                 combo.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Preferred)
                 hlayout.addWidget(combo)
+                combo.setFocusPolicy(Qt.NoFocus)
 
                 # gestion clic droit
                 # eventfilter pas sur le combo directement mais sur le view (contenu)
@@ -410,7 +424,6 @@ class MainDialog(QDialog):
                     # sauvegarde des valeurs des linedit pour gérer le rétablissement de la valeur si pas bonne
                     self.dico_val_linedit[champ] = val_unique
                     widget.setText(str(val_unique))
-                    print("on met en couleur les lineedit")
                     widget.setStyleSheet(f"background-color: {self.color_btn_commun}")
 
                 if isinstance(widget, QDateTimeEdit):
@@ -514,11 +527,23 @@ class MainDialog(QDialog):
 
     # slot : perte du focus pour gerer les contraintes de saisie sur les lineedit
     def on_perte_focus(self,champ,val):
+
+        # test
+        # regex_str = "^(0[1-9]|2([AB]|[1-9])|(1|[3-8])[0-9]|9[0-5])[0-9]{3}$"
+        # regex_str = "^(0[1-9]|[1-8][0-9]|9[0-5]|2A|2B)[0-9]{3}|97[1-8][0-9]{2}|9841[1-5]|99(109|130|131|134|127|137|138|140|437|416|445|132)$"
+        # regex_str = "length(insee_commune_gauche) <= 5"
+        # is_valid,type_chaine = type_de_chaine(regex_str)
+        # print(type_chaine)
+
+        # erreur,text = verifier_regex(val,regex_str)
+        # print(val , ": ",text)
+
         widget = get_widget_by_champ_valeur(self, champ, val)
-        contraintes = self.verification_contraintes(champ, widget)
+        # contraintes = self.verification_contraintes(champ, widget)
+        contraintes = verification_contraintes_formulaire(self.layer, champ, widget)
         if contraintes:
             contraintes = contraintes.replace("@value", champ)
-            affichercontraintes(contraintes, "Contraintes")
+            dlg_affichercontraintes(contraintes, "Contraintes")
             widget.setText(self.dico_val_linedit[champ])
             widget.setStyleSheet(f"background-color: {self.color_btn_commun}")
 
@@ -535,6 +560,15 @@ class MainDialog(QDialog):
         index_champs = self.layer.fields().indexOf(champ)
         self.widget_clique[index_champs] = val
 
+        # lecture des valeurs par defaut du formulaire
+        valdefaut = getValdefautForm(self.layer,champ)
+        print(valdefaut)
+
+        # test : recuperation des valeurs par defauts sur tous les champs
+        dico = getValdefautFormALLchamps(self.layer)
+        print(dico.keys())
+
+
     # slot combobox
     def combobox_sel(self,champ,val):
         # il faut initialiser tous les boutons en blanc
@@ -546,50 +580,6 @@ class MainDialog(QDialog):
         # initialisation d'un dico pour gérer le changeattributs
         index_champs = self.layer.fields().indexOf(champ)
         self.widget_clique[index_champs] = val
-
-    def explore_elements(self, elements, champ):
-        for elem in elements:
-            # if isinstance(elem, QgsAttributeEditorField):
-            if elem.name() == champ:
-                # 🔍 Récupère le champ réel depuis la couche
-                idx = self.layer.fields().indexOf(champ)
-                field = self.layer.fields().field(idx)
-                constraints = field.constraints()
-                # Récupère les infos de contraintes
-                expression = constraints.constraintExpression()
-                return {"expression" : expression or ""}
-        return None
-
-    def contraintes_saisie(self,champ):
-        form_config = self.layer.editFormConfig()
-        return self.explore_elements(form_config.tabs(),champ)
-
-    def verification_contraintes(self, champ, widget):
-        contraintes = self.contraintes_saisie(champ)
-        if not contraintes or not contraintes["expression"]:
-            return
-        valeur = widget.text().strip()
-        expr_str = contraintes["expression"].replace(f'"{champ}"', '@value')
-        # Crée l'expression QGIS
-        expr = QgsExpression(expr_str)
-        # expr = QgsExpression(contraintes["expression"])
-        # Crée un contexte pour évaluer l'expression
-        context = QgsExpressionContext()
-        layer_scope = QgsExpressionContextUtils.layerScope(self.layer)
-        context.appendScope(layer_scope)
-
-        # Ajout des variables dans le scope
-        layer_scope.setVariable("value", valeur)  # @value
-        # layer_scope.setVariable("@value", valeur)  # pour les expressions qui utilisent @value
-        layer_scope.setVariable(champ, valeur)  # si l'expression fait référence au champ par son nom
-
-        res = expr.evaluate(context)
-        if not res:
-            # print(f"⚠️ Valeur '{valeur}' invalide selon la contrainte : {expr.expression()}")
-            return  expr.expression()
-        else:
-            # print(f"✅ Valeur '{valeur}' valide selon la contrainte.")
-            return  ""
 
     def valide_modif(self):
         self.layer.startEditing()

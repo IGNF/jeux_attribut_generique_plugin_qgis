@@ -1,18 +1,7 @@
 {
   "troncon_de_route": {
-    "restriction_de_longueur": [],
-    "borne_debut_droite": [],
     "insee_commune_gauche": [],
     "insee_commune_droite": [],
-    "alias_gauche": [],
-    "alias_droit": [],
-    "liens_vers_route_nommee": [],
-    "cpx_numero": [],
-    "nom_collaboratif_droite": [],
-    "pente_maximale_dfci": [],
-    "etat_de_l_objet": [
-      "En service"
-    ],
     "nature": [
       "Bac ou liaison maritime",
       "Bretelle",
@@ -24,6 +13,42 @@
       "Route à 2 chaussées",
       "Sentier",
       "Type autoroutier"
+    ],
+    "importance": [
+      "NULL",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6"
+    ],
+    "nombre_de_voies": [
+      "NULL",
+      "0",
+      "1",
+      "10",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "Sans objet"
+    ],
+    "reserve_aux_bus": [
+      "NULL",
+      "Double sens",
+      "Sens direct",
+      "Sens inverse"
+    ],
+    "acces_vehicule_leger": [
+      "A péage",
+      "Libre",
+      "Physiquement impossible",
+      "Restreint aux ayants droit"
     ]
   },
   "route_numerotee_ou_nommee": {

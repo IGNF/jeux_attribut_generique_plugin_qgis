@@ -36,7 +36,7 @@ class ParamDialog(QDialog):
         self.mColorButton_btn_commun.setColor(QColor(self.dico_param["couleur_btn_commun"]))
         list_btn_color = [self.mColorButton_btn_valider, self.mColorButton_btn_sel, self.mColorButton_btn_commun]
 
-        self.spinBoxNbwidget.setRange(0,5)
+        self.spinBoxNbwidget.setRange(0,10)
 
         # regex pour la contrainte de saisi de la taille des btn
         regex = QRegularExpression(r"^(1[5-9]|[2-5][0-9]|60)$")

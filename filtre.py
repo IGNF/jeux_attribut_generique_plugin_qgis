@@ -9,6 +9,7 @@ import json
 
 from .constante import *
 from .fonction import *
+from .formulaire import *
 
 class FiltreDialog(QDialog):
 
@@ -93,10 +94,7 @@ class FiltreDialog(QDialog):
 
         for champ, valeurs in dico_champs_val.items():
             # test si champ est editable ou pas
-            # si oui on ajoute dans le treeview en rouge
-            index = self.layer.fields().indexOf(champ)
-            form_config = self.layer.editFormConfig()
-            read_only = form_config.readOnly(index)
+            read_only = isreadonly(self.layer,champ)
 
             champ_item = QStandardItem(champ)
             champ_item.setEditable(False)

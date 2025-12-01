@@ -3,7 +3,7 @@ import os.path
 import shutil
 
 from PyQt5.QtCore import QTimer, QDateTime
-from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtGui import QIcon, QPixmap, QFont
 from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QComboBox, QFileDialog, QPushButton, QDateTimeEdit, QDialog, \
     QGridLayout, QTextEdit
 from qgis.PyQt.QtWidgets import QMessageBox
@@ -201,7 +201,7 @@ def afficherinformation(text,titre = TITRE):
     msg.setWindowFlags(Qt.WindowStaysOnTopHint|Qt.WindowCloseButtonHint)
     msg.exec()
 
-def affichercontraintes(text, titre=TITRE):
+def dlg_affichercontraintes(text, titre=TITRE):
     msg = QDialog()
     msg.setWindowIcon(QIcon(PATHICON))
     msg.setWindowTitle(titre)
@@ -221,10 +221,16 @@ def affichercontraintes(text, titre=TITRE):
     # text edit
     text_edit = QTextEdit(msg)
     text_edit.setReadOnly(True)
-    text = text.replace(" or "," or \n")
+    text = text.replace(" or "," ou \n")
+    text = text.replace(" is ", " doit être ")
+    text = text.replace(" = ", " doit être ")
+    text = text.replace("length", " nombre de caractère ")
+
     text_edit.setText(text)
     # doc_height = text_edit.document().size().height()  # hauteur du contenu en "points"
-    text_edit.setFixedHeight(100)  # +5 pour un petit padding
+    text_edit.setFixedHeight(200)
+    text_edit.setMinimumWidth(500)
+
 
     layout.addWidget(icon_warning,0,0)
     layout.addWidget(intitule_widg,0,1)

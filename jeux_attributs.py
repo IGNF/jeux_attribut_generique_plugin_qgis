@@ -208,6 +208,7 @@ class JeuxAttribut:
 
         # connexion di slot "chemin le plus court"
         self.dlg.btn_che_court.clicked.connect(self.dlg.che_plus_court)
+        self.dlg.btn_che_court.setFocusPolicy(Qt.NoFocus)
 
         self.add_all_widget()
         self.dlg.get_attributs_communs()
