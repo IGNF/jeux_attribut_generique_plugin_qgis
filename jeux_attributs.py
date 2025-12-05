@@ -33,6 +33,7 @@ from qgis.core import QgsProject
 import os.path
 
 from .main_dialog import MainDialog
+from .symbologie import *
 from .fonction import *
 from .constante import *
 
@@ -227,7 +228,7 @@ class JeuxAttribut:
         result = self.dlg.exec_()
         if not result:
             # si on quitte on remet la vue sans le sens de numérisation
-            self.layer.loadNamedStyle(os.path.join(PATH_REP, "sauvegarde_style_initial.qml"),categories=QgsMapLayer.StyleCategory.Symbology| QgsMapLayer.Labeling)
+            suppr_symb_sens_num(self.layer)
             self.dlg.is_affiche_sens_num = False
             # on redessine la couche pour prend en compte du changement de style initial
             self.layer.triggerRepaint()

@@ -7,7 +7,7 @@ from PyQt5.uic import loadUi
 from qgis._core import QgsMapLayer
 from qgis.core import  QgsExpression,QgsExpressionContext, QgsExpressionContextUtils ,Qgis
 
-
+from .symbologie import *
 from .filtre import FiltreDialog
 from .param import ParamDialog
 from .cheminpluscourt import *
@@ -186,12 +186,11 @@ class MainDialog(QDialog):
     def affiche_sens_num(self):
         if self.is_affiche_sens_num:
             # chargement de la symbologie ET des etiquettes
-            self.layer.loadNamedStyle(os.path.join(PATH_REP ,"sauvegarde_style_initial.qml"),categories=QgsMapLayer.StyleCategory.Symbology| QgsMapLayer.Labeling)
+            suppr_symb_sens_num(self.layer)
             self.is_affiche_sens_num = False
         else:
             # sauvegarde de la symbologie ET des etiquettes
-            self.layer.saveNamedStyle(os.path.join(PATH_REP ,"sauvegarde_style_initial.qml"),categories=QgsMapLayer.StyleCategory.Symbology| QgsMapLayer.Labeling)
-            self.layer.loadNamedStyle(os.path.join(PATH_REP ,"style_sens_numerisation.qml"),categories=QgsMapLayer.StyleCategory.Symbology| QgsMapLayer.Labeling)
+            add_symb_sens_num(self.layer)
             self.is_affiche_sens_num = True
         self.layer.triggerRepaint()
 
