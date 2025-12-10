@@ -39,21 +39,145 @@
       "9",
       "Sans objet"
     ],
-    "reserve_aux_bus": [
-      "NULL",
-      "Double sens",
-      "Sens direct",
-      "Sens inverse"
-    ],
     "acces_vehicule_leger": [
       "A péage",
       "Libre",
       "Physiquement impossible",
       "Restreint aux ayants droit"
+    ],
+    "reserve_aux_bus": [
+      "NULL",
+      "Double sens",
+      "Sens direct",
+      "Sens inverse"
     ]
   },
   "route_numerotee_ou_nommee": {
     "geometrie": [],
     "date_creation": []
+  },
+  "troncon_hydrographique": {
+    "cleabs": [],
+    "code_hydrographique": [],
+    "identifiant_police_de_l_eau": [],
+    "cpx_toponyme_de_cours_d_eau": [],
+    "identifiant_bcae": [],
+    "nature": [
+      "Aqueduc",
+      "Canal",
+      "Conduit buse",
+      "Conduit forcé",
+      "Delta",
+      "Ecoulement canalisé",
+      "Ecoulement endoréique",
+      "Ecoulement hyporhéique",
+      "Ecoulement karstique",
+      "Ecoulement naturel",
+      "Ecoulement phréatique",
+      "Estuaire",
+      "Glacier, névé",
+      "Inconnue",
+      "Lac",
+      "Lagune",
+      "Mangrove",
+      "Marais",
+      "Mare",
+      "Plan d'eau de gravière",
+      "Plan d'eau de mine",
+      "Ravine",
+      "Retenue",
+      "Retenue-barrage",
+      "Retenue-bassin portuaire",
+      "Retenue-digue",
+      "Réservoir-bassin",
+      "Réservoir-bassin d'orage",
+      "Réservoir-bassin piscicole"
+    ],
+    "fictif": [
+      "NULL",
+      "0",
+      "1"
+    ],
+    "etat_de_l_objet": [
+      "Disparu",
+      "En construction",
+      "En projet",
+      "En service"
+    ],
+    "position_par_rapport_au_sol": [
+      "NULL",
+      "-1",
+      "-2",
+      "0",
+      "1",
+      "2",
+      "Inconnue"
+    ],
+    "persistance": [
+      "NULL",
+      "Ephémère",
+      "Inconnue",
+      "Intermittent",
+      "Permanent",
+      "Sec"
+    ],
+    "fosse": [
+      "NULL",
+      "0",
+      "1"
+    ],
+    "origine": [
+      "NULL",
+      "Artificielle",
+      "Inconnue",
+      "Naturelle aménagée",
+      "Naturelle non aménagée"
+    ],
+    "sens_de_l_ecoulement": [
+      "NULL",
+      "Double sens",
+      "Inconnu",
+      "Sens direct",
+      "Sens inverse"
+    ],
+    "delimitation": [
+      "NULL",
+      "0",
+      "1"
+    ],
+    "type_de_bras": [
+      "NULL",
+      "Inconnu",
+      "Mort",
+      "Principal",
+      "Sans objet",
+      "Secondaire"
+    ],
+    "inventaire_police_de_l_eau": [
+      "NULL",
+      "Expertise en cours",
+      "Inscrit",
+      "Non inscrit"
+    ],
+    "inventaire_bcae": [
+      "NULL",
+      "0",
+      "1"
+    ],
+    "type_d_annexe": [
+      "NULL",
+      "I-A",
+      "I-A_bis",
+      "I-B",
+      "I-C",
+      "I-C_bis",
+      "I-D"
+    ],
+    "validation_bcae": [
+      "NULL",
+      "0",
+      "1"
+    ],
+    "date_de_validation_bcae": []
   }
 }

@@ -23,7 +23,6 @@ class FiltreDialog(QDialog):
 
         self.layer = layer
 
-        self.nb_champ = 0
 
         self.lineEdit_recherche.textChanged.connect(self.filtre_tree)
 
@@ -33,7 +32,6 @@ class FiltreDialog(QDialog):
         self.pushButtonOk.clicked.connect(self.ok)
 
     def all_decocher(self):
-        self.nb_champ = 0
         for row in range(self.model.rowCount()):
             item_parent = self.model.item(row, 0)
             item_parent.setCheckState(Qt.Unchecked)
@@ -44,7 +42,6 @@ class FiltreDialog(QDialog):
 
 
     def all_cocher(self):
-        self.nb_champ = self.model.rowCount()
         for row in range(self.model.rowCount()):
             item_parent = self.model.item(row, 0)
             item_parent.setCheckState(Qt.Checked)
@@ -235,13 +232,21 @@ class FiltreDialog(QDialog):
         except Exception as e:
             print(f"Erreur lors de la sauvegarde JSON : {e}")
 
+    def nb_parent_coche(self):
+        count = 0
+        rows = self.model.rowCount()
+        for row in range(rows):
+            item = self.model.item(row)
+            if item.checkState() == Qt.Checked:
+                count += 1
+        return count
+
     def ok(self):
-        # tester si on a bien cliqué dans une valeur si on clic dans un champ
-        # si valeur vide → on retire le champ
-        if self.nb_champ >NB_CHAMP_MAX:
+        nb_champ_coche = self.nb_parent_coche()
+        if nb_champ_coche >NB_CHAMP_MAX:
             text = f"Vous voulez ajouter trop de valeurs , la fenêtre va dépasser de l'écran {CLIN_OEIL}<br>"
             text += f"La limite est de <span style='color: red'><b>{NB_CHAMP_MAX} </b></span>valeurs<br>"
-            text += f"Vous voulez en afficher : <span style='color: red'><b>{self.nb_champ}</b></span>"
+            text += f"Vous voulez en afficher : <span style='color: red'><b>{nb_champ_coche}</b></span>"
             afficheerreur(text,"Trop de champs ajoutés")
             return
 

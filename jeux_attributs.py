@@ -127,7 +127,6 @@ class JeuxAttribut:
             return
         # initialisation du nombre d'entités sélectionnées
         nb_sel = self.layer.selectedFeatureCount()
-        print("nb_sel = ",nb_sel)
         text = f"<b>Sélection = <span style ='color: red'> {nb_sel}</b></span>"
         self.dlg.label_nbsel.setText(text)
 
