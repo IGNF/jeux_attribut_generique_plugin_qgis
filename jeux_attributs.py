@@ -21,16 +21,15 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QCheckBox
-from qgis._core import QgsMapLayer
-from qgis.core import QgsProject
-
-# Initialize Qt resources from file resources.py
+from PyQt5.QtCore import QDate, QDateTime
 
 # Import the code for the dialog
 # from .jeux_attributs_dialog import ClassPluginDialog
 import os.path
+
+from PyQt5.QtWidgets import QDateEdit
+from qgis.gui import QgsDateTimeEdit
+from qgis.core import QgsProject
 
 from .main_dialog import MainDialog
 from .symbologie import *
@@ -132,6 +131,7 @@ class JeuxAttribut:
 
         if nb_sel == 0:
             self.dlg.btn_valider.setEnabled(False)
+            # TODO : a faire : mettre les dates a 1900....
         else:
             self.dlg.btn_valider.setEnabled(True)
 
@@ -145,10 +145,12 @@ class JeuxAttribut:
                     w.setStyleSheet("background-color: None")
                 elif isinstance(w, QPushButton):
                     w.setStyleSheet("background-color: None")
-                    # w.setStyleSheet("background-color: None")
 
-                elif isinstance(w, QDateTimeEdit):
+                # elif isinstance(w, QDateEdit):
+                elif isinstance(w, QgsDateTimeEdit):
                     w.setStyleSheet("background-color: None")
+                    # w.setDateTime(QDateTime(QDate(1900, 1, 1)))
+                    w.setNullRepresentation("Pas de date")
 
                 elif isinstance(w, QComboBox):
                     # combo
@@ -161,7 +163,7 @@ class JeuxAttribut:
 
         self.dlg.dico_val_linedit.clear()
 
-        # on gère les attributs communs si plusieurs selections
+        # on gère les attributs communs si au moins une selection
         if nb_sel >0:
             self.dlg.get_attributs_communs()
 

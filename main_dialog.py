@@ -1,11 +1,11 @@
 
 
-from PyQt5.QtCore import QObject, QEvent, QSize, QDate, QTime
-from PyQt5.QtGui import QIcon, QColor
-from PyQt5.QtWidgets import QDialog, QFormLayout, QHBoxLayout, QVBoxLayout, QSizePolicy, QFrame, QInputDialog, QCheckBox
+from PyQt5.QtCore import QObject, QEvent, QSize, QDate, QTimer, QDateTime
+from PyQt5.QtWidgets import QFormLayout, QHBoxLayout, QVBoxLayout, QSizePolicy, QFrame, QInputDialog, QDateEdit, \
+    QAbstractSpinBox
 from PyQt5.uic import loadUi
-from qgis._core import QgsMapLayer
-from qgis.core import  QgsExpression,QgsExpressionContext, QgsExpressionContextUtils ,Qgis
+from qgis.gui import QgsDateTimeEdit
+from qgis.core import  Qgis
 
 from .symbologie import *
 from .filtre import FiltreDialog
@@ -14,17 +14,30 @@ from .cheminpluscourt import *
 from .fonction import *
 from .formulaire import *
 
+# class ChangeDateUtilisateur(QObject):
+#     def __init__(self, class_parent):
+#         super().__init__()
+#         self.class_parent = class_parent
+#
+#     def eventFilter(self, obj, event):
+#         # evenement pour detecter uniquement les changements de dates par utilisateurs
+#         # et non par programmation
+#         # if isinstance(obj, QDateEdit):
+#         if isinstance(obj, QgsDateTimeEdit):
+#             if event.type() in (QEvent.KeyPress,
+#                                 QEvent.MouseButtonPress,
+#                                 QEvent.Wheel):  # molette
+#                 # QTimer pour eviter le "clic de retard"
+#                 QTimer.singleShot(100, lambda: self.class_parent.on_user_date_changed(obj))
+#                 # obj.user_edit = True
+#         return False
+
 class FiltreClicDroit(QObject):
     def __init__(self, class_parent):
         super().__init__()
         self.class_parent = class_parent
 
     def eventFilter(self, obj, event):
-        # if event.type() == QEvent.KeyPress:
-        #     if event.key() in (Qt.Key_Return, Qt.Key_Enter):
-        #         print("CLIC RETURN")
-        #         return True
-
         if event.type() == QEvent.MouseButtonPress and event.button() == Qt.RightButton:
             if isinstance(obj, QPushButton):
                 self.class_parent.clic_droit(obj)
@@ -76,6 +89,7 @@ class MainDialog(QDialog):
         self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.WindowCloseButtonHint)
 
         self.filtre_clic_droit = FiltreClicDroit(self)
+        # self.date_changed = ChangeDateUtilisateur(self)
 
         main_layout = QVBoxLayout(self)
         main_layout.setContentsMargins(5, 5, 5, 5)  # (gauche, haut, droite, bas)
@@ -283,13 +297,34 @@ class MainDialog(QDialog):
         read_only = isreadonly(self.layer,champ)
 
         if typewidget == "DateTime":
-            widgdatetime = QDateTimeEdit()
+            # widgdatetime = QDateTimeEdit()
+            # widgdatetime = QDateEdit()
+            widgdatetime = QgsDateTimeEdit()
             widgdatetime.setReadOnly(read_only)
             widgdatetime.setEnabled(not read_only)
             widgdatetime.setFixedWidth(180)
+            widgdatetime.setDisplayFormat("dd.MM.yyyy")
             widgdatetime.setProperty("champ", champ)
             widgdatetime.setProperty("valeur", "")
-            widgdatetime.setProperty("iswidgetjson", typewidget)
+            widgdatetime.setProperty("iswidgetjson", True)
+
+            # désactive le bouton de valeur NULL
+            widgdatetime.setAllowNull(False)
+
+            # bloque la saisie direct dans le lineedit (clic, molette,fleche)
+            widgdatetime.lineEdit().setReadOnly(True)
+            widgdatetime.setButtonSymbols(QAbstractSpinBox.NoButtons)
+            widgdatetime.setFocusPolicy(Qt.NoFocus)
+            widgdatetime.wheelEvent = lambda event: None
+
+            # widgdatetime.editingFinished.connect(lambda c=champ: self.on_perte_focus_date(c))
+            # widgdatetime.installEventFilter(self.date_changed)
+            # widgdatetime.valueChanged.connect(lambda v, c=champ:  self.on_user_date_changed(c, v))
+
+            # l'evenement est sur le calendrier, pas directement sur le widget
+            cal = widgdatetime.calendarWidget()
+            cal.clicked.connect(lambda v, c=champ:  self.on_user_date_changed(c, v))
+
             hlayout.addWidget(widgdatetime)
 
         if typewidget == "TextEdit":
@@ -425,11 +460,15 @@ class MainDialog(QDialog):
                     widget.setText(str(val_unique))
                     widget.setStyleSheet(f"background-color: {self.color_btn_commun}")
 
-                if isinstance(widget, QDateTimeEdit):
-                    val_sans_ms = val_unique.split(".")[0]
-                    date_format = "yyyy-MM-dd HH:mm:ss"
-                    qdt = QDateTime.fromString(val_sans_ms, date_format)
+                if isinstance(widget, QgsDateTimeEdit):
+                # if isinstance(widget, QDateEdit):
+                    # sans les décimales des secondes
+                    only_date = val_unique.split(" ")[0]
+                    date_format = "yyyy-MM-dd"
+                    qdt = QDateTime.fromString(only_date, date_format)
                     widget.setDateTime(qdt)
+                    widget.setStyleSheet(f"background-color: {self.color_btn_commun}")
+
 
             # Sinon (plusieurs valeurs différentes)
             else:
@@ -440,8 +479,11 @@ class MainDialog(QDialog):
                     widget.setStyleSheet("background-color: None")
                     self.dico_val_linedit[champ] = "***"
 
-                elif isinstance(widget, QDateTimeEdit):
-                    widget.setDateTime(QDateTime(QDate(1900, 1, 1), QTime(0, 0, 0)))
+                # elif isinstance(widget, QDateEdit):
+                elif isinstance(widget, QgsDateTimeEdit):
+                    widget.setDateTime(QDateTime(QDate(1900, 1, 1)))
+                    # widget.setDateTime(QDateTime())  # valeur nulle
+                    # widget.setNullRepresentation("***")
                     widget.setStyleSheet("background-color: None")
 
                 elif isinstance(widget, QComboBox):
@@ -551,6 +593,35 @@ class MainDialog(QDialog):
             index_champs = self.layer.fields().indexOf(champ)
             self.widget_clique[index_champs] = self.dico_val_linedit[champ]
 
+    def on_user_date_changed(self, champ, val):
+        widget = get_widget_by_champ_valeur(self, champ)
+        qdt = widget.dateTime()
+        index_champs = self.layer.fields().indexOf(champ)
+        self.widget_clique[index_champs] = qdt.toString("yyyy-MM-dd")
+        widget.setStyleSheet(f"background-color: {self.color_btn_sel}")
+
+    # def on_user_date_changed(self,obj):
+    #     print("user_date_changed")
+    #     champ = obj.property("champ")
+    #     widget = get_widget_by_champ_valeur(self, champ)
+    #
+    #     qdt = widget.dateTime()
+    #     index_champs = self.layer.fields().indexOf(champ)
+    #     self.widget_clique[index_champs] = qdt.toString("yyyy-MM-dd")
+    #     widget.setStyleSheet(f"background-color: {self.color_btn_sel}")
+    #     print(widget.lineEdit().text())
+
+    # def on_perte_focus_date(self, champ):
+        # widget = get_widget_by_champ_valeur(self, champ)
+        # widget.setStyleSheet(f"background-color: {self.color_btn_sel}")
+
+        # récupérer la QDateTime courante
+        # widget = get_widget_by_champ_valeur(self, champ)
+        # qdt = widget.dateTime()
+        # index_champs = self.layer.fields().indexOf(champ)
+        # self.widget_clique[index_champs] = qdt.toString("yyyy-MM-dd")
+
+
     # slot bouton
     def bouton_sel(self, champ, val):
         self.set_color_btn(champ, val, self.color_btn_sel)
@@ -561,11 +632,11 @@ class MainDialog(QDialog):
 
         # lecture des valeurs par defaut du formulaire
         valdefaut = getValdefautForm(self.layer,champ)
-        print(valdefaut)
+        # print(valdefaut)
 
         # test : recuperation des valeurs par defauts sur tous les champs
         dico = getValdefautFormALLchamps(self.layer)
-        print(dico.keys())
+        # print(dico.keys())
 
 
     # slot combobox
@@ -581,12 +652,18 @@ class MainDialog(QDialog):
         self.widget_clique[index_champs] = val
 
     def valide_modif(self):
+        # force la perte du focus des QDateTimeEdit pour récupérer leurs valeurs
+        # self.focusWidget().clearFocus()
+
+        # TODO a faire : si la date est 1900.... on ne modifie pas
+
         self.layer.startEditing()
         compteur = 0
         for sel in self.layer.selectedFeatures():
             for index_champ,nouvelle_valeur in self.widget_clique.items():
                 ancienne_valeur_sel = sel.attribute(index_champ)
                 if ancienne_valeur_sel != nouvelle_valeur:
+                    # print(f"{ancienne_valeur_sel}-->{nouvelle_valeur}")
                     self.layer.changeAttributeValue(sel.id(), index_champ, nouvelle_valeur)
                     compteur += 1
 

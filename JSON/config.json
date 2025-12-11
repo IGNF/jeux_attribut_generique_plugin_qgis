@@ -3,6 +3,8 @@
     "insee_commune_gauche": [],
     "insee_commune_droite": [],
     "liens_vers_route_nommee": [],
+    "date_creation": [],
+    "date_modification": [],
     "nature": [
       "Bac ou liaison maritime",
       "Bretelle",
@@ -16,8 +18,8 @@
       "Type autoroutier"
     ],
     "importance": [
-      "NULL",
       "1",
+      "NULL",
       "2",
       "3",
       "4",

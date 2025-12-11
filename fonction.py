@@ -2,13 +2,12 @@ import json
 import os.path
 import shutil
 
-from PyQt5.QtCore import QTimer, QDateTime
 from PyQt5.QtGui import QIcon, QPixmap, QFont
-from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QComboBox, QFileDialog, QPushButton, QDateTimeEdit, QDialog, \
-    QGridLayout, QTextEdit
+from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QComboBox, QFileDialog, QPushButton, QDialog, \
+    QGridLayout, QTextEdit, QDateEdit
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.PyQt.QtCore import Qt
-from qgis._core import QgsProject
+from qgis.gui import QgsDateTimeEdit
 
 from .constante import *
 import subprocess
@@ -142,7 +141,8 @@ def get_widget_by_champ_valeur(parent, champ, valeur=""):
         if isinstance(w, QLineEdit):
             return w
 
-        if isinstance(w, QDateTimeEdit):
+        # if isinstance(w, QDateEdit):
+        if isinstance(w, QgsDateTimeEdit):
             return w
 
         # cas des combobox, recherche dans tous les items
