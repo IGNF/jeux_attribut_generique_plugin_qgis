@@ -1,13 +1,6 @@
 {
   "troncon_de_route": {
-    "insee_commune_gauche": [],
-    "insee_commune_droite": [],
-    "liens_vers_route_nommee": [],
-    "date_creation": [],
-    "date_modification": [],
     "nature": [
-      "Bac ou liaison maritime",
-      "Bretelle",
       "Chemin",
       "Escalier",
       "Rond-point",
@@ -17,41 +10,19 @@
       "Sentier",
       "Type autoroutier"
     ],
-    "importance": [
-      "1",
+    "nature_de_la_restriction": [
       "NULL",
-      "2",
-      "3",
-      "4",
-      "5",
-      "6"
-    ],
-    "nombre_de_voies": [
-      "NULL",
-      "0",
-      "1",
-      "10",
-      "2",
-      "3",
-      "4",
-      "5",
-      "6",
-      "7",
-      "8",
-      "9",
-      "Sans objet"
-    ],
-    "acces_vehicule_leger": [
-      "A péage",
-      "Libre",
-      "Physiquement impossible",
-      "Restreint aux ayants droit"
-    ],
-    "reserve_aux_bus": [
-      "NULL",
-      "Double sens",
-      "Sens direct",
-      "Sens inverse"
+      "Aménagement mixte hors voie verte",
+      "Chaussée à voie centrale banalisée",
+      "Double sens cyclable non matérialisé",
+      "Entrée avec gardien",
+      "Interdit à la descente",
+      "Passage barré",
+      "Piste cyclable",
+      "Plot amovible",
+      "Voie de tramway utilisable par les véhicules de secours",
+      "Voie verte",
+      "Vélorue"
     ]
   },
   "route_numerotee_ou_nommee": {
@@ -59,10 +30,6 @@
     "date_creation": []
   },
   "troncon_hydrographique": {
-    "cleabs": [],
-    "code_hydrographique": [],
-    "identifiant_police_de_l_eau": [],
-    "cpx_toponyme_de_cours_d_eau": [],
     "identifiant_bcae": [],
     "nature": [
       "Aqueduc",
@@ -94,92 +61,6 @@
       "Réservoir-bassin",
       "Réservoir-bassin d'orage",
       "Réservoir-bassin piscicole"
-    ],
-    "fictif": [
-      "NULL",
-      "0",
-      "1"
-    ],
-    "etat_de_l_objet": [
-      "Disparu",
-      "En construction",
-      "En projet",
-      "En service"
-    ],
-    "position_par_rapport_au_sol": [
-      "NULL",
-      "-1",
-      "-2",
-      "0",
-      "1",
-      "2",
-      "Inconnue"
-    ],
-    "persistance": [
-      "NULL",
-      "Ephémère",
-      "Inconnue",
-      "Intermittent",
-      "Permanent",
-      "Sec"
-    ],
-    "fosse": [
-      "NULL",
-      "0",
-      "1"
-    ],
-    "origine": [
-      "NULL",
-      "Artificielle",
-      "Inconnue",
-      "Naturelle aménagée",
-      "Naturelle non aménagée"
-    ],
-    "sens_de_l_ecoulement": [
-      "NULL",
-      "Double sens",
-      "Inconnu",
-      "Sens direct",
-      "Sens inverse"
-    ],
-    "delimitation": [
-      "NULL",
-      "0",
-      "1"
-    ],
-    "type_de_bras": [
-      "NULL",
-      "Inconnu",
-      "Mort",
-      "Principal",
-      "Sans objet",
-      "Secondaire"
-    ],
-    "inventaire_police_de_l_eau": [
-      "NULL",
-      "Expertise en cours",
-      "Inscrit",
-      "Non inscrit"
-    ],
-    "inventaire_bcae": [
-      "NULL",
-      "0",
-      "1"
-    ],
-    "type_d_annexe": [
-      "NULL",
-      "I-A",
-      "I-A_bis",
-      "I-B",
-      "I-C",
-      "I-C_bis",
-      "I-D"
-    ],
-    "validation_bcae": [
-      "NULL",
-      "0",
-      "1"
-    ],
-    "date_de_validation_bcae": []
+    ]
   }
 }

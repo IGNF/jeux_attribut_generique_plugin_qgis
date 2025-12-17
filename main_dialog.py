@@ -86,10 +86,9 @@ class MainDialog(QDialog):
 
         self.setWindowTitle(f"{TITRE} {VERSION}")
         self.setWindowIcon(QIcon(PATHICON))
-        self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.WindowCloseButtonHint)
+        self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint)
 
         self.filtre_clic_droit = FiltreClicDroit(self)
-        # self.date_changed = ChangeDateUtilisateur(self)
 
         main_layout = QVBoxLayout(self)
         main_layout.setContentsMargins(5, 5, 5, 5)  # (gauche, haut, droite, bas)

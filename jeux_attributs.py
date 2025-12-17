@@ -191,9 +191,7 @@ class JeuxAttribut:
         else:
             self.layer = self.iface.activeLayer()
 
-
-        # on passe en paramètre "self.actualiserSelection" pour la réutiliser dans le main_dialog
-        self.dlg = MainDialog(self.iface,self.layer,self)
+        self.dlg = MainDialog(self.iface,self.layer,self,parent = self.iface.mainWindow())
 
         # initialisation de la treeview du filtre
         clear_layout(self.dlg.formlayout)
