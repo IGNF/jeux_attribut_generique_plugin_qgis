@@ -1,16 +1,16 @@
 
 
 from PyQt5.QtCore import QObject, QEvent, QSize, QDate, QTimer, QDateTime
+from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QFormLayout, QHBoxLayout, QVBoxLayout, QSizePolicy, QFrame, QInputDialog, QDateEdit, \
     QAbstractSpinBox
 from PyQt5.uic import loadUi
-from qgis.gui import QgsDateTimeEdit
 from qgis.core import  Qgis
+from qgis.utils import plugins
 
-from .symbologie import *
+# from .symbologie import *
 from .filtre import FiltreDialog
 from .param import ParamDialog
-from .cheminpluscourt import *
 from .fonction import *
 from .formulaire import *
 
@@ -64,8 +64,6 @@ class MainDialog(QDialog):
         self.plugin = plugin
         self.iface = iface
         self.layer = layer
-        self.is_affiche_sens_num = False
-        self.cheminpluscourt = None
 
         # TODO à supprimer pour déploiement (ça ouvre la console)
         # console = self.iface.mainWindow().findChild(QObject, "PythonConsole")
@@ -197,37 +195,23 @@ class MainDialog(QDialog):
         # btn_che_court.clicked.connect(self.che_plus_court)
 
     def affiche_sens_num(self):
-        if self.is_affiche_sens_num:
-            # chargement de la symbologie ET des etiquettes
-            suppr_symb_sens_num(self.layer)
-            self.is_affiche_sens_num = False
-        else:
-            # sauvegarde de la symbologie ET des etiquettes
-            add_symb_sens_num(self.layer)
-            self.is_affiche_sens_num = True
-        self.layer.triggerRepaint()
+        try:
+            processing_plugin = plugins[PLUGIN_CHE_SENS_NUM]
+            processing_plugin.run()
+        except KeyError:
+            QMessageBox.warning(None, "Attention",
+                f"Le plugin {PLUGIN_CHE_SENS_NUM} n'est pas installé ou pas activé\n"
+                f"- Veuillez l'activer dans le menu \"Installer/Gérer les extensions de QGIS\"")
 
     def che_plus_court(self):
-        if self.layer.selectedFeatureCount() != 2:
-            QMessageBox.warning(self,TITRE,"Veuillez sélectionner exactement 2 tronçons")
-            return
-        # sauvegarde du layer pour le restituer apres le calcul du chemin le plus court
-        layer_avant = self.layer
-        # instanciation de la class dhemin le plus court
-        self.cheminpluscourt = cheminpluscourt(self.iface, self.layer)
-        self.cheminpluscourt.cheminpluscourt()
-
-        self.set_active_layer(layer_avant.name())
-        # IMPORTANT : laisser le temps du chemin le plus court de finir la selection
-        # avant d’appeler actualiserSelection()
+        try:
+            processing_plugin = plugins[PLUGIN_CHE_PLUS_COURT]
+            processing_plugin.run()
+        except KeyError:
+            QMessageBox.warning(None, "Attention",
+                f"Le plugin {PLUGIN_CHE_PLUS_COURT} n'est pas installé ou pas activé\n"
+                f"- Veuillez l'activer dans le menu \"Installer/Gérer les extensions de QGIS\"")
         QTimer.singleShot(0, self.plugin.actualiserSelection)
-
-    def set_active_layer(self,layer_name):
-        project = QgsProject.instance()
-        couche = project.mapLayersByName(layer_name)
-        self.iface.setActiveLayer(couche[0])
-        self.layer = self.iface.activeLayer()
-
 
     def deplace_btn_to_json(self,champ,valeur):
         # charger TOUT le json (donc ne pas passer par la fonction loadjson qui charge que le layer donné)

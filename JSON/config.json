@@ -1,6 +1,10 @@
 {
   "troncon_de_route": {
+    "restriction_de_poids_total": [],
+    "restriction_de_poids_par_essieu": [],
     "nature": [
+      "Bac ou liaison maritime",
+      "Bretelle",
       "Chemin",
       "Escalier",
       "Rond-point",
@@ -10,19 +14,12 @@
       "Sentier",
       "Type autoroutier"
     ],
-    "nature_de_la_restriction": [
+    "sens_de_circulation": [
       "NULL",
-      "Aménagement mixte hors voie verte",
-      "Chaussée à voie centrale banalisée",
-      "Double sens cyclable non matérialisé",
-      "Entrée avec gardien",
-      "Interdit à la descente",
-      "Passage barré",
-      "Piste cyclable",
-      "Plot amovible",
-      "Voie de tramway utilisable par les véhicules de secours",
-      "Voie verte",
-      "Vélorue"
+      "Double sens",
+      "Sans objet",
+      "Sens direct",
+      "Sens inverse"
     ]
   },
   "route_numerotee_ou_nommee": {

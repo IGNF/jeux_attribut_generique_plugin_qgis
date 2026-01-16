@@ -27,12 +27,12 @@ from PyQt5.QtCore import QDate, QDateTime
 # from .jeux_attributs_dialog import ClassPluginDialog
 import os.path
 
-from PyQt5.QtWidgets import QDateEdit
-from qgis.gui import QgsDateTimeEdit
+from PyQt5.QtGui import QColor
 from qgis.core import QgsProject
+from qgis.utils import plugins
 
 from .main_dialog import MainDialog
-from .symbologie import *
+# from .symbologie import *
 from .fonction import *
 from .constante import *
 
@@ -92,10 +92,10 @@ class JeuxAttribut:
     def on_layer_changed(self,layer):
         self.layer = layer
 
-        # le test parce que self.dlg n'existe pas encore , il est declaré apres on_layer_changed
+        # le test parce que self.dlg n'existe pas encore, il est declaré apres on_layer_changed
         if self.dlg is None:
             return
-        # mise a jour du layer pour le dialogue
+        # mise à jour du layer pour le dialogue
         self.dlg.layer = layer
 
         # on vide le dico des widgets cliqués
@@ -135,7 +135,7 @@ class JeuxAttribut:
         else:
             self.dlg.btn_valider.setEnabled(True)
 
-        # Remet la couleur par défaut pour tout les boutons ajoutés dynamiquement
+        # Remet la couleur par défaut pour tous les boutons ajoutés dynamiquement
         # et sauvegarde des valeurs des lineedit.
         for w in self.dlg.findChildren(QWidget):
             if w.property("iswidgetjson"):
@@ -201,7 +201,6 @@ class JeuxAttribut:
         else:
             self.dlg.btn_valider.setEnabled(True)
 
-
         # ajout du nombre d'entités sélectionnées
         text = f"<b>Sélection = <span style ='color: red'> {self.layer.selectedFeatureCount()}</b></span>"
         self.dlg.label_nbsel.setText(text)
@@ -226,12 +225,14 @@ class JeuxAttribut:
         # Run the dialog event loop
         result = self.dlg.exec_()
         if not result:
-            # si on quitte on remet la vue sans le sens de numérisation
-            suppr_symb_sens_num(self.layer)
+            # si on quitte, on remet la vue sans le sens de numérisation via le plugin
+            processing_plugin = plugins[PLUGIN_CHE_SENS_NUM]
+            processing_plugin.suppr_symb_sens_num(self.layer)
+
             self.dlg.is_affiche_sens_num = False
-            # on redessine la couche pour prend en compte du changement de style initial
+            # on redessine la couche pour prendre en compte du changement de style initial
             self.layer.triggerRepaint()
-            # on reinitialise pour gere le rechargement si une seule instance
+            # on réinitialise pour gere le rechargement si une seule instance
             self.dlg = None
 
 
