@@ -3,16 +3,16 @@
     "alias_gauche": [],
     "pente_maximale_dfci": [],
     "nature": [
+      "Route à 1 chaussée",
+      "Chemin",
+      "Route empierrée",
+      "Sentier",
+      "Type autoroutier",
       "Bac ou liaison maritime",
       "Bretelle",
-      "Chemin",
       "Escalier",
       "Rond-point",
-      "Route empierrée",
-      "Route à 1 chaussée",
-      "Route à 2 chaussées",
-      "Sentier",
-      "Type autoroutier"
+      "Route à 2 chaussées"
     ],
     "importance": [
       "NULL",
