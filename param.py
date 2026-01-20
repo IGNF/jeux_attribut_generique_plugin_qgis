@@ -25,7 +25,7 @@ class ParamDialog(QDialog):
             "couleur_btn_selection": "#d0e60c",
             # "couleur_btn_defaut": "None",
             "couleur_btn_commun": "#00b729",
-            "taille_btn": TAILLE_BTN_CHAMP_PAR_DEFAUT
+            "taille_font": TAILLE_FONT_DEFAUT
         }
 
         dico_fichier = self.load_param_json()
@@ -39,9 +39,9 @@ class ParamDialog(QDialog):
         self.spinBoxNbwidget.setRange(0,10)
 
         # regex pour la contrainte de saisi de la taille des btn
-        regex = QRegularExpression(r"^(1[5-9]|[2-5][0-9]|60)$")
-        validator = QRegularExpressionValidator(regex, self.lineEdit_taille_btn)
-        self.lineEdit_taille_btn.setValidator(validator)
+        regex = QRegularExpression(r"^(?:[6-9]|1\d|2\d|30)$")
+        validator = QRegularExpressionValidator(regex, self.lineEdit_taille_font)
+        self.lineEdit_taille_font.setValidator(validator)
         # masque le warning
         self.label_warning.hide()
 
@@ -57,12 +57,12 @@ class ParamDialog(QDialog):
             btn_color.colorChanged.connect(lambda _, b=btn_color: self.color_change(b))
 
         # événement edit_taille_btn change
-        self.lineEdit_taille_btn.textChanged.connect(self.taille_btn_change)
+        self.lineEdit_taille_font.textChanged.connect(self.taille_btn_change)
 
     def init_parametre(self):
         valeur_spin = self.dico_param.get("nb_btn_ligne",3)
         self.spinBoxNbwidget.setValue(valeur_spin)
-        self.lineEdit_taille_btn.setText(str(self.dico_param.get("taille_btn",TAILLE_BTN_CHAMP_PAR_DEFAUT)))
+        self.lineEdit_taille_font.setText(str(self.dico_param.get("taille_btn", TAILLE_FONT_DEFAUT)))
 
 
     def color_change(self,btn):
@@ -86,16 +86,16 @@ class ParamDialog(QDialog):
         self.dico_param["nb_btn_ligne"] = value
 
     def taille_btn_change(self):
-        taille = self.lineEdit_taille_btn.text()
+        taille = self.lineEdit_taille_font.text()
         if taille == "":
             return  # on ne fait rien tant que vide
-        if self.lineEdit_taille_btn.hasAcceptableInput():
+        if self.lineEdit_taille_font.hasAcceptableInput():
             self.label_warning.hide()
-            self.lineEdit_taille_btn.setStyleSheet("")
-            self.dico_param["taille_btn"] = int(self.lineEdit_taille_btn.text())
+            self.lineEdit_taille_font.setStyleSheet("")
+            self.dico_param["taille_btn"] = int(self.lineEdit_taille_font.text())
         else:
             self.label_warning.show()
-            self.lineEdit_taille_btn.setStyleSheet("background-color: #ffa8a8")
+            self.lineEdit_taille_font.setStyleSheet("background-color: #ffa8a8")
 
 
     def load_param_json(self):

@@ -80,7 +80,7 @@ class MainDialog(QDialog):
         self.color_btn_valider = self.dico_param.get("couleur_btn_valider", "#e648e7")
         self.color_btn_sel = self.dico_param.get("couleur_btn_selection", "#2ab51a")
         self.color_btn_commun = self.dico_param.get("couleur_btn_commun", "#ff8080")
-        self.taille_btn = self.dico_param.get("taille_btn", TAILLE_BTN_CHAMP_PAR_DEFAUT)
+        self.taille_font = self.dico_param.get("taille_btn", TAILLE_FONT_DEFAUT)
 
         self.setWindowTitle(f"{TITRE} {VERSION}")
         self.setWindowIcon(QIcon(PATHICON))
@@ -267,6 +267,23 @@ class MainDialog(QDialog):
                 return True
         return False
 
+    def create_btn(self,champ,val,read_only):
+        btn = QPushButton(str(val))
+        font = btn.font()
+        font.setPointSize(self.taille_font)
+        btn.setFont(font)
+        btn.setEnabled(not read_only)
+        btn.setProperty("champ", champ)
+        btn.setProperty("valeur", val)
+        btn.setProperty("iswidgetjson", True)
+        btn.setToolTip(str(val))
+        btn.setFocusPolicy(Qt.NoFocus)
+
+        # gestion clic droit
+        btn.installEventFilter(self.filtre_clic_droit)
+        btn.clicked.connect(lambda _, c=champ, v=val: self.bouton_sel(c, v))
+        return btn
+
     def add_widget(self,champ,valeurs,typewidget):
         # formatage du nom des champs (suppr des _)
         text_label = champ.replace("_", " ").replace("l ", "l'").replace("d ", "d'").capitalize() + " :  "
@@ -312,12 +329,14 @@ class MainDialog(QDialog):
 
         if typewidget == "TextEdit":
             lineedit = QLineEdit()
+            font = lineedit.font()
+            font.setPointSize(self.taille_font)
+            lineedit.setFont(font)
             # on désactive le menu contextuel d'un clic droit par défaut sur un lineedit
             lineedit.setContextMenuPolicy(Qt.NoContextMenu)
             lineedit.setReadOnly(read_only)
             lineedit.setEnabled(not read_only)
             lineedit.setFixedWidth(180)
-            lineedit.setFixedHeight(self.taille_btn)
             lineedit.setProperty("champ", champ)
             # valeur = "" pour gérer l'aspect du widget
             lineedit.setProperty("valeur", "")
@@ -329,49 +348,63 @@ class MainDialog(QDialog):
             lineedit.editingFinished.connect(lambda c=champ,widg=lineedit:self.on_perte_focus(c, widg.text()))
 
         else:
+            # boucle sur 0 --> self.nb_widget_par_ligne
             for val in valeurs[:self.nb_widget_par_ligne]:
-                btn = QPushButton(str(val))
-                btn.setEnabled(not read_only)
-                btn.setFixedHeight(self.taille_btn)
-                btn.setProperty("champ",champ)
-                btn.setProperty("valeur", val)
-                btn.setProperty("iswidgetjson", True)
-                btn.setToolTip(str(val))
-                btn.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Preferred)
+                # btn = QPushButton(str(val))
+                # font = btn.font()
+                # font.setPointSize(self.taille_font)
+                # btn.setFont(font)
+                # btn.setEnabled(not read_only)
+                # # btn.setFixedHeight(self.taille_btn)
+                # btn.setProperty("champ",champ)
+                # btn.setProperty("valeur", val)
+                # btn.setProperty("iswidgetjson", True)
+                # btn.setToolTip(str(val))
+                # # btn.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Preferred)
+                # hlayout.addWidget(btn)
+                # btn.setFocusPolicy(Qt.NoFocus)
+                #
+                # # gestion clic droit
+                # btn.installEventFilter(self.filtre_clic_droit)
+                #
+                # btn.clicked.connect(lambda _, c=champ, v=val: self.bouton_sel(c, v))
+                btn = self.create_btn(champ,val,read_only)
                 hlayout.addWidget(btn)
-                btn.setFocusPolicy(Qt.NoFocus)
-
-                # gestion clic droit
-                btn.installEventFilter(self.filtre_clic_droit)
-
-                btn.clicked.connect(lambda _, c=champ, v=val: self.bouton_sel(c, v))
 
             if len(valeurs) == self.nb_widget_par_ligne + 1:
                 val = valeurs[-1]
-                btn = QPushButton(str(val))
-                btn.setFixedHeight(self.taille_btn)
-                btn.setProperty("champ",champ)
-                btn.setProperty("valeur", val)
-                btn.setProperty("iswidgetjson", True)
-                btn.setToolTip(str(val))
-                btn.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Preferred)
+                # btn = QPushButton(str(val))
+                # font = btn.font()
+                # font.setPointSize(self.taille_font)
+                # btn.setFont(font)
+                # btn.setFixedHeight(self.taille_font)
+                # btn.setProperty("champ",champ)
+                # btn.setProperty("valeur", val)
+                # btn.setProperty("iswidgetjson", True)
+                # btn.setToolTip(str(val))
+                # btn.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Preferred)
+                # hlayout.addWidget(btn)
+                # btn.setFocusPolicy(Qt.NoFocus)
+                # btn.clicked.connect(lambda _, c=champ ,v=val: self.bouton_sel(c, v))
+                btn = self.create_btn(champ, val, read_only)
                 hlayout.addWidget(btn)
-                btn.setFocusPolicy(Qt.NoFocus)
-                btn.clicked.connect(lambda _, c=champ ,v=val: self.bouton_sel(c, v))
 
             elif len(valeurs) > self.nb_widget_par_ligne + 1:
                 combo = QComboBox()
                 combo.setEnabled(not read_only)
+                font = combo.font()
+                font.setPointSize(self.taille_font)
+                combo.setFont(font)
 
                 combo.addItems([str(val) for val in valeurs[self.nb_widget_par_ligne:]])
 
-                combo.setFixedHeight(self.taille_btn)
+                # combo.setFixedHeight(self.taille_btn)
                 combo.setProperty("champ", champ)
                 combo.setProperty("valeur", combo.currentText())
                 combo.setProperty("iswidgetjson", True)
                 # on stock le combo
                 self.combo_widgets[champ] = combo
-                combo.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Preferred)
+                # combo.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Preferred)
                 hlayout.addWidget(combo)
                 combo.setFocusPolicy(Qt.NoFocus)
 
@@ -689,7 +722,7 @@ class MainDialog(QDialog):
         self.color_btn_valider = self.dico_param.get("couleur_btn_valider", "#df920d")
         self.color_btn_sel = self.dico_param.get("couleur_btn_selection", "#2ab51a")
         self.color_btn_commun = self.dico_param.get("couleur_btn_commun", "#ff8080")
-        self.taille_btn = self.dico_param.get("taille_btn", TAILLE_BTN_CHAMP_PAR_DEFAUT)
+        self.taille_font = self.dico_param.get("taille_btn", TAILLE_FONT_DEFAUT)
 
         # on recharge les btn pour prendre en compte le changement du nb de btn par ligne et les couleurs
         self.plugin.dico_filtre = loadjson(self.layer.name())
