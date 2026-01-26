@@ -30,5 +30,48 @@
       "Passage difficile",
       "Restreint aux ayants droit"
     ]
+  },
+  "troncon_hydrographique": {
+    "identifiant_bcae": [],
+    "nature": [
+      "Lac",
+      "Aqueduc",
+      "Canal",
+      "Conduit buse",
+      "Conduit forcé",
+      "Delta",
+      "Ecoulement canalisé",
+      "Ecoulement endoréique",
+      "Ecoulement hyporhéique",
+      "Ecoulement karstique",
+      "Ecoulement naturel",
+      "Ecoulement phréatique",
+      "Estuaire",
+      "Glacier, névé",
+      "Inconnue",
+      "Lagune",
+      "Mangrove",
+      "Marais",
+      "Mare",
+      "Plan d'eau de gravière",
+      "Plan d'eau de mine",
+      "Ravine",
+      "Retenue",
+      "Retenue-barrage",
+      "Retenue-bassin portuaire",
+      "Retenue-digue",
+      "Réservoir-bassin",
+      "Réservoir-bassin d'orage",
+      "Réservoir-bassin piscicole"
+    ],
+    "position_par_rapport_au_sol": [
+      "NULL",
+      "-1",
+      "-2",
+      "0",
+      "1",
+      "2",
+      "Inconnue"
+    ]
   }
 }
