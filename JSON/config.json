@@ -1,18 +1,20 @@
 {
   "troncon_de_route": {
+    "insee_commune_gauche": [],
+    "insee_commune_droite": [],
     "alias_gauche": [],
     "pente_maximale_dfci": [],
     "nature": [
-      "Route à 1 chaussée",
-      "Chemin",
-      "Route empierrée",
-      "Sentier",
-      "Type autoroutier",
       "Bac ou liaison maritime",
       "Bretelle",
+      "Chemin",
       "Escalier",
       "Rond-point",
-      "Route à 2 chaussées"
+      "Route empierrée",
+      "Route à 1 chaussée",
+      "Route à 2 chaussées",
+      "Sentier",
+      "Type autoroutier"
     ],
     "importance": [
       "NULL",
@@ -72,6 +74,14 @@
       "1",
       "2",
       "Inconnue"
+    ]
+  },
+  "terrain_de_sport": {
+    "etat_de_l_objet": [
+      "En construction",
+      "En projet",
+      "En ruine",
+      "En service"
     ]
   }
 }
