@@ -1,9 +1,9 @@
 import os
 
 TITRE = "Jeux d'attributs générique"
-VERSION = "v1.3.0"
-PLUGIN_CHE_PLUS_COURT = "(IGN)chemin-le-plus-court"
-PLUGIN_CHE_SENS_NUM = "(IGN)sens_numerisation"
+VERSION = "v1.4.0"
+PLUGIN_CHE_PLUS_COURT = "IGN_chemin-le-plus-court"
+PLUGIN_CHE_SENS_NUM = "IGN_sens_numerisation"
 
 SEPARATION_TOOLTIP = "\t\U0001F846\t"
 CLIN_OEIL = "\U0001F609"

@@ -124,6 +124,7 @@ class JeuxAttribut:
     def actualiserSelection(self):
         if self.dlg is None:
             return
+        self.dlg.get_attributs_communs()
         # initialisation du nombre d'entités sélectionnées
         nb_sel = self.layer.selectedFeatureCount()
         text = f"<b>Sélection = <span style ='color: red'> {nb_sel}</b></span>"
@@ -178,8 +179,8 @@ class JeuxAttribut:
         pass
 
     def run(self):
-
         # une seule instance de dialogue
+        print("run")
         if self.dlg is not None:
             return
 
@@ -213,21 +214,24 @@ class JeuxAttribut:
         self.dlg.get_attributs_communs()
         self.dlg.show()
 
-        # deconnecter le signal avant de la reconnecter
         self.iface.mapCanvas().currentLayerChanged.connect(self.on_layer_changed)
-        try:
-            self.iface.mapCanvas().selectionChanged.disconnect(self.actualiserSelection)
-        except TypeError:
-            pass  # aucune connexion existante
 
         self.iface.mapCanvas().selectionChanged.connect(self.actualiserSelection)
         self.actualiserSelection()
         # Run the dialog event loop
         result = self.dlg.exec_()
         if not result:
+            # on deconnecte le signal en quittant
+            try:
+                self.iface.mapCanvas().selectionChanged.disconnect(self.actualiserSelection)
+            except TypeError:
+                pass  # aucune connexion existante
             # si on quitte, on remet la vue sans le sens de numérisation via le plugin
-            processing_plugin = plugins[PLUGIN_CHE_SENS_NUM]
-            processing_plugin.suppr_symb_sens_num(self.layer)
+            try:
+                processing_plugin = plugins[PLUGIN_CHE_SENS_NUM]
+                processing_plugin.suppr_symb_sens_num(self.layer)
+            except:
+                pass
 
             self.dlg.is_affiche_sens_num = False
             # on redessine la couche pour prendre en compte du changement de style initial
