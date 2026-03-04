@@ -21,7 +21,12 @@ jobs:
 
       - name: Build plugin zip
         run: |
-          zip -r "IGN_jeux_attributs_generique.zip" . -x ".git/*" ".github/*"
+          mkdir -p IGN_jeux_attributs_generique
+          rsync -av --progress . IGN_jeux_attributs_generique/ \
+            --exclude .git \
+            --exclude .github \
+            --exclude IGN_jeux_attributs_generique
+          zip -r IGN_jeux_attributs_generique.zip IGN_jeux_attributs_generique
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
