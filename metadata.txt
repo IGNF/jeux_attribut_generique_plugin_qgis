@@ -9,6 +9,7 @@ description=plugin générique
 version=1.4.0
 author=Gérôme PECHEUR (IGN)
 email=gerome.pecheur@ign.fr
+license=GNU AGPL v3
 
 about=Ce plugin est un jeux d'attributs générique. Il permet la modification sémantique des valeurs d'attributs.
 
