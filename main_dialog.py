@@ -11,6 +11,7 @@ from .filtre import FiltreDialog
 from .param import ParamDialog
 from .fonction import *
 from .formulaire import *
+from .mapping_version import *
 
 # class ChangeDateUtilisateur(QObject):
 #     def __init__(self, class_parent):
@@ -36,7 +37,7 @@ class FiltreClicDroit(QObject):
         self.class_parent = class_parent
 
     def eventFilter(self, obj, event):
-        if event.type() == QEvent.MouseButtonPress and event.button() == Qt.RightButton:
+        if event.type() == QEvent.MouseButtonPress and event.button() == RightButton:
             if isinstance(obj, QPushButton):
                 self.class_parent.clic_droit(obj)
                 return True
@@ -82,7 +83,7 @@ class MainDialog(QDialog):
 
         self.setWindowTitle(f"{TITRE}")
         self.setWindowIcon(QIcon(PATHICON))
-        self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint)
+        self.setWindowFlags(Window | WindowCloseButtonHint)
 
         self.filtre_clic_droit = FiltreClicDroit(self)
 
@@ -175,19 +176,19 @@ class MainDialog(QDialog):
 
         # Connexion des signaux
         self.btn_valider.clicked.connect(self.valide_modif)
-        self.btn_valider.setFocusPolicy(Qt.NoFocus)
+        self.btn_valider.setFocusPolicy(NoFocus)
         self.btn_filtre.clicked.connect(self.gestionfiltre)
-        self.btn_filtre.setFocusPolicy(Qt.NoFocus)
+        self.btn_filtre.setFocusPolicy(NoFocus)
         self.btn_apropos.clicked.connect(self.apropos)
-        self.btn_apropos.setFocusPolicy(Qt.NoFocus)
+        self.btn_apropos.setFocusPolicy(NoFocus)
         self.btn_param.clicked.connect(self.show_param)
-        self.btn_param.setFocusPolicy(Qt.NoFocus)
+        self.btn_param.setFocusPolicy(NoFocus)
         self.btn_importer.clicked.connect(lambda:importer_json(self)) # self -> pour lier le qmessage au dlg pour passer devant
-        self.btn_importer.setFocusPolicy(Qt.NoFocus)
+        self.btn_importer.setFocusPolicy(NoFocus)
         self.btn_exporter.clicked.connect(lambda:exporter_json(self))
-        self.btn_exporter.setFocusPolicy(Qt.NoFocus)
+        self.btn_exporter.setFocusPolicy(NoFocus)
         self.btn_sens_num.clicked.connect(self.affiche_sens_num)
-        self.btn_sens_num.setFocusPolicy(Qt.NoFocus)
+        self.btn_sens_num.setFocusPolicy(NoFocus)
 
         # le slot de "btn_che_court" est declaré dans jeux_attributs.py
         # btn_che_court.clicked.connect(self.che_plus_court)
@@ -256,7 +257,7 @@ class MainDialog(QDialog):
             index = view.indexAt(event.pos())
             if index.isValid():
                 champ = combo.property("champ")
-                valeur = index.data(Qt.DisplayRole)
+                valeur = index.data(DisplayRole)
                 self.deplace_btn_to_json(champ, valeur)
                 # on actualise l'interface
                 self.plugin.dico_filtre =  loadjson(self.layer.name())
@@ -275,7 +276,7 @@ class MainDialog(QDialog):
         btn.setProperty("valeur", val)
         btn.setProperty("iswidgetjson", True)
         btn.setToolTip(str(val))
-        btn.setFocusPolicy(Qt.NoFocus)
+        btn.setFocusPolicy(NoFocus)
 
         # gestion clic droit
         btn.installEventFilter(self.filtre_clic_droit)
@@ -312,7 +313,7 @@ class MainDialog(QDialog):
             # bloque la saisie direct dans le lineedit (clic, molette,fleche)
             widgdatetime.lineEdit().setReadOnly(True)
             widgdatetime.setButtonSymbols(QAbstractSpinBox.NoButtons)
-            widgdatetime.setFocusPolicy(Qt.NoFocus)
+            widgdatetime.setFocusPolicy(NoFocus)
             widgdatetime.wheelEvent = lambda event: None
 
             # widgdatetime.editingFinished.connect(lambda c=champ: self.on_perte_focus_date(c))
@@ -331,7 +332,7 @@ class MainDialog(QDialog):
             font.setPointSize(self.taille_font)
             lineedit.setFont(font)
             # on désactive le menu contextuel d'un clic droit par défaut sur un lineedit
-            lineedit.setContextMenuPolicy(Qt.NoContextMenu)
+            lineedit.setContextMenuPolicy(NoContextMenu)
             lineedit.setReadOnly(read_only)
             lineedit.setEnabled(not read_only)
             lineedit.setFixedWidth(180)
@@ -360,7 +361,7 @@ class MainDialog(QDialog):
                 # btn.setToolTip(str(val))
                 # # btn.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Preferred)
                 # hlayout.addWidget(btn)
-                # btn.setFocusPolicy(Qt.NoFocus)
+                # btn.setFocusPolicy(NoFocus)
                 #
                 # # gestion clic droit
                 # btn.installEventFilter(self.filtre_clic_droit)
@@ -382,7 +383,7 @@ class MainDialog(QDialog):
                 # btn.setToolTip(str(val))
                 # btn.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Preferred)
                 # hlayout.addWidget(btn)
-                # btn.setFocusPolicy(Qt.NoFocus)
+                # btn.setFocusPolicy(NoFocus)
                 # btn.clicked.connect(lambda _, c=champ ,v=val: self.bouton_sel(c, v))
                 btn = self.create_btn(champ, val, read_only)
                 hlayout.addWidget(btn)
@@ -404,7 +405,7 @@ class MainDialog(QDialog):
                 self.combo_widgets[champ] = combo
                 # combo.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Preferred)
                 hlayout.addWidget(combo)
-                combo.setFocusPolicy(Qt.NoFocus)
+                combo.setFocusPolicy(NoFocus)
 
                 # gestion clic droit
                 # eventfilter pas sur le combo directement mais sur le view (contenu)
@@ -539,7 +540,7 @@ class MainDialog(QDialog):
             model = combo.model()
             for i in range(model.rowCount()):
                 index = model.index(i, 0)
-                model.setData(index, QColor(color), Qt.BackgroundRole)
+                model.setData(index, QColor(color), BackgroundRole)
 
     # on modifie la couleur SAUF si l'item a la couleur : self.color_btn_commun'
     def set_color_itemcombo(self,champ,val=None,color = None):
@@ -552,15 +553,15 @@ class MainDialog(QDialog):
         for i in range(model.rowCount()):
             index = model.index(i, 0)
             texte = model.data(index)
-            current_color = model.data(index, Qt.BackgroundRole)
+            current_color = model.data(index, BackgroundRole)
             if current_color == QColor(self.color_btn_commun):
                 continue
-            model.setData(index, QColor("White"), Qt.BackgroundRole)
+            model.setData(index, QColor("White"), BackgroundRole)
             # if texte == val and style != f"background-color: {self.color_btn_commun}":
             if texte == val :
-                model.setData(index, QColor(color), Qt.BackgroundRole)
+                model.setData(index, QColor(color), BackgroundRole)
             else:
-                model.setData(index, QColor("White"), Qt.BackgroundRole)
+                model.setData(index, QColor("White"), BackgroundRole)
 
         # On colore aussi le fond visible du combo si la valeur est sélectionnée
         # ce qui est toujours le cas apres get_attributs_communs
@@ -702,7 +703,7 @@ class MainDialog(QDialog):
     def apropos(self):
         dlgAProposDe = QDialog()
         loadUi(os.path.dirname(__file__) + "/aproposde.ui", dlgAProposDe)
-        dlgAProposDe.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.WindowCloseButtonHint)
+        dlgAProposDe.setWindowFlags(WindowStaysOnTopHint | WindowCloseButtonHint)
         dlgAProposDe.setWindowTitle(f"{TITRE}")
         dlgAProposDe.pushButtonAffichedoc.clicked.connect(afficheDoc)
         dlgAProposDe.exec_()
