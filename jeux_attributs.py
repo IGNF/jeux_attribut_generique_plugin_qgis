@@ -21,18 +21,15 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt5.QtCore import QDate, QDateTime
 
 # Import the code for the dialog
-# from .jeux_attributs_dialog import ClassPluginDialog
 import os.path
 
-from PyQt5.QtGui import QColor
+from qgis.PyQt.QtGui import QColor
 from qgis.core import QgsProject
 from qgis.utils import plugins
 
 from .main_dialog import MainDialog
-# from .symbologie import *
 from .fonction import *
 from .constante import *
 

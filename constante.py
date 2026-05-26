@@ -1,7 +1,6 @@
 import os
 
 TITRE = "Jeux d'attributs générique"
-VERSION = "v1.4.0"
 PLUGIN_CHE_PLUS_COURT = "IGN_chemin_le_plus_court"
 PLUGIN_CHE_SENS_NUM = "IGN_sens_numerisation"
 

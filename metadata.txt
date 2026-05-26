@@ -6,7 +6,7 @@
 name=IGN Jeux d'attributs générique
 qgisMinimumVersion=3.0
 description=plugin générique
-version=1.4.0
+version=1.4.0_recette
 author=Gérôme PECHEUR (IGN)
 email=gerome.pecheur@ign.fr
 license=GNU AGPL v3

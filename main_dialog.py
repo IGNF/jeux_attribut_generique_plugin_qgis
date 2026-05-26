@@ -1,14 +1,12 @@
 
 
-from PyQt5.QtCore import QObject, QEvent, QSize, QDate, QTimer, QDateTime
-from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QFormLayout, QHBoxLayout, QVBoxLayout, QSizePolicy, QFrame, QInputDialog, QDateEdit, \
-    QAbstractSpinBox
-from PyQt5.uic import loadUi
+from qgis.PyQt.QtCore import QObject, QEvent, QSize, QDate, QTimer, QDateTime
+from qgis.PyQt.QtGui import QColor
+from qgis.PyQt.QtWidgets import QFormLayout, QHBoxLayout, QVBoxLayout, QFrame, QInputDialog, QAbstractSpinBox
+from qgis.PyQt.uic import loadUi
 from qgis.core import  Qgis
 from qgis.utils import plugins
 
-# from .symbologie import *
 from .filtre import FiltreDialog
 from .param import ParamDialog
 from .fonction import *
@@ -82,7 +80,7 @@ class MainDialog(QDialog):
         self.color_btn_commun = self.dico_param.get("couleur_btn_commun", "#ff8080")
         self.taille_font = self.dico_param.get("taille_btn", TAILLE_FONT_DEFAUT)
 
-        self.setWindowTitle(f"{TITRE} {VERSION}")
+        self.setWindowTitle(f"{TITRE}")
         self.setWindowIcon(QIcon(PATHICON))
         self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint)
 
@@ -705,7 +703,7 @@ class MainDialog(QDialog):
         dlgAProposDe = QDialog()
         loadUi(os.path.dirname(__file__) + "/aproposde.ui", dlgAProposDe)
         dlgAProposDe.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.WindowCloseButtonHint)
-        dlgAProposDe.setWindowTitle(f"{TITRE} {VERSION}")
+        dlgAProposDe.setWindowTitle(f"{TITRE}")
         dlgAProposDe.pushButtonAffichedoc.clicked.connect(afficheDoc)
         dlgAProposDe.exec_()
 
