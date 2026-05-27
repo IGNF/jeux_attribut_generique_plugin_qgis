@@ -5,6 +5,7 @@
 [general]
 name=IGN Jeux d'attributs générique
 qgisMinimumVersion=3.0
+qgisMaximumVersion=4.99
 description=plugin générique
 version=1.4.0_recette
 author=Gérôme PECHEUR (IGN)
