@@ -8,8 +8,8 @@ try :
     WindowCloseButtonHint = Qt.WindowType.WindowCloseButtonHint
     # WindowTitleHint = Qt.WindowType.WindowTitleHint
     WindowStaysOnTopHint = Qt.WindowType.WindowStaysOnTopHint
-    # Checked = Qt.CheckState.Checked
-    # Unchecked = Qt.CheckState.Unchecked
+    Checked = Qt.CheckState.Checked
+    Unchecked = Qt.CheckState.Unchecked
     # ItemIsEnabled = Qt.ItemFlag.ItemIsEnabled
     # ItemIsUserCheckable = Qt.ItemFlag.ItemIsUserCheckable
     # MatchExactly = Qt.MatchFlag.MatchExactly
@@ -28,6 +28,8 @@ try :
     Information = QMessageBox.Icon.Information
     Ok = QMessageBox.StandardButton.Ok
     RichText = Qt.TextFormat.RichText
+    SolidPattern = Qt.BrushStyle.SolidPattern
+    CaseInsensitive = Qt.CaseSensitivity.CaseInsensitive
 # QT5
 except :
     # Dialog = Qt.Dialog
@@ -35,8 +37,8 @@ except :
     WindowCloseButtonHint = Qt.WindowCloseButtonHint
     # WindowTitleHint = Qt.WindowTitleHint
     WindowStaysOnTopHint = Qt.WindowStaysOnTopHint
-    # Checked = Qt.Checked
-    # Unchecked = Qt.Unchecked
+    Checked = Qt.Checked
+    Unchecked = Qt.Unchecked
     # ItemIsEnabled = Qt.ItemIsEnabled
     # ItemIsUserCheckable = Qt.ItemIsUserCheckable
     # MatchExactly = Qt.MatchFlag.MatchExactly
@@ -55,3 +57,5 @@ except :
     Information = QMessageBox.Information
     Ok = QMessageBox.Ok
     RichText = Qt.RichText
+    SolidPattern = Qt.SolidPattern
+    CaseInsensitive = Qt.CaseInsensitive

@@ -5,7 +5,7 @@ import webbrowser
 
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QWidget, QLabel, QLineEdit, QComboBox, QFileDialog, QPushButton, QDialog, \
-    QGridLayout, QTextEdit, QDateEdit
+    QGridLayout, QTextEdit
 from qgis.gui import QgsDateTimeEdit
 
 from .constante import *
