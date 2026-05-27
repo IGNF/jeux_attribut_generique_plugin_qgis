@@ -1,5 +1,5 @@
 from qgis.PyQt.QtCore import Qt
-from qgis.PyQt.QtWidgets import QTabBar,QMessageBox,QAbstractItemView,QListWidget
+from qgis.PyQt.QtWidgets import QMessageBox
 
 # QT6
 try :
@@ -24,6 +24,10 @@ try :
     BackgroundRole = Qt.ItemDataRole.BackgroundRole
     RightButton = Qt.MouseButton.RightButton
     NoContextMenu = Qt.ContextMenuPolicy.NoContextMenu
+    Warning = QMessageBox.Icon.Warning
+    Information = QMessageBox.Icon.Information
+    Ok = QMessageBox.StandardButton.Ok
+    RichText = Qt.TextFormat.RichText
 # QT5
 except :
     # Dialog = Qt.Dialog
@@ -47,3 +51,7 @@ except :
     BackgroundRole = Qt.BackgroundRole
     RightButton = Qt.RightButton
     NoContextMenu = Qt.NoContextMenu
+    Warning = QMessageBox.Warning
+    Information = QMessageBox.Information
+    Ok = QMessageBox.Ok
+    RichText = Qt.RichText
