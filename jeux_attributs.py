@@ -46,7 +46,6 @@ class JeuxAttribut:
         self.iface = iface
         self.layer = None
 
-        # TEST
         self.dico_filtre = {}
 
         self.plugin_dir = os.path.dirname(__file__)
@@ -177,7 +176,6 @@ class JeuxAttribut:
 
     def run(self):
         # une seule instance de dialogue
-        print("run")
         if self.dlg is not None:
             return
 
@@ -230,7 +228,6 @@ class JeuxAttribut:
             except:
                 pass
 
-            self.dlg.is_affiche_sens_num = False
             # on redessine la couche pour prendre en compte du changement de style initial
             self.layer.triggerRepaint()
             # on réinitialise pour gere le rechargement si une seule instance

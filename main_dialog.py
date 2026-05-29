@@ -1,8 +1,8 @@
-
-
-from qgis.PyQt.QtCore import QObject, QEvent, QSize, QDate, QTimer, QDateTime
+from PyQt5.QtGui import QCursor
+from PyQt5.QtWidgets import QCheckBox
+from qgis.PyQt.QtCore import QObject, QEvent, QSize, QDate, QTimer, QDateTime,QPoint
 from qgis.PyQt.QtGui import QColor
-from qgis.PyQt.QtWidgets import QFormLayout, QHBoxLayout, QVBoxLayout, QFrame, QInputDialog, QAbstractSpinBox
+from qgis.PyQt.QtWidgets import QFormLayout, QHBoxLayout, QVBoxLayout, QFrame, QInputDialog, QAbstractSpinBox,QApplication
 from qgis.PyQt.uic import loadUi
 from qgis.core import  Qgis
 from qgis.utils import plugins
@@ -37,21 +37,108 @@ class FiltreClicDroit(QObject):
         self.class_parent = class_parent
 
     def eventFilter(self, obj, event):
-        if event.type() == QEvent.MouseButtonPress and event.button() == RightButton:
-            if isinstance(obj, QPushButton):
-                self.class_parent.clic_droit(obj)
-                return True
-                # QMessageBox.warning(None, "fd","sdf")
-            # Cas d’un clic droit sur un item du QComboBox
-            # le clic se fait sur le viewport
-            elif isinstance(obj, QWidget):
-                self.class_parent.clic_droit_combobox(obj,event)
+        # if event.type() == QEvent.MouseButtonPress and event.button() == RightButton:
+        #     # if isinstance(obj, QPushButton):
+        #     #     self.class_parent.clic_droit(obj)
+        #     #     return True
+        #     # Cas d’un clic droit sur un item du QComboBox
+        #     # le clic se fait sur le viewport
+        #     if isinstance(obj, QWidget):
+        #         self.class_parent.clic_droit_combobox(obj,event)
+        #         return True
+
+        if event.type() == QEvent.MouseButtonPress and event.button() == LeftButton:
+            # if isinstance(obj, QPushButton):
+            self._dragging = False
+            self.widget_avant_move = obj
+            self._press_pos = event.pos()
+
+            # recuperer la position du combo avant le move
+            if isinstance(obj, QWidget):
+                view = obj.parentWidget()
+                while view and not hasattr(view, "indexAt"):
+                    view = view.parentWidget()
+                if view:
+                    combo = view.parent()
+                    while combo and not isinstance(combo, QComboBox):
+                        combo = combo.parent()
+                    index = view.indexAt(event.pos())
+                    if index.isValid():
+                        self.class_parent.index_combo = index
+                        self.class_parent.combo_pos_avant_move = (self.class_parent.get_position_combo(combo))
+                        self.class_parent.combo_init_index = index.row()
+                        self.class_parent.combo_avant_move_text = index.data()
+                        print(
+                            self.class_parent.combo_pos_avant_move,
+                            self.class_parent.combo_init_index,
+                            self.class_parent.combo_avant_move_text)
+
+            return False
+
+        if event.type() == QEvent.MouseMove:
+            if getattr(self, "_press_pos", None):
+                if (event.globalPos() - self._press_pos).manhattanLength() > QApplication.startDragDistance():
+                    if isinstance(obj, QPushButton):
+                        self._dragging = True
+                        self.class_parent.init_fantome_btn(event,obj)
+
+                    elif isinstance(obj, QWidget): #combobox
+                        self._dragging = True
+                        self.class_parent._ghost_combo.move(QCursor.pos() + QPoint(1, 1))
+                        self.class_parent.init_fantome_item_combo(event,obj)
+            return False
+
+        if event.type() == QEvent.MouseButtonRelease and event.button() == LeftButton:
+            if getattr(self, "_dragging", False):
+                widget_apres_move = QApplication.widgetAt(event.globalPos())
+                if isinstance(obj, QPushButton):
+                    self.class_parent.relache_clic_gauche_btn(self.widget_avant_move, widget_apres_move)
+                elif isinstance(obj, QWidget):
+                    self.class_parent.relache_clic_gauche_combo(self.widget_avant_move, widget_apres_move)
+
+            self._dragging = False
+            self._press_pos = None
+            self.widget_avant_move = None
+            self.class_parent._ghost.hide()
+            self.class_parent._ghost_combo.hide()
+            return False
+
         return False
+
+
 
 class MainDialog(QDialog):
 
     def __init__(self ,iface,layer,plugin,parent=None):
         super().__init__(parent)
+
+        # =====================================================
+        # image fantôme qui suit la souris lors du drag and drop des boutons
+        self._ghost = QLabel(None)
+        self._ghost.setWindowFlags(ToolTip | FramelessWindowHint)
+        self._ghost.setScaledContents(True)
+        self._ghost.setStyleSheet("""
+            background-color: rgb(30, 144, 255);  /* bleu semi-transparent */
+            border: 1px solid blue;
+            padding: 1px;
+        """)
+        self._ghost.hide()
+
+        # =================================
+        # image fantome pour l'item d'un combo
+        self._ghost_combo = QLabel(None)
+        self._ghost_combo.setWindowFlags(ToolTip | FramelessWindowHint)
+        self._ghost_combo.setScaledContents(True)
+        self._ghost_combo.setStyleSheet("""
+            color: black;
+            border: 1px solid blue;
+            padding: 5px;
+        """)
+        self._ghost_combo.hide()
+
+        self.combo_pos_avant_move = None
+        self.combo_avant_move_text = None
+
 
         self.get_contraintes = {}
         self.dlgFiltre = None
@@ -237,34 +324,180 @@ class MainDialog(QDialog):
         except Exception as e:
             print(f" Erreur sauvegarde JSON : {e}")
 
+    def init_fantome_btn(self,event,obj):
+        pix = obj.grab().scaled(obj.width(),obj.height() )
+        self._ghost.setPixmap(pix)
+        self._ghost.move(event.globalPos() + QPoint(1, 1))
+        self._ghost.show()
+
+    def init_fantome_item_combo(self,event,obj):
+        view = obj.parent()
+        if hasattr(view, "indexAt"):  # s'assurer que view possède bien la methode indexAt() ->QListView
+            # 🔹 Remonter la hiérarchie jusqu’à trouver le QComboBox
+            combo = view
+            while combo is not None and not isinstance(combo, QComboBox):
+                combo = combo.parent()
+            index = view.indexAt(event.pos())
+            if index.isValid():
+                valeur = index.data(DisplayRole)
+                self._ghost_combo.setText(valeur)
+                self._ghost_combo.adjustSize()
+                self._ghost_combo.raise_()
+                # self._ghost_combo.move(event.globalPos() + QPoint(1, 1))
+                self._ghost_combo.move(QCursor.pos() + QPoint(1, 1))
+                self._ghost_combo.show()
+
+    def relache_clic_gauche_combo(self,obj_avant_move,obj_sous_mouse):
+        pos_final = self.getposition_btn(obj_sous_mouse)
+        # si la position est en dehors du layout, on quitte
+        if pos_final is None:
+            return
+
+        # on valide le déplacement uniquement sur la meme ligne
+        if self.combo_pos_avant_move[0] != pos_final[0]:
+            print("déplacement combo interdit : pas sur la même ligne")
+            return
+
+        valeur = self.combo_avant_move_text
+        # rechercher dans le json le champ du combo avant le déplacement
+        champ = self.get_champ_from_json(valeur)
+
+        # TODO : optimiser en ne chargeant que le layer concerné et pas tout le json (mais la fonction loadjson est faite pour charger tout le json et retourner que le layer concerné, à revoir si besoin)
+        with open(PATHJSON, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        valeur_par_champ = data[self.layer.name()][champ]
+
+
+        valeur_par_champ.remove(valeur)
+        valeur_par_champ.insert(pos_final[1], valeur)
+
+        # Sauvegarde du JSON complet (structure conservée)
+        try:
+            with open(PATHJSON, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            print(f" Erreur sauvegarde JSON : {e}")
+
+        self.plugin.dico_filtre = loadjson(self.layer.name())
+        self.plugin.add_all_widget()
+        QTimer.singleShot(0, self.plugin.actualiserSelection)
+
+
+        # la position initial c'est le nombre de QPushButton dans le layout plus la position de l'item dans le combo
+        # nb_widg = self.get_nb_widget_from_ligne(pos_final[0])
+
+
+    def get_champ_from_json(self,valeur_recherche):
+        print("valeur_recherche : ", valeur_recherche)
+        data = loadjson(self.layer.name())
+        for champ, valeurs in data.items():
+            if isinstance(valeurs, list) and valeur_recherche in valeurs:
+                return champ
+        return None
+
+
+    # def clic_droit_combobox(self,obj,event):
+    #     view = obj.parent()  # -> QListView
+    #     if hasattr(view, "indexAt"): # s'assurer que view possede bien la methode indexAt() ->QListView
+    #         # 🔹 Remonter la hiérarchie jusqu’à trouver le QComboBox
+    #         combo = view
+    #         while combo is not None and not isinstance(combo, QComboBox):
+    #             combo = combo.parent()
+    #
+    #         index = view.indexAt(event.pos())
+    #         if index.isValid():
+    #             champ = combo.property("champ")
+    #             valeur = index.data(DisplayRole)
+    #             self.deplace_btn_to_json(champ, valeur)
+    #             # on actualise l'interface
+    #             self.plugin.dico_filtre =  loadjson(self.layer.name())
+    #             self.plugin.add_all_widget()
+    #             QTimer.singleShot(0, self.plugin.actualiserSelection)
+    #             return True
+    #     return False
+
+
+    def relache_clic_gauche_btn(self, obj, obj_sous_mouse):
+        pos_init = self.getposition_btn(obj)
+        pos_final = self.getposition_btn(obj_sous_mouse)
+        # si la position est en dehors du layout, on quitte
+        if pos_final is None:
+            return
+
+        # on valide le déplacement uniquement sur la meme ligne
+        if pos_init[0] != pos_final[0]:
+            return
+
+        # deplacement du bouton dans le json si le bouton est relaché sur un autre bouton
+        with open(PATHJSON, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        champ = obj.property("champ")
+        valeur = obj.property("valeur")
+        valeur_par_champ = data[self.layer.name()][champ]
+        valeur_par_champ.remove(valeur)
+        # pos_final[1] --> 2ieme composante de coordonnées
+        valeur_par_champ.insert(pos_final[1], valeur)
+
+        # Sauvegarde du JSON complet (structure conservée)
+        try:
+            with open(PATHJSON, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            print(f" Erreur sauvegarde JSON : {e}")
+
+        # actualisation de l'interface
+        self.plugin.dico_filtre = loadjson(self.layer.name())
+        self.plugin.add_all_widget()
+
+    def get_nb_widget_from_ligne(self,ligne):
+        count = 0
+        item = self.formlayout.itemAt(ligne)
+        if item is not None:
+            layout = item.layout()
+            if layout is not None:
+                for j in range(layout.count()):
+                    widget = layout.itemAt(j).widget()
+                    if widget is not None and type(widget) == QPushButton:
+                        count += 1
+        return count
+
+    def get_position_combo(self, combo):
+        for row in range(self.formlayout.rowCount()):
+            field_item = self.formlayout.itemAt(row,QFormLayout.FieldRole)
+            if not field_item:
+                continue
+            layout = field_item.layout()
+            if not layout:
+                continue
+            for col in range(layout.count()):
+                widget = layout.itemAt(col).widget()
+                if widget == combo:
+                    return row, col
+        return None
+
+    def getposition_btn(self,obj):
+        for row in range(self.formlayout.rowCount()):
+            field_item = self.formlayout.itemAt(row,QFormLayout.FieldRole)
+            if field_item is None:
+                continue
+            layout = field_item.layout()
+            if layout is None:
+                continue
+            for col in range(layout.count()):
+                widget = layout.itemAt(col).widget()
+                if widget == obj:
+                    return row, col
+        return None
+
     def clic_droit(self,obj):
         champ = obj.property("champ")
         valeur = obj.property("valeur")
+        print(f"champ,valeur : {champ},{valeur}")
         self.deplace_btn_to_json(champ,valeur)
         # actualisation de l'interface
         self.plugin.dico_filtre = loadjson(self.layer.name())
         self.plugin.add_all_widget()
 
-
-    def clic_droit_combobox(self,obj,event):
-        view = obj.parent()  # -> QListView
-        if hasattr(view, "indexAt"): # s'assurer que view possede bien la methode indexAt() ->QListView
-            # 🔹 Remonter la hiérarchie jusqu’à trouver le QComboBox
-            combo = view
-            while combo is not None and not isinstance(combo, QComboBox):
-                combo = combo.parent()
-
-            index = view.indexAt(event.pos())
-            if index.isValid():
-                champ = combo.property("champ")
-                valeur = index.data(DisplayRole)
-                self.deplace_btn_to_json(champ, valeur)
-                # on actualise l'interface
-                self.plugin.dico_filtre =  loadjson(self.layer.name())
-                self.plugin.add_all_widget()
-                QTimer.singleShot(0, self.plugin.actualiserSelection)
-                return True
-        return False
 
     def create_btn(self,champ,val,read_only):
         btn = QPushButton(str(val))
@@ -285,9 +518,12 @@ class MainDialog(QDialog):
 
     def add_widget(self,champ,valeurs,typewidget):
         # formatage du nom des champs (suppr des _)
-        text_label = champ.replace("_", " ").replace("l ", "l'").replace("d ", "d'").capitalize() + " :  "
-        style = "<span style= 'color: #b63d3d; font-weight: bold'>"
-        champ_format = QLabel(f"{style}{text_label}</span>")
+        text_label = champ.replace("_", " ").replace("l ", "l'").replace("d ", "d'").capitalize()
+        champ_format = QLabel(text_label)
+        champ_format.setStyleSheet("""
+            color: #b63d3d;
+            font-weight: bold;
+        """)
 
         hlayout = QHBoxLayout()
         hlayout.setSpacing(1)

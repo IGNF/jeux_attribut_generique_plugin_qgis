@@ -5,6 +5,8 @@ from qgis.PyQt.QtWidgets import QMessageBox
 try :
     # Dialog = Qt.WindowType.Dialog
     Window = Qt.WindowType.Window
+    ToolTip = Qt.WindowType.ToolTip
+    FramelessWindowHint = Qt.WindowType.FramelessWindowHint
     WindowCloseButtonHint = Qt.WindowType.WindowCloseButtonHint
     # WindowTitleHint = Qt.WindowType.WindowTitleHint
     WindowStaysOnTopHint = Qt.WindowType.WindowStaysOnTopHint
@@ -23,6 +25,7 @@ try :
     DisplayRole = Qt.ItemDataRole.DisplayRole
     BackgroundRole = Qt.ItemDataRole.BackgroundRole
     RightButton = Qt.MouseButton.RightButton
+    LeftButton = Qt.MouseButton.LeftButton
     NoContextMenu = Qt.ContextMenuPolicy.NoContextMenu
     Warning = QMessageBox.Icon.Warning
     Information = QMessageBox.Icon.Information
@@ -30,10 +33,13 @@ try :
     RichText = Qt.TextFormat.RichText
     SolidPattern = Qt.BrushStyle.SolidPattern
     CaseInsensitive = Qt.CaseSensitivity.CaseInsensitive
+
 # QT5
 except :
     # Dialog = Qt.Dialog
     Window = Qt.Window
+    ToolTip = Qt.ToolTip
+    FramelessWindowHint = Qt.FramelessWindowHint
     WindowCloseButtonHint = Qt.WindowCloseButtonHint
     # WindowTitleHint = Qt.WindowTitleHint
     WindowStaysOnTopHint = Qt.WindowStaysOnTopHint
@@ -52,6 +58,7 @@ except :
     DisplayRole = Qt.DisplayRole
     BackgroundRole = Qt.BackgroundRole
     RightButton = Qt.RightButton
+    LeftButton = Qt.LeftButton
     NoContextMenu = Qt.NoContextMenu
     Warning = QMessageBox.Warning
     Information = QMessageBox.Information
