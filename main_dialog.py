@@ -362,7 +362,7 @@ class MainDialog(QDialog):
         # rechercher dans le json le champ du combo avant le déplacement
         champ = self.get_champ_from_json(valeur)
 
-        # TODO : optimiser en ne chargeant que le layer concerné et pas tout le json (mais la fonction loadjson est faite pour charger tout le json et retourner que le layer concerné, à revoir si besoin)
+        # TODO : optimise en ne chargeant que le layer concerné et pas tout le json (mais la fonction loadjson est faite pour charger tout le json et retourner que le layer concerné, à revoir si besoin)
         with open(PATHJSON, "r", encoding="utf-8") as f:
             data = json.load(f)
         valeur_par_champ = data[self.layer.name()][champ]
