@@ -1,3 +1,5 @@
+
+
 <table>
 <colgroup>
 <col style="width: 21%" />
@@ -8,12 +10,12 @@
 <td rowspan="2"><img src="images/image1.jpeg"
 style="width:1.38681in;height:1.47153in"
 alt="logo_IGN_pour_lettre" /></td>
-<td style="text-align: center;"><p><strong>Manuel utilisateur du plugin
+<td style="font-size: 24px;text-align: center;"><p><strong>Manuel utilisateur du plugin
 « Jeux d’attributs génériques »</strong></p>
-<p><strong>V0.1</strong></p></td>
+<p><strong>V1.4.1</strong></p></td>
 </tr>
 <tr>
-<td style="text-align: center;"></td>
+<td style="font-size: 16px;text-align: center;">Développeur  : Gérôme PECHEUR (IGN)</td>
 </tr>
 </tbody>
 </table>
@@ -21,44 +23,45 @@ alt="logo_IGN_pour_lettre" /></td>
 
 
 
-| Version |    Date    | Modifié par    | Historique des modifications |
-|:-------:|:----------:|----------------|------------------------------|
-|   0.1   | 18/11/2025 | Gérôme PECHEUR | Création                     |
+## Sommaire
 
-**Sommaire**
+- [1. Prérequis](#prerequis)
 
-[1 Prérequis](#prérequis)
+- [2. Résumé](#resume)
 
-[2 Résumé](#résumé)
+- [3. Installation](#installation)
 
-[3 Installation](#installation)
+- [4. Présentation](#presentation)
 
-[4 Présentation](#présentation)
+- [5. Filtrage des champs](#filtrage-des-champs)
 
-[5 Filtrage des champs](#filtrage-des-champs)
+	- [5.1 Sélection unique / multiple](#selection-unique-multiple)
 
-[5.1 Sélection unique / multiple](#sélection-unique-multiple)
+	- [5.2 Sélection via <img src="images/image2.png"
+style="width:0.23478in;height:0.20798in" />](#selection-via)
 
-[5.2 Sélection via <img src="images/image2.png"
-style="width:0.23478in;height:0.20798in" />](#sélection-via)
+- [6. Modification des valeurs des champs](#modification-des-valeurs-des-champs)
 
-[6 Modification des valeurs des champs](#modification-des-valeurs-des-champs)
+- [7. Modification de l’ordre d’affichage des « widgets »](#modification-de-lordre-daffichage-des-widgets)
 
-[7 Modification de l’ordre d’affichage des « widgets »](#modification-de-lordre-daffichage-des-widgets)
+- [8. Paramétrage des préférences de l’interface](#parametrage-des-preferences-de-linterface)
 
-[8 Paramétrage des préférences de l’interface](#paramétrage-des-préférences-de-linterface)
+- [9. A propos](#a-propos)
 
-[9 A propos](#a-propos)
 
-# 
 
-# Prérequis
+<div  style="background-color: #00ADC5; border: 1px solid black; padding: 5px; text-align: justify;margin-bottom:10px;">
+  <h2 id="prerequis" style="color: white;margin:0;" >1. Prérequis</h2>
+</div>
 
 Version de QGIS : 3.28 ou supérieur.
 
-Ce plugin fonctionne en parallèle avec le plugin « maitre ».
+Le plugin « maitre » doit préalablement être installé : 
+[maitre-qgis-plugin sur GitHub](https://github.com/IGNF/maitre-qgis-plugin)
 
-# Résumé
+<div  style="background-color: #00ADC5; border: 1px solid black; padding: 5px; text-align: justify;margin-bottom:10px;">
+  <h2 id="resume" style="color: white;margin:0;" >2. Résumé</h2>
+</div>
 
 Ce plugin est une aide à la modification des attributs des différents
 champs.
@@ -66,7 +69,9 @@ champs.
 Un filtre permet de sélectionner uniquement les champs que l’on veut
 modifier.
 
-# Installation
+<div  style="background-color: #00ADC5; border: 1px solid black; padding: 5px; text-align: justify;margin-bottom:10px;">
+  <h2 id="installation" style="color: white;margin:0;" >3. Installation</h2>
+</div>
 
 Au préalable il faut installer le plugin « Maitre », c’est lui qui gère
 l’intégration du plugin dans le menu IGN et / ou dans les barres
@@ -86,7 +91,9 @@ sur **Installer le plugin**.
 <img src="images/image3.png"
 style="width:6.83889in;height:1.525in" />
 
-# Présentation
+<div  style="background-color: #00ADC5; border: 1px solid black; padding: 5px; text-align: justify;margin-bottom:10px;">
+  <h2 id="presentation" style="color: white;margin:0;" >4. Présentation</h2>
+</div>
 
 <img src="images/image4.png"
 style="width:4.27847in;height:0.79097in" />
@@ -136,7 +143,9 @@ style="width:0.18261in;height:0.20538in" />
 l’enregistrement du projet : <img src="images/image13.png"
 style="width:0.69565in;height:0.22031in" />
 
-# Filtrage des champs
+<div  style="background-color: #00ADC5; border: 1px solid black; padding: 5px; text-align: justify;margin-bottom:10px;">
+  <h2 id="filtrage-des-champs" style="color: white;margin:0;" >5. Filtrage des champs</h2>
+</div>
 
 A la première ouverture le plugin n’affiche aucuns widgets, ceux-ci
 doivent être configurés.
@@ -168,7 +177,12 @@ sélectionner également une ou plusieurs valeurs.
 On actualise l’interface principal avec le bouton « actualiser la
 sélection »
 
-## Sélection unique / multiple
+<div  style="font-size: 10px;background-color: #00ADC5; border: 1px solid black; padding: 5px; text-align: justify;margin-bottom:10px;">
+  <h2 id="selection-unique-multiple" style="color: white;margin:0;" >5.1 Sélection unique / multiple</h2>
+</div>
+
+
+
 
 Lorsque l’on sélectionne une ou plusieurs entités, l’interface met :
 
@@ -183,8 +197,12 @@ Lorsque l’on sélectionne une ou plusieurs entités, l’interface met :
 > <img src="images/image15.png"
 > style="width:4.15924in;height:1.56543in" />
 
-## Sélection via <img src="images/image2.png"
-style="width:0.23478in;height:0.20798in" />
+## Sélection via <img src="images/image2.png">
+<div  style="font-size: 10px;background-color: #00ADC5; border: 1px solid black; padding: 5px; text-align: justify;margin-bottom:10px;">
+  <h2 id="selection-via" style="color: white;margin:0;" >5.2 Sélection via <img src="images/image2.png"</h2>
+</div>
+
+
 
 <img src="images/image16.png"
 style="width:0.25413in;height:0.25413in" /> Ce bouton permet la
@@ -200,7 +218,9 @@ sélectionnés respectant l’algorithme du chemin le plus court. Un
 contrôle visuel est toutefois nécessaire afin de vérifier si la
 sélection faite est celle attendue.
 
-# Modification des valeurs des champs
+<div  style="background-color: #00ADC5; border: 1px solid black; padding: 5px; text-align: justify;margin-bottom:10px;">
+  <h2 id="modification-des-valeurs-des-champs" style="color: white;margin:0;" >6. Modification des valeurs des champs</h2>
+</div>
 
 Une fois les tronçons sélectionnés il suffit de cliquer sur les
 nouvelles valeurs choisies.
@@ -222,7 +242,9 @@ Un message QGIS confirme la prise en compte des modifications.
 <img src="images/image19.png"
 style="width:4.72917in;height:0.35417in" />
 
-# Modification de l’ordre d’affichage des « widgets »
+<div  style="background-color: #00ADC5; border: 1px solid black; padding: 5px; text-align: justify;margin-bottom:10px;">
+  <h2 id="modification-de-lordre-daffichage-des-widgets" style="color: white;margin:0;" >7. Modification de l’ordre d’affichage des « widgets »</h2>
+</div>
 
 Apres filtrage des champs-valeurs il peut être pertinent de modifier
 l’ordre d’affichage des différents « widgets » dans l’interface
@@ -252,7 +274,11 @@ Renseigner la nouvelle position.
 
 L’interface est mise à jour avec la nouvelle position du « widget ».
 
-# Paramétrage des préférences de l’interface
+<div  style="background-color: #00ADC5; border: 1px solid black; padding: 5px; text-align: justify;margin-bottom:10px;">
+  <h2 id="parametrage-des-preferences-de-linterface" style="color: white;margin:0;" >8. Paramétrage des préférences de l’interface</h2>
+</div>
+
+
 
 <img src="images/image6.png"
 style="width:0.26111in;height:0.26944in" /> Ouvre l’interface de
@@ -272,7 +298,9 @@ forme de « boutons » et les suivantes seront incluses dans une
 
 - On peut également modifier les couleurs des différents « widgets »
 
-# A propos
+<div  style="background-color: #00ADC5; border: 1px solid black; padding: 5px; text-align: justify;margin-bottom:10px;">
+  <h2 id="a-propos" style="color: white;margin:0;" >9. A propos</h2>
+</div>
 
 Accessible via <img src="images/image22.PNG"
 style="width:0.23962in;height:0.25003in" />.
