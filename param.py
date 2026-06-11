@@ -1,11 +1,12 @@
 import json
 
-from PyQt5.QtGui import QIcon, QColor, QRegularExpressionValidator
-from PyQt5.QtWidgets import QDialog
-from PyQt5.uic import loadUi
-from PyQt5.QtCore import Qt, QRegularExpression
+from qgis.PyQt.QtGui import QIcon, QColor, QRegularExpressionValidator
+from qgis.PyQt.QtWidgets import QDialog
+from qgis.PyQt.uic import loadUi
+from qgis.PyQt.QtCore import QRegularExpression
 
 from .constante import *
+from .mapping_version import *
 
 
 class ParamDialog(QDialog):
@@ -16,7 +17,7 @@ class ParamDialog(QDialog):
         loadUi(os.path.dirname(__file__) + "/param.ui", self)
         self.setWindowTitle(TITRE)
         self.setWindowIcon(QIcon(PATHICON))
-        self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.WindowCloseButtonHint)
+        self.setWindowFlags(WindowStaysOnTopHint | WindowCloseButtonHint)
 
         # Dictionnaire de paramètres avec valeurs par défaut
         self.dico_param = {

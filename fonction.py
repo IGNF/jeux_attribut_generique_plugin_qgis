@@ -1,16 +1,15 @@
 import json
 import os.path
 import shutil
+import webbrowser
 
-from PyQt5.QtGui import QIcon, QPixmap, QFont
-from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QComboBox, QFileDialog, QPushButton, QDialog, \
-    QGridLayout, QTextEdit, QDateEdit
-from qgis.PyQt.QtWidgets import QMessageBox
-from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtWidgets import QWidget, QLabel, QLineEdit, QComboBox, QFileDialog, QPushButton, QDialog, \
+    QGridLayout, QTextEdit
 from qgis.gui import QgsDateTimeEdit
 
 from .constante import *
-import subprocess
+from .mapping_version import *
 
 
 def importer_json(dlg):
@@ -176,42 +175,42 @@ def clear_layout(layout):
             clear_layout(item.layout())
 
 def afficheDoc():
-    if not os.path.isfile(os.path.join(os.path.dirname(__file__),"jeux d'attributs.pdf")):
-        afficheerreur("La documentation est introuvable", "Information")
-    else:
-        os.popen(os.path.join(os.path.dirname(__file__),"jeux d'attributs.pdf"))
+    webbrowser.open("https://ignf.github.io/jeux_attribut_generique_plugin_qgis/")
+    # if not os.path.isfile(os.path.join(os.path.dirname(__file__),"jeux d'attributs.pdf")):
+    #     afficheerreur("La documentation est introuvable", "Information")
+    # else:
+    #     os.popen(os.path.join(os.path.dirname(__file__),"jeux d'attributs.pdf"))
 
 def afficheerreur(text, titre=TITRE):
     msg = QMessageBox()
-    msg.setIcon(QMessageBox.Warning)
+    msg.setIcon(Warning)
     msg.setWindowTitle(titre)
     msg.setWindowIcon(QIcon(PATHICON))
-    msg.setStandardButtons(QMessageBox.Ok)
-    msg.setTextFormat(Qt.RichText)
+    msg.setStandardButtons(Ok)
+    msg.setTextFormat(RichText)
     msg.setText(text)
-    msg.setWindowFlags(Qt.WindowStaysOnTopHint|Qt.WindowCloseButtonHint)
+    msg.setWindowFlags(WindowStaysOnTopHint|WindowCloseButtonHint)
     msg.exec()
 
 def afficherinformation(text,titre = TITRE):
     msg = QMessageBox()
-    msg.setIcon(QMessageBox.Information)
+    msg.setIcon(Information)
     msg.setWindowTitle(titre)
-    msg.setStandardButtons(QMessageBox.Ok)
+    msg.setStandardButtons(Ok)
     msg.setText(text)
-    msg.setWindowFlags(Qt.WindowStaysOnTopHint|Qt.WindowCloseButtonHint)
+    msg.setWindowFlags(WindowStaysOnTopHint|WindowCloseButtonHint)
     msg.exec()
 
 def dlg_affichercontraintes(text, titre=TITRE):
     msg = QDialog()
     msg.setWindowIcon(QIcon(PATHICON))
     msg.setWindowTitle(titre)
-    # msg.setTextFormat(Qt.RichText)
-    # msg.setText(intitule)
+
     layout = QGridLayout(msg)
 
     # --- Icône Warning ---
     icon_warning = QLabel()
-    icon = QMessageBox().standardIcon(QMessageBox.Warning)
+    icon = QMessageBox().standardIcon(Warning)
     icon_warning.setPixmap(icon)
 
     # intitulé
@@ -236,7 +235,7 @@ def dlg_affichercontraintes(text, titre=TITRE):
     layout.addWidget(intitule_widg,0,1)
     layout.addWidget(text_edit,1,1)
 
-    msg.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.WindowCloseButtonHint)
+    msg.setWindowFlags(WindowStaysOnTopHint | WindowCloseButtonHint)
     msg.exec()
 
 

@@ -3,7 +3,7 @@ name: Release QGIS Plugin
 on:
   push:
     tags:
-      - '*'
+      - 'version_finale'
 
 jobs:
   build-release:
@@ -15,6 +15,13 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Delete previous release if exists
+        run: |
+          gh release delete version_finale --yes || echo "No previous release"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
       - name: Install zip
         run: sudo apt-get install zip -y

@@ -5,16 +5,18 @@
 [general]
 name=IGN Jeux d'attributs générique
 qgisMinimumVersion=3.0
+qgisMaximumVersion=4.99
 description=plugin générique
-version=1.4.0
+version=1.4.1_recette
 author=Gérôme PECHEUR (IGN)
 email=gerome.pecheur@ign.fr
 license=GNU AGPL v3
 
 about=Ce plugin est un jeux d'attributs générique. Il permet la modification sémantique des valeurs d'attributs.
 
-tracker=http://bugs
-repository=http://repo
+homepage=https://ignf.github.io/jeux_attribut_generique_plugin_qgis/
+tracker=https://github.com/IGNF/jeux_attribut_generique_plugin_qgis/issues
+repository=https://github.com/IGNF/jeux_attribut_generique_plugin_qgis
 # End of mandatory metadata
 
 # Recommended items:
@@ -26,7 +28,6 @@ hasProcessingProvider=no
 # Tags are comma separated with spaces allowed
 tags=python
 
-homepage=http://homepage
 category=Plugins
 icon=icons/icon_principal.png
 # experimental flag
