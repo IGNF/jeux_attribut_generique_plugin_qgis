@@ -86,7 +86,11 @@ class JeuxAttribut:
 
 
     def on_layer_changed(self,layer):
+        # ce n'est pas un layer mais un groupe de couche ou autre, on ne fait rien
+        if layer is None:
+            return
         self.layer = layer
+
 
         # le test parce que self.dlg n'existe pas encore, il est declaré apres on_layer_changed
         if self.dlg is None:
