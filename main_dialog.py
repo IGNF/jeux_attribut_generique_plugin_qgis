@@ -1,8 +1,9 @@
-from PyQt5.QtGui import QCursor
-from PyQt5.QtWidgets import QCheckBox
+from pathlib import Path
+
 from qgis.PyQt.QtCore import QObject, QEvent, QSize, QDate, QTimer, QDateTime,QPoint
-from qgis.PyQt.QtGui import QColor
-from qgis.PyQt.QtWidgets import QFormLayout, QHBoxLayout, QVBoxLayout, QFrame, QInputDialog, QAbstractSpinBox,QApplication
+from qgis.PyQt.QtGui import QColor,QCursor
+from qgis.PyQt.QtWidgets import (QFormLayout, QHBoxLayout, QVBoxLayout, QFrame, QInputDialog, QAbstractSpinBox,
+                                 QListView,QApplication)
 from qgis.PyQt.uic import loadUi
 from qgis.core import  Qgis
 from qgis.utils import plugins
@@ -37,24 +38,17 @@ class FiltreClicDroit(QObject):
         self.class_parent = class_parent
 
     def eventFilter(self, obj, event):
-        # if event.type() == QEvent.MouseButtonPress and event.button() == RightButton:
-        #     # if isinstance(obj, QPushButton):
-        #     #     self.class_parent.clic_droit(obj)
-        #     #     return True
-        #     # Cas d’un clic droit sur un item du QComboBox
-        #     # le clic se fait sur le viewport
-        #     if isinstance(obj, QWidget):
-        #         self.class_parent.clic_droit_combobox(obj,event)
-        #         return True
-
         if event.type() == QEvent.MouseButtonPress and event.button() == LeftButton:
-            # if isinstance(obj, QPushButton):
             self._dragging = False
             self.widget_avant_move = obj
             self._press_pos = event.pos()
 
-            # recuperer la position du combo avant le move
-            if isinstance(obj, QWidget):
+            # clic gauche sur un bouton
+            if isinstance(obj, QPushButton):
+                self.type_drag = "button"
+
+            # # clic gauche sur un item du combobox
+            elif isinstance(obj, QWidget):
                 view = obj.parentWidget()
                 while view and not hasattr(view, "indexAt"):
                     view = view.parentWidget()
@@ -62,30 +56,99 @@ class FiltreClicDroit(QObject):
                     combo = view.parent()
                     while combo and not isinstance(combo, QComboBox):
                         combo = combo.parent()
+                    if combo:
+                        self.type_drag = "combo"
+                        self.combo_source = combo
                     index = view.indexAt(event.pos())
                     if index.isValid():
                         self.class_parent.index_combo = index
                         self.class_parent.combo_pos_avant_move = (self.class_parent.get_position_combo(combo))
                         self.class_parent.combo_init_index = index.row()
                         self.class_parent.combo_avant_move_text = index.data()
-                        print(
-                            self.class_parent.combo_pos_avant_move,
-                            self.class_parent.combo_init_index,
-                            self.class_parent.combo_avant_move_text)
-
             return False
 
         if event.type() == QEvent.MouseMove:
             if getattr(self, "_press_pos", None):
                 if (event.globalPos() - self._press_pos).manhattanLength() > QApplication.startDragDistance():
-                    if isinstance(obj, QPushButton):
-                        self._dragging = True
-                        self.class_parent.init_fantome_btn(event,obj)
 
-                    elif isinstance(obj, QWidget): #combobox
-                        self._dragging = True
-                        self.class_parent._ghost_combo.move(QCursor.pos() + QPoint(1, 1))
-                        self.class_parent.init_fantome_item_combo(event,obj)
+                    # recuperation du widget sous la souris
+                    widget_sous_souris = QApplication.widgetAt(event.globalPos())
+
+                    # on bouge un bouton sur une autre ligne ->
+                    # - on affiche le fantome_interdit
+                    # - on masque le fantome_btn et on return False
+                    if self.type_drag == "button":
+                        pos_init = self.class_parent.get_position_btn(obj)
+                        pos_final = self.class_parent.get_position_btn(widget_sous_souris)
+                        if pos_init is not None and pos_final is not None:
+                            # si ligne différente ...
+                            if pos_init[0] != pos_final[0]:
+                                print(f"deplacement interdit pour btn : {pos_init[0]} --> {pos_final[0]}")
+                                self.class_parent._ghost.hide()
+                                self.class_parent.show_fantome_interdit(event)
+                                return False
+
+                    # on bouge un item du combo sur une autre ligne ->
+                    # - on affiche le fantome_interdit
+                    # - on masque le fantome_btn et on return False
+                    if self.type_drag == "combo" and self.combo_source is not None:
+                        pos_init = self.class_parent.get_position_combo(self.combo_source)
+                        pos_final = self.class_parent.get_position_btn(widget_sous_souris)
+
+                        if pos_init is not None and pos_final is not None:
+                            if pos_init[0] != pos_final[0]:
+                                self.class_parent._ghost_combo.hide()
+                                self.class_parent.show_fantome_interdit(event)
+                                return False
+
+
+                    # # on bouge un item du combo sur une autre ligne ->
+                    # # - on affiche le fantome_interdit
+                    # # - on masque le fantome_combo et on return False
+                    # elif isinstance(obj, QListView):
+                    #     print("on bouge le combo")
+                    # pos_init = self.class_parent.get_position_combo(obj)
+                    # pos_final = self.class_parent.get_position_combo(widget_sous_souris)
+                    # if pos_init is not None and pos_final is not None:
+                    #     # si ligne différente ...
+                    #     if pos_init[0] != pos_final[0]:
+                    #         print(f"deplacement interdit pour btn : {pos_init[0]} --> {pos_final[0]}")
+                    #         self.class_parent._ghost_combo.hide()
+                    #         self.class_parent.show_fantome_interdit(event)
+                    #         return False
+
+
+
+                    # Traitement par rapport aux WIDGETS SURVOLES
+                    self._dragging = True
+                    # on survol un bouton
+                    if isinstance(widget_sous_souris, QPushButton):
+                        if self.type_drag == "button":
+                            self.class_parent.show_fantome_btn(event,obj)
+                        elif self.type_drag == "combo":
+                            self.class_parent.show_fantome_item_combo(event, obj)
+                        self.class_parent._ghost_interdit.hide()
+
+                    # on survol un label (label fantome)
+                    elif isinstance(widget_sous_souris,QLabel):
+                        self.class_parent.show_fantome_interdit(event)
+                        self.class_parent._ghost.hide()
+
+                    # on survol un item du combo
+                    elif widget_sous_souris.parent() and isinstance(widget_sous_souris.parent(), QListView): #combobox
+                        self.class_parent.show_fantome_item_combo(event,obj)
+                        self.class_parent._ghost_interdit.hide()
+
+                    # on survol le combo
+                    elif isinstance(widget_sous_souris, QComboBox):
+                        self.class_parent.show_fantome_btn(event, obj)
+                        self.class_parent._ghost_interdit.hide()
+
+                    # on survol autre chose (fond de l'interface par exemple)
+                    else:
+                        self.class_parent.show_fantome_interdit(event)
+                        self.class_parent._ghost.hide()
+                        self.class_parent._ghost_combo.hide()
             return False
 
         if event.type() == QEvent.MouseButtonRelease and event.button() == LeftButton:
@@ -94,18 +157,15 @@ class FiltreClicDroit(QObject):
                 if isinstance(obj, QPushButton):
                     self.class_parent.relache_clic_gauche_btn(self.widget_avant_move, widget_apres_move)
                 elif isinstance(obj, QWidget):
-                    self.class_parent.relache_clic_gauche_combo(self.widget_avant_move, widget_apres_move)
+                    self.class_parent.relache_clic_gauche_combo(widget_apres_move)
 
             self._dragging = False
             self._press_pos = None
             self.widget_avant_move = None
             self.class_parent._ghost.hide()
             self.class_parent._ghost_combo.hide()
-            return False
-
+            self.class_parent._ghost_interdit.hide()
         return False
-
-
 
 class MainDialog(QDialog):
 
@@ -115,6 +175,7 @@ class MainDialog(QDialog):
         # =====================================================
         # image fantôme qui suit la souris lors du drag and drop des boutons
         self._ghost = QLabel(None)
+        self._ghost.setAttribute(Qt.WA_TransparentForMouseEvents, True)
         self._ghost.setWindowFlags(ToolTip | FramelessWindowHint)
         self._ghost.setScaledContents(True)
         self._ghost.setStyleSheet("""
@@ -125,8 +186,9 @@ class MainDialog(QDialog):
         self._ghost.hide()
 
         # =================================
-        # image fantome pour l'item d'un combo
+        # image fantôme pour l'item d'un combo
         self._ghost_combo = QLabel(None)
+        self._ghost_combo.setAttribute(Qt.WA_TransparentForMouseEvents, True)
         self._ghost_combo.setWindowFlags(ToolTip | FramelessWindowHint)
         self._ghost_combo.setScaledContents(True)
         self._ghost_combo.setStyleSheet("""
@@ -135,10 +197,24 @@ class MainDialog(QDialog):
             padding: 5px;
         """)
         self._ghost_combo.hide()
+        # ===================================
+
+        # ===================================
+        # image fantôme interdit
+        self._ghost_interdit = QLabel(None)
+        # éviter de détecter le survol de la souris sur le qlabel fantôme, prendre que les btn en compte
+        self._ghost_interdit.setAttribute(Qt.WA_TransparentForMouseEvents, True)
+        self._ghost_interdit.setWindowFlags(ToolTip | FramelessWindowHint)
+        self._ghost_interdit.setScaledContents(True)
+        self.path_ghost_interdit = Path(__file__).parent / "icons" / "ghost_interdit.PNG"
+        icon = QIcon(str(self.path_ghost_interdit))
+        pixmap = icon.pixmap(30, 30)
+        self._ghost_interdit.setPixmap(pixmap)
+        self._ghost_interdit.hide()
+        # =============================================
 
         self.combo_pos_avant_move = None
         self.combo_avant_move_text = None
-
 
         self.get_contraintes = {}
         self.dlgFiltre = None
@@ -249,7 +325,7 @@ class MainDialog(QDialog):
         self.formlayout = QFormLayout()
         self.formlayout.setSpacing(1)
 
-        # ajout des 2 layouts (permanent et layout des btn) separés par une ligne
+        # ajout des 2 layouts (permanent et layout des btn) séparés par une ligne
         main_layout.addLayout(self.formlayout)
         # --- AJOUT DE LA LIGNE HORIZONTALE ---
         line = QFrame()
@@ -277,9 +353,6 @@ class MainDialog(QDialog):
         self.btn_sens_num.clicked.connect(self.affiche_sens_num)
         self.btn_sens_num.setFocusPolicy(NoFocus)
 
-        # le slot de "btn_che_court" est declaré dans jeux_attributs.py
-        # btn_che_court.clicked.connect(self.che_plus_court)
-
     def affiche_sens_num(self):
         try:
             processing_plugin = plugins[PLUGIN_CHE_SENS_NUM]
@@ -299,56 +372,31 @@ class MainDialog(QDialog):
                 f"- Veuillez l'activer dans le menu \"Installer/Gérer les extensions de QGIS\"")
         QTimer.singleShot(0, self.plugin.actualiserSelection)
 
-    def deplace_btn_to_json(self,champ,valeur):
-        # charger TOUT le json (donc ne pas passer par la fonction loadjson qui charge que le layer donné)
-        with open(PATHJSON, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        valeur_par_champ = data[self.layer.name()][champ]
-        pos, ok = QInputDialog.getInt(
-            self,
-            "Modifier la position",
-            f"Position de <span style='color: red'><b>'{champ}'</b></span>"
-            f"{SEPARATION_TOOLTIP}<span style='color: red'><b>'{valeur}'</b></span>",
-            value=1,
-            min=1,
-            max=len(valeur_par_champ)+1,
-            step=1
-        )
-        valeur_par_champ.remove(valeur)
-        valeur_par_champ.insert(pos - 1, valeur)
-
-        # Sauvegarde du JSON complet (structure conservée)
-        try:
-            with open(PATHJSON, "w", encoding="utf-8") as f:
-                json.dump(data, f, ensure_ascii=False, indent=2)
-        except Exception as e:
-            print(f" Erreur sauvegarde JSON : {e}")
-
-    def init_fantome_btn(self,event,obj):
+    def show_fantome_btn(self,event,obj):
         pix = obj.grab().scaled(obj.width(),obj.height() )
         self._ghost.setPixmap(pix)
-        self._ghost.move(event.globalPos() + QPoint(1, 1))
+        self._ghost.move(event.globalPos() - QPoint(10, int(pix.height()/2)))
         self._ghost.show()
 
-    def init_fantome_item_combo(self,event,obj):
-        view = obj.parent()
-        if hasattr(view, "indexAt"):  # s'assurer que view possède bien la methode indexAt() ->QListView
-            # 🔹 Remonter la hiérarchie jusqu’à trouver le QComboBox
-            combo = view
-            while combo is not None and not isinstance(combo, QComboBox):
-                combo = combo.parent()
-            index = view.indexAt(event.pos())
-            if index.isValid():
-                valeur = index.data(DisplayRole)
-                self._ghost_combo.setText(valeur)
-                self._ghost_combo.adjustSize()
-                self._ghost_combo.raise_()
-                # self._ghost_combo.move(event.globalPos() + QPoint(1, 1))
-                self._ghost_combo.move(QCursor.pos() + QPoint(1, 1))
-                self._ghost_combo.show()
+    def show_fantome_item_combo(self,event,obj):
+        # on utilise la valeur mémorisée au clic
+        valeur = self.combo_avant_move_text
+        if not valeur:
+            return
+        self._ghost_combo.setText(str(valeur))
+        self._ghost_combo.adjustSize()
+        self._ghost_combo.raise_()
 
-    def relache_clic_gauche_combo(self,obj_avant_move,obj_sous_mouse):
-        pos_final = self.getposition_btn(obj_sous_mouse)
+        # position suit juste la souris
+        self._ghost_combo.move(QCursor.pos() - QPoint(10, 10))
+        self._ghost_combo.show()
+
+    def show_fantome_interdit(self, event):
+        self._ghost_interdit.move(event.globalPos() - QPoint(15, 15))
+        self._ghost_interdit.show()
+
+    def relache_clic_gauche_combo(self,obj_sous_mouse):
+        pos_final = self.get_position_btn(obj_sous_mouse)
         # si la position est en dehors du layout, on quitte
         if pos_final is None:
             return
@@ -367,7 +415,6 @@ class MainDialog(QDialog):
             data = json.load(f)
         valeur_par_champ = data[self.layer.name()][champ]
 
-
         valeur_par_champ.remove(valeur)
         valeur_par_champ.insert(pos_final[1], valeur)
 
@@ -383,43 +430,16 @@ class MainDialog(QDialog):
         QTimer.singleShot(0, self.plugin.actualiserSelection)
 
 
-        # la position initial c'est le nombre de QPushButton dans le layout plus la position de l'item dans le combo
-        # nb_widg = self.get_nb_widget_from_ligne(pos_final[0])
-
-
     def get_champ_from_json(self,valeur_recherche):
-        print("valeur_recherche : ", valeur_recherche)
         data = loadjson(self.layer.name())
         for champ, valeurs in data.items():
             if isinstance(valeurs, list) and valeur_recherche in valeurs:
                 return champ
         return None
 
-
-    # def clic_droit_combobox(self,obj,event):
-    #     view = obj.parent()  # -> QListView
-    #     if hasattr(view, "indexAt"): # s'assurer que view possede bien la methode indexAt() ->QListView
-    #         # 🔹 Remonter la hiérarchie jusqu’à trouver le QComboBox
-    #         combo = view
-    #         while combo is not None and not isinstance(combo, QComboBox):
-    #             combo = combo.parent()
-    #
-    #         index = view.indexAt(event.pos())
-    #         if index.isValid():
-    #             champ = combo.property("champ")
-    #             valeur = index.data(DisplayRole)
-    #             self.deplace_btn_to_json(champ, valeur)
-    #             # on actualise l'interface
-    #             self.plugin.dico_filtre =  loadjson(self.layer.name())
-    #             self.plugin.add_all_widget()
-    #             QTimer.singleShot(0, self.plugin.actualiserSelection)
-    #             return True
-    #     return False
-
-
     def relache_clic_gauche_btn(self, obj, obj_sous_mouse):
-        pos_init = self.getposition_btn(obj)
-        pos_final = self.getposition_btn(obj_sous_mouse)
+        pos_init = self.get_position_btn(obj)
+        pos_final = self.get_position_btn(obj_sous_mouse)
         # si la position est en dehors du layout, on quitte
         if pos_final is None:
             return
@@ -449,21 +469,9 @@ class MainDialog(QDialog):
         self.plugin.dico_filtre = loadjson(self.layer.name())
         self.plugin.add_all_widget()
 
-    def get_nb_widget_from_ligne(self,ligne):
-        count = 0
-        item = self.formlayout.itemAt(ligne)
-        if item is not None:
-            layout = item.layout()
-            if layout is not None:
-                for j in range(layout.count()):
-                    widget = layout.itemAt(j).widget()
-                    if widget is not None and type(widget) == QPushButton:
-                        count += 1
-        return count
-
     def get_position_combo(self, combo):
-        for row in range(self.formlayout.rowCount()):
-            field_item = self.formlayout.itemAt(row,QFormLayout.FieldRole)
+        for ligne in range(self.formlayout.rowCount()):
+            field_item = self.formlayout.itemAt(ligne,QFormLayout.FieldRole)
             if not field_item:
                 continue
             layout = field_item.layout()
@@ -472,12 +480,12 @@ class MainDialog(QDialog):
             for col in range(layout.count()):
                 widget = layout.itemAt(col).widget()
                 if widget == combo:
-                    return row, col
+                    return ligne, col
         return None
 
-    def getposition_btn(self,obj):
-        for row in range(self.formlayout.rowCount()):
-            field_item = self.formlayout.itemAt(row,QFormLayout.FieldRole)
+    def get_position_btn(self,obj):
+        for ligne in range(self.formlayout.rowCount()):
+            field_item = self.formlayout.itemAt(ligne,QFormLayout.FieldRole)
             if field_item is None:
                 continue
             layout = field_item.layout()
@@ -486,18 +494,8 @@ class MainDialog(QDialog):
             for col in range(layout.count()):
                 widget = layout.itemAt(col).widget()
                 if widget == obj:
-                    return row, col
+                    return ligne, col
         return None
-
-    def clic_droit(self,obj):
-        champ = obj.property("champ")
-        valeur = obj.property("valeur")
-        print(f"champ,valeur : {champ},{valeur}")
-        self.deplace_btn_to_json(champ,valeur)
-        # actualisation de l'interface
-        self.plugin.dico_filtre = loadjson(self.layer.name())
-        self.plugin.add_all_widget()
-
 
     def create_btn(self,champ,val,read_only):
         btn = QPushButton(str(val))
@@ -585,42 +583,11 @@ class MainDialog(QDialog):
         else:
             # boucle sur 0 --> self.nb_widget_par_ligne
             for val in valeurs[:self.nb_widget_par_ligne]:
-                # btn = QPushButton(str(val))
-                # font = btn.font()
-                # font.setPointSize(self.taille_font)
-                # btn.setFont(font)
-                # btn.setEnabled(not read_only)
-                # # btn.setFixedHeight(self.taille_btn)
-                # btn.setProperty("champ",champ)
-                # btn.setProperty("valeur", val)
-                # btn.setProperty("iswidgetjson", True)
-                # btn.setToolTip(str(val))
-                # # btn.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Preferred)
-                # hlayout.addWidget(btn)
-                # btn.setFocusPolicy(NoFocus)
-                #
-                # # gestion clic droit
-                # btn.installEventFilter(self.filtre_clic_droit)
-                #
-                # btn.clicked.connect(lambda _, c=champ, v=val: self.bouton_sel(c, v))
                 btn = self.create_btn(champ,val,read_only)
                 hlayout.addWidget(btn)
 
             if len(valeurs) == self.nb_widget_par_ligne + 1:
                 val = valeurs[-1]
-                # btn = QPushButton(str(val))
-                # font = btn.font()
-                # font.setPointSize(self.taille_font)
-                # btn.setFont(font)
-                # btn.setFixedHeight(self.taille_font)
-                # btn.setProperty("champ",champ)
-                # btn.setProperty("valeur", val)
-                # btn.setProperty("iswidgetjson", True)
-                # btn.setToolTip(str(val))
-                # btn.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Preferred)
-                # hlayout.addWidget(btn)
-                # btn.setFocusPolicy(NoFocus)
-                # btn.clicked.connect(lambda _, c=champ ,v=val: self.bouton_sel(c, v))
                 btn = self.create_btn(champ, val, read_only)
                 hlayout.addWidget(btn)
 
@@ -719,7 +686,6 @@ class MainDialog(QDialog):
                     qdt = QDateTime.fromString(only_date, date_format)
                     widget.setDateTime(qdt)
                     widget.setStyleSheet(f"background-color: {self.color_btn_commun}")
-
 
             # Sinon (plusieurs valeurs différentes)
             else:

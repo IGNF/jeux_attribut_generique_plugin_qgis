@@ -25,6 +25,8 @@
 # Import the code for the dialog
 import os.path
 
+from qgis.PyQt.QtWidgets import QApplication
+from qgis.PyQt.QtCore import QSettings,QSize,QPoint
 from qgis.PyQt.QtGui import QColor
 from qgis.core import QgsProject
 from qgis.utils import plugins
@@ -86,7 +88,11 @@ class JeuxAttribut:
 
 
     def on_layer_changed(self,layer):
+        # ce n'est pas un layer mais un groupe de couche ou autre, on ne fait rien
+        if layer is None:
+            return
         self.layer = layer
+
 
         # le test parce que self.dlg n'existe pas encore, il est declaré apres on_layer_changed
         if self.dlg is None:
@@ -174,6 +180,38 @@ class JeuxAttribut:
     def unload(self):
         pass
 
+    def sauve_position_dial(self):
+        settings = QSettings(QSettings.NativeFormat, QSettings.UserScope,
+                             "IGN", TITRE)
+        print(settings.fileName())
+        settings.setValue("position", self.dlg.pos())
+        settings.setValue("taille", self.dlg.size())
+        print(f"enregistrement position dans base de registre : pos-size = {self.dlg.pos()}-{self.dlg.size()}")
+
+    def restore_position_dial(self):
+        settings = QSettings(QSettings.NativeFormat, QSettings.UserScope, "IGN", TITRE)
+        pos = settings.value("position", type=QPoint)
+        size = settings.value("taille", type=QSize)
+        if pos is None:
+            return
+        screens = QApplication.screens()
+        multi = len(screens) > 1
+        # Vérifie si la position est sur un des écrans
+        on_screen = any(screen.geometry().contains(pos) for screen in screens)
+        if on_screen:
+            self.dlg.move(pos)
+            if size:
+                self.dlg.resize(size)
+        else:
+            # Si un seul écran → replacer en haut-gauche
+            if not multi:
+                self.dlg.move(QPoint(0, 0))
+            else:
+                # Multi-écran mais position invalide → centrer sur écran principal
+                primary = QApplication.primaryScreen().geometry()
+                center = primary.center()
+                self.dlg.move(center - self.dlg.rect().center())
+
     def run(self):
         # une seule instance de dialogue
         if self.dlg is not None:
@@ -188,6 +226,8 @@ class JeuxAttribut:
             self.layer = self.iface.activeLayer()
 
         self.dlg = MainDialog(self.iface,self.layer,self,parent = self.iface.mainWindow())
+
+        self.restore_position_dial()
 
         # initialisation de la treeview du filtre
         clear_layout(self.dlg.formlayout)
@@ -216,6 +256,8 @@ class JeuxAttribut:
         # Run the dialog event loop
         result = self.dlg.exec_()
         if not result:
+            # sauvegarde de la position du dial dans la base de registre
+            self.sauve_position_dial()
             # on deconnecte le signal en quittant
             try:
                 self.iface.mapCanvas().selectionChanged.disconnect(self.actualiserSelection)
