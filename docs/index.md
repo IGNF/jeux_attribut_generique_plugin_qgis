@@ -197,7 +197,8 @@ Lorsque l’on sélectionne une ou plusieurs entités, l’interface met :
 > <img src="images/image15.png"
 > style="width:4.15924in;height:1.56543in" />
 
-## Sélection via <img src="images/image2.png">
+
+
 <div  style="font-size: 10px;background-color: #00ADC5; border: 1px solid black; padding: 5px; text-align: justify;margin-bottom:10px;">
   <h2 id="selection-via" style="color: white;margin:0;" >5.2 Sélection via <img src="images/image2.png"</h2>
 </div>
