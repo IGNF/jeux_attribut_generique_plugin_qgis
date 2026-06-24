@@ -468,6 +468,7 @@ class MainDialog(QDialog):
         # actualisation de l'interface
         self.plugin.dico_filtre = loadjson(self.layer.name())
         self.plugin.add_all_widget()
+        QTimer.singleShot(0, self.plugin.actualiserSelection)
 
     def get_position_combo(self, combo):
         for ligne in range(self.formlayout.rowCount()):
