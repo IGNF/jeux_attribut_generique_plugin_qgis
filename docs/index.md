@@ -259,20 +259,16 @@ Par défaut les « widgets » sont insérés par ordre d’affichage dans le
 filtre.
 
 On peut se retrouver avec un widget qui sera souvent utilisé mais qui
-sera inséré dans la « combobox » ou dans un bouton mais pas à la
+sera inséré dans la liste déroulante ou dans un bouton mais pas à la
 position voulue.
 
 Solution :
 
-Faire un clic-droit sur un « bouton » ou sur une valeur dans le
-« combobox »
+Faire un clic gauche avec la souris sur un bouton ou sur une entrée de la liste déroulante.  
+Maintenir enfoncé puis deplacez vous sur un nouvel endroit (Le nouvel endroit doit être sur la même ligne).  
+Relachez, l'interface s'actualise avec la nouvelle position. 
 
-<img src="images/image20.png"
-style="width:1.77373in;height:0.88687in" />
 
-Renseigner la nouvelle position.
-
-L’interface est mise à jour avec la nouvelle position du « widget ».
 
 <div  style="background-color: #00ADC5; border: 1px solid black; padding: 5px; text-align: justify;margin-bottom:10px;">
   <h2 id="parametrage-des-preferences-de-linterface" style="color: white;margin:0;" >8. Paramétrage des préférences de l’interface</h2>
