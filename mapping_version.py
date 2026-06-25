@@ -33,6 +33,7 @@ try :
     RichText = Qt.TextFormat.RichText
     SolidPattern = Qt.BrushStyle.SolidPattern
     CaseInsensitive = Qt.CaseSensitivity.CaseInsensitive
+    WA_TransparentForMouseEvents = Qt.WidgetAttribute.WA_TransparentForMouseEvents
 
 # QT5
 except :
@@ -66,3 +67,4 @@ except :
     RichText = Qt.RichText
     SolidPattern = Qt.SolidPattern
     CaseInsensitive = Qt.CaseInsensitive
+    WA_TransparentForMouseEvents = Qt.WA_TransparentForMouseEvents

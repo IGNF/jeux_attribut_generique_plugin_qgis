@@ -14,24 +14,6 @@ from .fonction import *
 from .formulaire import *
 from .mapping_version import *
 
-# class ChangeDateUtilisateur(QObject):
-#     def __init__(self, class_parent):
-#         super().__init__()
-#         self.class_parent = class_parent
-#
-#     def eventFilter(self, obj, event):
-#         # evenement pour detecter uniquement les changements de dates par utilisateurs
-#         # et non par programmation
-#         # if isinstance(obj, QDateEdit):
-#         if isinstance(obj, QgsDateTimeEdit):
-#             if event.type() in (QEvent.KeyPress,
-#                                 QEvent.MouseButtonPress,
-#                                 QEvent.Wheel):  # molette
-#                 # QTimer pour eviter le "clic de retard"
-#                 QTimer.singleShot(100, lambda: self.class_parent.on_user_date_changed(obj))
-#                 # obj.user_edit = True
-#         return False
-
 class FiltreClicDroit(QObject):
     def __init__(self, class_parent):
         super().__init__()
@@ -83,7 +65,6 @@ class FiltreClicDroit(QObject):
                         if pos_init is not None and pos_final is not None:
                             # si ligne différente ...
                             if pos_init[0] != pos_final[0]:
-                                print(f"deplacement interdit pour btn : {pos_init[0]} --> {pos_final[0]}")
                                 self.class_parent._ghost.hide()
                                 self.class_parent.show_fantome_interdit(event)
                                 return False
@@ -100,24 +81,6 @@ class FiltreClicDroit(QObject):
                                 self.class_parent._ghost_combo.hide()
                                 self.class_parent.show_fantome_interdit(event)
                                 return False
-
-
-                    # # on bouge un item du combo sur une autre ligne ->
-                    # # - on affiche le fantome_interdit
-                    # # - on masque le fantome_combo et on return False
-                    # elif isinstance(obj, QListView):
-                    #     print("on bouge le combo")
-                    # pos_init = self.class_parent.get_position_combo(obj)
-                    # pos_final = self.class_parent.get_position_combo(widget_sous_souris)
-                    # if pos_init is not None and pos_final is not None:
-                    #     # si ligne différente ...
-                    #     if pos_init[0] != pos_final[0]:
-                    #         print(f"deplacement interdit pour btn : {pos_init[0]} --> {pos_final[0]}")
-                    #         self.class_parent._ghost_combo.hide()
-                    #         self.class_parent.show_fantome_interdit(event)
-                    #         return False
-
-
 
                     # Traitement par rapport aux WIDGETS SURVOLES
                     self._dragging = True
@@ -175,7 +138,7 @@ class MainDialog(QDialog):
         # =====================================================
         # image fantôme qui suit la souris lors du drag and drop des boutons
         self._ghost = QLabel(None)
-        self._ghost.setAttribute(Qt.WA_TransparentForMouseEvents, True)
+        self._ghost.setAttribute(WA_TransparentForMouseEvents, True)
         self._ghost.setWindowFlags(ToolTip | FramelessWindowHint)
         self._ghost.setScaledContents(True)
         self._ghost.setStyleSheet("""
@@ -188,7 +151,7 @@ class MainDialog(QDialog):
         # =================================
         # image fantôme pour l'item d'un combo
         self._ghost_combo = QLabel(None)
-        self._ghost_combo.setAttribute(Qt.WA_TransparentForMouseEvents, True)
+        self._ghost_combo.setAttribute(WA_TransparentForMouseEvents, True)
         self._ghost_combo.setWindowFlags(ToolTip | FramelessWindowHint)
         self._ghost_combo.setScaledContents(True)
         self._ghost_combo.setStyleSheet("""
@@ -203,7 +166,7 @@ class MainDialog(QDialog):
         # image fantôme interdit
         self._ghost_interdit = QLabel(None)
         # éviter de détecter le survol de la souris sur le qlabel fantôme, prendre que les btn en compte
-        self._ghost_interdit.setAttribute(Qt.WA_TransparentForMouseEvents, True)
+        self._ghost_interdit.setAttribute(WA_TransparentForMouseEvents, True)
         self._ghost_interdit.setWindowFlags(ToolTip | FramelessWindowHint)
         self._ghost_interdit.setScaledContents(True)
         self.path_ghost_interdit = Path(__file__).parent / "icons" / "ghost_interdit.PNG"
@@ -403,7 +366,6 @@ class MainDialog(QDialog):
 
         # on valide le déplacement uniquement sur la meme ligne
         if self.combo_pos_avant_move[0] != pos_final[0]:
-            print("déplacement combo interdit : pas sur la même ligne")
             return
 
         valeur = self.combo_avant_move_text
@@ -848,15 +810,6 @@ class MainDialog(QDialog):
         index_champs = self.layer.fields().indexOf(champ)
         self.widget_clique[index_champs] = val
 
-        # lecture des valeurs par defaut du formulaire
-        valdefaut = getValdefautForm(self.layer,champ)
-        # print(valdefaut)
-
-        # test : recuperation des valeurs par defauts sur tous les champs
-        dico = getValdefautFormALLchamps(self.layer)
-        # print(dico.keys())
-
-
     # slot combobox
     def combobox_sel(self,champ,val):
         # il faut initialiser tous les boutons en blanc
@@ -881,7 +834,6 @@ class MainDialog(QDialog):
             for index_champ,nouvelle_valeur in self.widget_clique.items():
                 ancienne_valeur_sel = sel.attribute(index_champ)
                 if ancienne_valeur_sel != nouvelle_valeur:
-                    # print(f"{ancienne_valeur_sel}-->{nouvelle_valeur}")
                     self.layer.changeAttributeValue(sel.id(), index_champ, nouvelle_valeur)
                     compteur += 1
 
