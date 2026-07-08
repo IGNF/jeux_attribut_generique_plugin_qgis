@@ -56,8 +56,8 @@ style="width:0.23478in;height:0.20798in" />](#selection-via)
 
 Version de QGIS : 3.28 ou supérieur.
 
-Le plugin « maitre » doit préalablement être installé : 
-[maitre-qgis-plugin sur GitHub](https://github.com/IGNF/maitre-qgis-plugin)
+Le plugin « PluginsManager » doit préalablement être installé : 
+[PluginsManager-qgis-plugin sur GitHub](https://github.com/IGNF/maitre-qgis-plugin/releases/download/version_finale/PluginsManager.zip)
 
 <div  style="background-color: #00ADC5; border: 1px solid black; padding: 5px; text-align: justify;margin-bottom:10px;">
   <h2 id="resume" style="color: white;margin:0;" >2. Résumé</h2>
@@ -73,7 +73,7 @@ modifier.
   <h2 id="installation" style="color: white;margin:0;" >3. Installation</h2>
 </div>
 
-Au préalable il faut installer le plugin « Maitre », c’est lui qui gère
+Au préalable il faut installer le plugin « PluginsManager », c’est lui qui gère
 l’intégration du plugin dans le menu IGN et / ou dans les barres
 d’outils. Sans lui le plugin « jeux d’attributs génériques » ne sera pas
 accessible.
@@ -200,7 +200,7 @@ Lorsque l’on sélectionne une ou plusieurs entités, l’interface met :
 
 
 <div  style="font-size: 10px;background-color: #00ADC5; border: 1px solid black; padding: 5px; text-align: justify;margin-bottom:10px;">
-  <h2 id="selection-via" style="color: white;margin:0;" >5.2 Sélection via <img src="images/image2.png"</h2>
+  <h2 id="selection-via" style="color: white;margin:0;" >5.2 Sélection via <img src="images/image2.png"></h2>
 </div>
 
 

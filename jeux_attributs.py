@@ -25,17 +25,13 @@
 # Import the code for the dialog
 import os.path
 
-from qgis.PyQt.QtWidgets import QApplication
-from qgis.PyQt.QtCore import QSettings,QSize,QPoint
 from qgis.PyQt.QtGui import QColor
-from qgis.core import QgsProject
+from qgis.core import QgsProject,QgsApplication
 from qgis.utils import plugins
 
 from .main_dialog import MainDialog
 from .fonction import *
-from .constante import *
-
-
+from .window_manager import *
 
 class JeuxAttribut:
     """QGIS Plugin Implementation."""
@@ -162,7 +158,7 @@ class JeuxAttribut:
                     # items du combo
                     for i in range(model.rowCount()):
                         index = model.index(i, 0)
-                        model.setData(index, QColor("white"), Qt.BackgroundRole)
+                        model.setData(index, QColor("white"), BackgroundRole)
 
         self.dlg.dico_val_linedit.clear()
 
@@ -171,46 +167,44 @@ class JeuxAttribut:
             self.dlg.get_attributs_communs()
 
     def apropos(self):
-        self.dlgAProposDe.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.WindowCloseButtonHint)
-        self.dlgAProposDe.exec_()
+        self.dlgAProposDe.setWindowFlags(WindowStaysOnTopHint | WindowCloseButtonHint)
+        self.dlgAProposDe.exec()
 
     def initGui(self):
-        pass
+        self.iface.projectRead.connect(self.on_project_opened)
 
     def unload(self):
         pass
 
-    def sauve_position_dial(self):
-        settings = QSettings(QSettings.NativeFormat, QSettings.UserScope,
-                             "IGN", TITRE)
-        print(settings.fileName())
-        settings.setValue("position", self.dlg.pos())
-        settings.setValue("taille", self.dlg.size())
-        print(f"enregistrement position dans base de registre : pos-size = {self.dlg.pos()}-{self.dlg.size()}")
 
-    def restore_position_dial(self):
-        settings = QSettings(QSettings.NativeFormat, QSettings.UserScope, "IGN", TITRE)
-        pos = settings.value("position", type=QPoint)
-        size = settings.value("taille", type=QSize)
-        if pos is None:
-            return
-        screens = QApplication.screens()
-        multi = len(screens) > 1
-        # Vérifie si la position est sur un des écrans
-        on_screen = any(screen.geometry().contains(pos) for screen in screens)
-        if on_screen:
-            self.dlg.move(pos)
-            if size:
-                self.dlg.resize(size)
-        else:
-            # Si un seul écran → replacer en haut-gauche
-            if not multi:
-                self.dlg.move(QPoint(0, 0))
-            else:
-                # Multi-écran mais position invalide → centrer sur écran principal
-                primary = QApplication.primaryScreen().geometry()
-                center = primary.center()
-                self.dlg.move(center - self.dlg.rect().center())
+    def on_project_opened(self):
+        settings = QSettings(NativeFormat, UserScope, "IGN", TITRE)
+        visible = settings.value("visible", False, type=bool)
+
+        if visible:
+            self.run()
+
+    def on_dialog_closed(self):
+        sauve_position_dial(self.dlg)
+        # déconnexion des signaux
+        try:
+            self.iface.mapCanvas().selectionChanged.disconnect(self.actualiserSelection)
+        except TypeError:
+            pass
+        try:
+            self.iface.currentLayerChanged.disconnect(self.actualiserSelection)
+        except TypeError:
+            pass
+        # si on quitte, on remet la vue sans le sens de numérisation via le plugin
+        try:
+            processing_plugin = plugins[PLUGIN_CHE_SENS_NUM]
+            processing_plugin.suppr_symb_sens_num(self.layer)
+        except:
+            pass
+        self.dlg = None
+
+    def fermeture_qgis(self):
+        sauve_position_dial(self.dlg)
 
     def run(self):
         # une seule instance de dialogue
@@ -227,7 +221,12 @@ class JeuxAttribut:
 
         self.dlg = MainDialog(self.iface,self.layer,self,parent = self.iface.mainWindow())
 
-        self.restore_position_dial()
+        # événement fermeture de qgis
+        QgsApplication.instance().aboutToQuit.connect(self.fermeture_qgis)
+        restore_position_dial(self.dlg)
+
+        # connection de la fermeture du dialogue
+        self.dlg.finished.connect(self.on_dialog_closed)
 
         # initialisation de la treeview du filtre
         clear_layout(self.dlg.formlayout)
@@ -243,7 +242,7 @@ class JeuxAttribut:
 
         # connexion di slot "chemin le plus court"
         self.dlg.btn_che_court.clicked.connect(self.dlg.che_plus_court)
-        self.dlg.btn_che_court.setFocusPolicy(Qt.NoFocus)
+        self.dlg.btn_che_court.setFocusPolicy(NoFocus)
 
         self.add_all_widget()
         self.dlg.get_attributs_communs()
@@ -253,26 +252,6 @@ class JeuxAttribut:
 
         self.iface.mapCanvas().selectionChanged.connect(self.actualiserSelection)
         self.actualiserSelection()
-        # Run the dialog event loop
-        result = self.dlg.exec_()
-        if not result:
-            # sauvegarde de la position du dial dans la base de registre
-            self.sauve_position_dial()
-            # on deconnecte le signal en quittant
-            try:
-                self.iface.mapCanvas().selectionChanged.disconnect(self.actualiserSelection)
-            except TypeError:
-                pass  # aucune connexion existante
-            # si on quitte, on remet la vue sans le sens de numérisation via le plugin
-            try:
-                processing_plugin = plugins[PLUGIN_CHE_SENS_NUM]
-                processing_plugin.suppr_symb_sens_num(self.layer)
-            except:
-                pass
 
-            # on redessine la couche pour prendre en compte du changement de style initial
-            self.layer.triggerRepaint()
-            # on réinitialise pour gere le rechargement si une seule instance
-            self.dlg = None
 
 

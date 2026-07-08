@@ -1,9 +1,10 @@
-from qgis.PyQt.QtCore import Qt
-from qgis.PyQt.QtWidgets import QMessageBox
+from qgis.PyQt.QtCore import Qt,QSettings,QEvent
+from qgis.PyQt.QtWidgets import QMessageBox,QFrame,QDialog
 
 # QT6
 try :
     # Dialog = Qt.WindowType.Dialog
+    Accepted = QDialog.DialogCode.Accepted
     Window = Qt.WindowType.Window
     ToolTip = Qt.WindowType.ToolTip
     FramelessWindowHint = Qt.WindowType.FramelessWindowHint
@@ -33,10 +34,19 @@ try :
     RichText = Qt.TextFormat.RichText
     SolidPattern = Qt.BrushStyle.SolidPattern
     CaseInsensitive = Qt.CaseSensitivity.CaseInsensitive
+    WA_TransparentForMouseEvents = Qt.WidgetAttribute.WA_TransparentForMouseEvents
+    NativeFormat = QSettings.Format.NativeFormat
+    UserScope = QSettings.Scope.UserScope
+    HLine = QFrame.Shape.HLine
+    Sunken = QFrame.Shadow.Sunken
+    MouseButtonPress = QEvent.Type.MouseButtonPress
+    MouseMove = QEvent.Type.MouseMove
+    MouseButtonRelease = QEvent.Type.MouseButtonRelease
 
 # QT5
-except :
+except AttributeError:
     # Dialog = Qt.Dialog
+    Accepted = QDialog.Accepted
     Window = Qt.Window
     ToolTip = Qt.ToolTip
     FramelessWindowHint = Qt.FramelessWindowHint
@@ -66,3 +76,11 @@ except :
     RichText = Qt.RichText
     SolidPattern = Qt.SolidPattern
     CaseInsensitive = Qt.CaseInsensitive
+    WA_TransparentForMouseEvents = Qt.WA_TransparentForMouseEvents
+    NativeFormat = QSettings.NativeFormat
+    UserScope = QSettings.UserScope
+    HLine = QFrame.HLine
+    Sunken = QFrame.Sunken
+    MouseButtonPress = QEvent.MouseButtonPress
+    MouseMove = QEvent.MouseMove
+    MouseButtonRelease = QEvent.MouseButtonRelease
