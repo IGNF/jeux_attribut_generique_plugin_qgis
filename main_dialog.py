@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from qgis.PyQt.QtCore import QObject, QEvent, QSize, QDate, QTimer, QDateTime,QPoint
+from qgis.PyQt.QtCore import QObject, QSize, QDate, QTimer, QDateTime,QPoint
 from qgis.PyQt.QtGui import QColor,QCursor
-from qgis.PyQt.QtWidgets import (QFormLayout, QHBoxLayout, QVBoxLayout, QFrame, QInputDialog, QAbstractSpinBox,
+from qgis.PyQt.QtWidgets import (QFormLayout, QHBoxLayout, QVBoxLayout,  QAbstractSpinBox,
                                  QListView,QApplication)
 from qgis.PyQt.uic import loadUi
 from qgis.core import  Qgis
@@ -20,7 +20,7 @@ class FiltreClicDroit(QObject):
         self.class_parent = class_parent
 
     def eventFilter(self, obj, event):
-        if event.type() == QEvent.MouseButtonPress and event.button() == LeftButton:
+        if event.type() == MouseButtonPress and event.button() == LeftButton:
             self._dragging = False
             self.widget_avant_move = obj
             self._press_pos = event.pos()
@@ -49,7 +49,7 @@ class FiltreClicDroit(QObject):
                         self.class_parent.combo_avant_move_text = index.data()
             return False
 
-        if event.type() == QEvent.MouseMove:
+        if event.type() == MouseMove:
             if getattr(self, "_press_pos", None):
                 if (event.globalPos() - self._press_pos).manhattanLength() > QApplication.startDragDistance():
 
@@ -114,7 +114,7 @@ class FiltreClicDroit(QObject):
                         self.class_parent._ghost_combo.hide()
             return False
 
-        if event.type() == QEvent.MouseButtonRelease and event.button() == LeftButton:
+        if event.type() == MouseButtonRelease and event.button() == LeftButton:
             if getattr(self, "_dragging", False):
                 widget_apres_move = QApplication.widgetAt(event.globalPos())
                 if isinstance(obj, QPushButton):
@@ -292,8 +292,8 @@ class MainDialog(QDialog):
         main_layout.addLayout(self.formlayout)
         # --- AJOUT DE LA LIGNE HORIZONTALE ---
         line = QFrame()
-        line.setFrameShape(QFrame.HLine)
-        line.setFrameShadow(QFrame.Sunken)
+        line.setFrameShape(HLine)
+        line.setFrameShadow(Sunken)
         line.setStyleSheet("""color: #808080;background-color: #808080;""")
         main_layout.addWidget(line)
         # --------------------------------------
@@ -848,7 +848,7 @@ class MainDialog(QDialog):
     # ajoute les boutons dans l'interface en fonction du filtre
     def gestionfiltre(self):
         self.dlgFiltre = FiltreDialog(self.layer)
-        if self.dlgFiltre.exec_() == QDialog.Accepted:
+        if self.dlgFiltre.exec() == Accepted:
             # Récupère les filtres choisis par l'utilisateur
             self.dico_filtre = self.dlgFiltre.getcheckitem()
             # Rafraîchir les widgets selon les filtres
@@ -861,13 +861,13 @@ class MainDialog(QDialog):
         dlgAProposDe.setWindowFlags(WindowStaysOnTopHint | WindowCloseButtonHint)
         dlgAProposDe.setWindowTitle(f"{TITRE}")
         dlgAProposDe.pushButtonAffichedoc.clicked.connect(afficheDoc)
-        dlgAProposDe.exec_()
+        dlgAProposDe.exec()
 
     def show_param(self):
         self.dlgParam = ParamDialog()
         # connecte le bouton OK du dialog à la mise à jour en direct
         self.dlgParam.pushButtonOk.clicked.connect(self.applique_parametres)
-        self.dlgParam.exec_()
+        self.dlgParam.exec()
 
     def applique_parametres(self):
         # recharge le dictionnaire mis à jour
