@@ -1,8 +1,8 @@
 import os
 
 TITRE = "Jeux d'attributs générique"
-PLUGIN_CHE_PLUS_COURT = "IGN_chemin_le_plus_court"
-PLUGIN_CHE_SENS_NUM = "IGN_sens_numerisation"
+PLUGIN_CHE_PLUS_COURT = "IGN_ShortestPath"
+PLUGIN_CHE_SENS_NUM = "IGN_DigitizingDirection"
 
 SEPARATION_TOOLTIP = "\t\U0001F846\t"
 CLIN_OEIL = "\U0001F609"
