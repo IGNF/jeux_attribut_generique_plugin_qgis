@@ -54,10 +54,8 @@ style="width:0.23478in;height:0.20798in" />](#selection-via)
   <h2 id="prerequis" style="color: white;margin:0;" >1. Prérequis</h2>
 </div>
 
-Version de QGIS : 3.28 ou supérieur.
-
-Le plugin « PluginsManager » doit préalablement être installé : 
-[PluginsManager-qgis-plugin sur GitHub](https://github.com/IGNF/maitre-qgis-plugin/releases/download/version_finale/PluginsManager.zip)
+- Version de QGIS : 3.34 ou supérieur.
+- Le plugin «IGN PluginsManager» doit préalablement être installé, il est disponible dans le dépôt officiel.
 
 <div  style="background-color: #00ADC5; border: 1px solid black; padding: 5px; text-align: justify;margin-bottom:10px;">
   <h2 id="resume" style="color: white;margin:0;" >2. Résumé</h2>
@@ -82,66 +80,48 @@ Le plugin « espace collaboratif » doit également être installé afin
 d’impacter les modifications des couches vers les serveurs IGN, sinon
 seules les données locales seront modifiées.
 
-Ouvrir QGIS.
-
-Allez dans **Extensions/Installer/Gérer les extensions**, cliquez sur
-**Installer depuis un ZIP**, sélectionner le fichier ZIP puis cliquez
-sur **Installer le plugin**.
-
-<img src="images/image3.png"
-style="width:6.83889in;height:1.525in" />
 
 <div  style="background-color: #00ADC5; border: 1px solid black; padding: 5px; text-align: justify;margin-bottom:10px;">
   <h2 id="presentation" style="color: white;margin:0;" >4. Présentation</h2>
 </div>
 
-<img src="images/image4.png"
-style="width:4.27847in;height:0.79097in" />
+<img src="images/image4.png" style="width:4.27847in;height:0.79097in" />
 
 Lors de la première ouverture de l’interface, seul les boutons par
 défauts apparaissent.
 
 En effet le filtrage des champs est pour l’instant vide.
 
-<img src="images/image5.png"
-style="width:0.27847in;height:0.27847in" />  Permet de configurer le
+<img src="images/image5.png" style="width:0.27847in;height:0.27847in" />  Permet de configurer le
 filtrage des champs.
 
-<img src="images/image6.png"
-style="width:0.26111in;height:0.26944in" /> Permet de paramétrer
+<img src="images/image6.png" style="width:0.26111in;height:0.26944in" /> Permet de paramétrer
 l’interface (couleurs, nombre de boutons par ligne)
 
-<img src="images/image7.png"
-style="width:0.27847in;height:0.26111in" /> Afficher / Masquer le sens
+<img src="images/image7.png" style="width:0.27847in;height:0.26111in" /> Afficher / Masquer le sens
 de numérisation des linéaires
 
-<img src="images/image2.png"
-style="width:0.30417in;height:0.26944in" /> Permet de sélectionner
+<img src="images/image2.png" style="width:0.30417in;height:0.26944in" /> Permet de sélectionner
 toutes les entités comprises entres deux linéaires en suivant
 l’algorithme du « chemin le plus court »
 
-<img src="images/image8.png"
-style="width:0.30417in;height:0.27847in" /> Permet d’afficher le suivi
+<img src="images/image8.png" style="width:0.30417in;height:0.27847in" /> Permet d’afficher le suivi
 des versions et d’ouvrir la documentation du plugin.
 
-<img src="images/image9.png"
-style="width:0.27847in;height:0.27847in" /> Permet d’importer une
+<img src="images/image9.png" style="width:0.27847in;height:0.27847in" /> Permet d’importer une
 configuration des filtres des champs.
 
-<img src="images/image10.png"
-style="width:0.29583in;height:0.26944in" /> Permet d’exporter la
+<img src="images/image10.png" style="width:0.29583in;height:0.26944in" /> Permet d’exporter la
 configuration des filtres des champs
 
-<img src="images/image11.png"
-style="width:1.37391in;height:0.29583in" /> Permet de valider les
+<img src="images/image11.png" style="width:1.37391in;height:0.29583in" /> Permet de valider les
 modifications dans QGIS. Les modifications vers le serveur IGN seront
 effectives uniquement après avoir enregistré les modifications de la
 couche via :<img src="images/image12.png"
 style="width:0.18261in;height:0.20538in" />
 
 **<span class="mark">ATTENTION</span> :** ne pas confondre avec
-l’enregistrement du projet : <img src="images/image13.png"
-style="width:0.69565in;height:0.22031in" />
+l’enregistrement du projet : <img src="images/image13.png" style="width:0.69565in;height:0.22031in" />
 
 <div  style="background-color: #00ADC5; border: 1px solid black; padding: 5px; text-align: justify;margin-bottom:10px;">
   <h2 id="filtrage-des-champs" style="color: white;margin:0;" >5. Filtrage des champs</h2>
@@ -155,11 +135,9 @@ doivent être configurés.
 
 - Soit en configurant manuellement les champs à modifier.
 
-Cliquez sur <img src="images/image5.png"
-style="width:0.27847in;height:0.27847in" />
+Cliquez sur <img src="images/image5.png" style="width:0.27847in;height:0.27847in" />
 
-<img src="images/image14.png"
-style="width:3.14319in;height:3.42609in" />
+<img src="images/image14.png" style="width:3.14319in;height:3.42609in" />
 
 Cette interface permet de choisir les champs ainsi que les valeurs qui
 doivent apparaitre dans l’interface principal pour pouvoir les modifier
@@ -194,8 +172,7 @@ Lorsque l’on sélectionne une ou plusieurs entités, l’interface met :
 - Sans couleur : les valeurs qui ne sont pas communes à toutes les
   entités sélectionnées
 
-> <img src="images/image15.png"
-> style="width:4.15924in;height:1.56543in" />
+ <img src="images/image15.png" style="width:4.15924in;height:1.56543in"/>
 
 
 
@@ -205,15 +182,13 @@ Lorsque l’on sélectionne une ou plusieurs entités, l’interface met :
 
 
 
-<img src="images/image16.png"
-style="width:0.25413in;height:0.25413in" /> Ce bouton permet la
+<img src="images/image16.png" style="width:0.25413in;height:0.25413in" /> Ce bouton permet la
 sélection de toutes les entités comprises entre 2 linéaires
 sélectionnés.
 
 Il faut sélectionner 2 tronçons. Ces 2 tronçons doivent être visibles à
 l’écran et être connectés. Ensuite on clique sur
-<img src="images/image2.png"
-style="width:0.18261in;height:0.16176in" />, le résultat est une
+<img src="images/image2.png" style="width:0.18261in;height:0.16176in" />, le résultat est une
 sélection de tous les tronçons entre le premier et le deuxième
 sélectionnés respectant l’algorithme du chemin le plus court. Un
 contrôle visuel est toutefois nécessaire afin de vérifier si la
@@ -226,8 +201,7 @@ sélection faite est celle attendue.
 Une fois les tronçons sélectionnés il suffit de cliquer sur les
 nouvelles valeurs choisies.
 
-<img src="images/image17.png"
-style="width:4.09565in;height:1.5415in" />
+<img src="images/image17.png" style="width:4.09565in;height:1.5415in" />
 
 Les valeurs en lecture seules apparaissent en grisé et ne sont pas
 modifiables.
@@ -235,13 +209,11 @@ modifiables.
 Les valeurs à modifier sont affichées sur un fond bleu (par défaut).
 
 Les modifications sur le(s) tronçon(s) sélectionné(s) sont à valider
-avec le bouton <img src="images/image11.png"
-style="width:1.21048in;height:0.22627in" />
+avec le bouton <img src="images/image11.png" style="width:1.21048in;height:0.22627in" />
 
 Un message QGIS confirme la prise en compte des modifications.
 
-<img src="images/image19.png"
-style="width:4.72917in;height:0.35417in" />
+<img src="images/image19.png" style="width:4.72917in;height:0.35417in" />
 
 <div  style="background-color: #00ADC5; border: 1px solid black; padding: 5px; text-align: justify;margin-bottom:10px;">
   <h2 id="modification-de-lordre-daffichage-des-widgets" style="color: white;margin:0;" >7. Modification de l’ordre d’affichage des « widgets »</h2>
@@ -277,12 +249,10 @@ Relachez, l'interface s'actualise avec la nouvelle position.
 
 
 
-<img src="images/image6.png"
-style="width:0.26111in;height:0.26944in" /> Ouvre l’interface de
+<img src="images/image6.png" style="width:0.26111in;height:0.26944in" /> Ouvre l’interface de
 paramétrage.
 
-<img src="images/image21.png"
-style="width:2.76904in;height:1.39136in" />
+<img src="images/image21.png" style="width:2.76904in;height:1.39136in" />
 
 - Cette interface permet de configurer le nombre de « widgets » par
   ligne
@@ -299,12 +269,9 @@ forme de « boutons » et les suivantes seront incluses dans une
   <h2 id="a-propos" style="color: white;margin:0;" >9. A propos</h2>
 </div>
 
-Accessible via <img src="images/image22.PNG"
-style="width:0.23962in;height:0.25003in" />.
+Accessible via <img src="images/image22.PNG" style="width:0.23962in;height:0.25003in" />.
 
-<img src="images/image23.png"
-style="width:3.57157in;height:2.45199in" />
+<img src="images/image23.png" style="width:3.57157in;height:2.45199in" />
 
-Ce dialogue <img src="images/image6.png"
-style="width:0.26111in;height:0.26944in" />permet de suivre l’historique
+Ce dialogue <img src="images/image6.png" style="width:0.26111in;height:0.26944in" />permet de suivre l’historique
 des différentes versions ainsi que d’afficher cette documentation.

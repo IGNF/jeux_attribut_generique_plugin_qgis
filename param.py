@@ -1,12 +1,13 @@
 import json
 
+from qgis.PyQt.QtCore import Qt
+
 from qgis.PyQt.QtGui import QIcon, QColor, QRegularExpressionValidator
 from qgis.PyQt.QtWidgets import QDialog
 from qgis.PyQt.uic import loadUi
 from qgis.PyQt.QtCore import QRegularExpression
 
 from .constante import *
-from .mapping_version import *
 
 
 class ParamDialog(QDialog):
@@ -17,7 +18,7 @@ class ParamDialog(QDialog):
         loadUi(os.path.dirname(__file__) + "/param.ui", self)
         self.setWindowTitle(TITRE)
         self.setWindowIcon(QIcon(PATHICON))
-        self.setWindowFlags(WindowStaysOnTopHint | WindowCloseButtonHint)
+        self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.WindowCloseButtonHint)
 
         # Dictionnaire de paramètres avec valeurs par défaut
         self.dico_param = {
@@ -119,9 +120,3 @@ class ParamDialog(QDialog):
                 json.dump(self.dico_param, f, ensure_ascii=False, indent=2)
         except Exception as e:
             print(f"Erreur lors de la sauvegarde JSON : {e}")
-
-    # def ok(self):
-    #     self.sauve_param_json()
-    #
-    #     # la fenetre reste ouvert
-    #     # self.accept()
