@@ -3,13 +3,13 @@ import os.path
 import shutil
 import webbrowser
 
+from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QWidget, QLabel, QLineEdit, QComboBox, QFileDialog, QPushButton, QDialog, \
-    QGridLayout, QTextEdit
+    QGridLayout, QTextEdit,QMessageBox
 from qgis.gui import QgsDateTimeEdit
 
 from .constante import *
-from .mapping_version import *
 
 
 def importer_json(dlg):
@@ -186,19 +186,19 @@ def afficheerreur(text, titre=TITRE):
     msg.setIcon(Warning)
     msg.setWindowTitle(titre)
     msg.setWindowIcon(QIcon(PATHICON))
-    msg.setStandardButtons(Ok)
-    msg.setTextFormat(RichText)
+    msg.setStandardButtons(QMessageBox.StandardButton.Ok)
+    msg.setTextFormat(Qt.TextFormat.RichText)
     msg.setText(text)
-    msg.setWindowFlags(WindowStaysOnTopHint|WindowCloseButtonHint)
+    msg.setWindowFlags(Qt.WindowType.Dialog|Qt.WindowType.WindowCloseButtonHint)
     msg.exec()
 
 def afficherinformation(text,titre = TITRE):
     msg = QMessageBox()
-    msg.setIcon(Information)
+    msg.setIcon(QMessageBox.Icon.Information)
     msg.setWindowTitle(titre)
-    msg.setStandardButtons(Ok)
+    msg.setStandardButtons(QMessageBox.StandardButton.Ok)
     msg.setText(text)
-    msg.setWindowFlags(WindowStaysOnTopHint|WindowCloseButtonHint)
+    msg.setWindowFlags(Qt.WindowType.Dialog|Qt.WindowType.WindowCloseButtonHint)
     msg.exec()
 
 def dlg_affichercontraintes(text, titre=TITRE):
@@ -235,7 +235,7 @@ def dlg_affichercontraintes(text, titre=TITRE):
     layout.addWidget(intitule_widg,0,1)
     layout.addWidget(text_edit,1,1)
 
-    msg.setWindowFlags(WindowStaysOnTopHint | WindowCloseButtonHint)
+    msg.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.WindowCloseButtonHint)
     msg.exec()
 
 

@@ -1,4 +1,4 @@
-
+from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import  QStandardItemModel, QStandardItem, QBrush, QColor
 from qgis.PyQt.uic import loadUi
 from qgis.PyQt.QtCore import QSortFilterProxyModel
@@ -15,7 +15,7 @@ class FiltreDialog(QDialog):
         loadUi(os.path.dirname(__file__) + "/filtre.ui", self)
         self.setWindowTitle(TITRE)
         self.setWindowIcon(QIcon(PATHICON))
-        self.setWindowFlags(WindowStaysOnTopHint | WindowCloseButtonHint)
+        self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.WindowCloseButtonHint)
 
         self.layer = layer
 
@@ -30,20 +30,20 @@ class FiltreDialog(QDialog):
     def all_decocher(self):
         for row in range(self.model.rowCount()):
             item_parent = self.model.item(row, 0)
-            item_parent.setCheckState(Unchecked)
+            item_parent.setCheckState(Qt.CheckState.Unchecked)
 
             for i in range(item_parent.rowCount()):
                 child = item_parent.child(i, 0)
-                child.setCheckState(Unchecked)
+                child.setCheckState(Qt.CheckState.Unchecked)
 
 
     def all_cocher(self):
         for row in range(self.model.rowCount()):
             item_parent = self.model.item(row, 0)
-            item_parent.setCheckState(Checked)
+            item_parent.setCheckState(Qt.CheckState.Checked)
             for i in range(item_parent.rowCount()):
                 child = item_parent.child(i, 0)
-                child.setCheckState(Checked)
+                child.setCheckState(Qt.CheckState.Checked)
 
 
     def ini_treeview(self):
@@ -64,23 +64,23 @@ class FiltreDialog(QDialog):
         self.model.setHorizontalHeaderLabels(["Champ / valeur"])
 
         brushfond1 = QBrush()
-        brushfond1.setStyle(SolidPattern)
+        brushfond1.setStyle(Qt.BrushStyle.SolidPattern)
         brushfond1.setColor(QColor(230, 230, 230))
 
         brushfond2 = QBrush()
-        brushfond2.setStyle(SolidPattern)
+        brushfond2.setStyle(Qt.BrushStyle.SolidPattern)
         brushfond2.setColor(QColor(200, 200, 200))
 
         brushtext1= QBrush()
-        brushtext1.setStyle(SolidPattern)
+        brushtext1.setStyle(Qt.BrushStyle.SolidPattern)
         brushtext1.setColor(QColor(0, 107, 24))
 
         brushtext2 = QBrush()
-        brushtext2.setStyle(SolidPattern)
+        brushtext2.setStyle(Qt.BrushStyle.SolidPattern)
         brushtext2.setColor(QColor(0, 107, 24))
 
         brush_noeditable = QBrush()
-        brush_noeditable.setStyle(SolidPattern)
+        brush_noeditable.setStyle(Qt.BrushStyle.SolidPattern)
         brush_noeditable.setColor(QColor(255, 40, 40))
 
         self.label_noeditable.setStyleSheet("color: rgb(255,40,40)")
@@ -103,7 +103,7 @@ class FiltreDialog(QDialog):
 
             # Si le champ est présent dans le JSON → cocher le champ
             if champ in filtre_layer:
-                champ_item.setCheckState(Checked)
+                champ_item.setCheckState(Qt.CheckState.Checked)
 
             if dico_types[champ] == "ValueMap":
                 for val in valeurs:
@@ -117,14 +117,14 @@ class FiltreDialog(QDialog):
                     val_item.setCheckable(True)
                     # Si la valeur est cochée dans le JSON → cocher
                     if champ in filtre_layer and val in filtre_layer[champ]:
-                        val_item.setCheckState(Checked)
+                        val_item.setCheckState(Qt.CheckState.Checked)
                     champ_item.appendRow(val_item)
             self.model.appendRow(champ_item)
 
         # PROXY (pour la recherche)
         self.proxy_model = QSortFilterProxyModel()
         self.proxy_model.setSourceModel(self.model)
-        self.proxy_model.setFilterCaseSensitivity(CaseInsensitive)
+        self.proxy_model.setFilterCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
         self.proxy_model.setFilterKeyColumn(0)  # on filtre sur la première colonne
 
         # Important pour treeView avec hiérarchie
@@ -150,16 +150,16 @@ class FiltreDialog(QDialog):
         # on coche un parent
         if item.hasChildren():
             # Si le parent est décoché, décocher tous les enfants
-            if state == Unchecked:
+            if state == Qt.CheckState.Unchecked:
                 for i in range(item.rowCount()):
                     child = item.child(i)
-                    child.setCheckState(Unchecked)
+                    child.setCheckState(Qt.CheckState.Unchecked)
 
             # Si le parent est coché -> cocher tous les enfants (optionnel)
-            elif state == Checked:
+            elif state == Qt.CheckState.Checked:
                 for i in range(item.rowCount()):
                     child = item.child(i)
-                    child.setCheckState(Checked)
+                    child.setCheckState(Qt.CheckState.Checked)
 
         # on coche un enfant -->  le parent se coche
         else:
@@ -167,10 +167,10 @@ class FiltreDialog(QDialog):
             if parent:
                 # Si au moins un enfant est coché -> cocher le parent
                 any_checked = any(
-                    parent.child(i).checkState() == Checked
+                    parent.child(i).checkState() == Qt.CheckState.Checked
                     for i in range(parent.rowCount())
                 )
-                parent.setCheckState(Checked if any_checked else Unchecked)
+                parent.setCheckState(Qt.CheckState.Checked if any_checked else Qt.CheckState.Unchecked)
 
         self.model.blockSignals(False)
 
@@ -195,7 +195,7 @@ class FiltreDialog(QDialog):
             # Parcourir toutes les valeurs enfants
             for j in range(champ_item.rowCount()):
                 val_item = champ_item.child(j)
-                if val_item.checkState() == Checked:
+                if val_item.checkState() == Qt.CheckState.Checked:
                     valeurs.append(val_item.text())
 
             # On ajoute le champ seulement si :
@@ -203,7 +203,7 @@ class FiltreDialog(QDialog):
             # - ou s’il n’a pas de valeurs enfants (facultatif selon ton besoin)
             if valeurs:
                 dico_checked[champ_name] = valeurs
-            elif champ_item.rowCount() == 0 and champ_item.checkState() == Checked:
+            elif champ_item.rowCount() == 0 and champ_item.checkState() == Qt.CheckState.Checked:
                 # cas spécial : champ sans enfants
                 dico_checked[champ_name] = []
         return dico_checked
@@ -233,7 +233,7 @@ class FiltreDialog(QDialog):
         rows = self.model.rowCount()
         for row in range(rows):
             item = self.model.item(row)
-            if item.checkState() == Checked:
+            if item.checkState() == Qt.CheckState.Checked:
                 count += 1
         return count
 

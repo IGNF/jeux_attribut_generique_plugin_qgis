@@ -158,7 +158,7 @@ class JeuxAttribut:
                     # items du combo
                     for i in range(model.rowCount()):
                         index = model.index(i, 0)
-                        model.setData(index, QColor("white"), BackgroundRole)
+                        model.setData(index, QColor("white"), Qt.ItemDataRole.BackgroundRole)
 
         self.dlg.dico_val_linedit.clear()
 
@@ -167,7 +167,7 @@ class JeuxAttribut:
             self.dlg.get_attributs_communs()
 
     def apropos(self):
-        self.dlgAProposDe.setWindowFlags(WindowStaysOnTopHint | WindowCloseButtonHint)
+        self.dlgAProposDe.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.WindowCloseButtonHint)
         self.dlgAProposDe.exec()
 
     def initGui(self):
@@ -178,7 +178,7 @@ class JeuxAttribut:
 
 
     def on_project_opened(self):
-        settings = QSettings(NativeFormat, UserScope, "IGN", TITRE)
+        settings = QSettings(QSettings.Format.NativeFormat, QSettings.Scope.UserScope, "IGN", TITRE)
         visible = settings.value("visible", False, type=bool)
 
         if visible:
@@ -242,7 +242,7 @@ class JeuxAttribut:
 
         # connexion di slot "chemin le plus court"
         self.dlg.btn_che_court.clicked.connect(self.dlg.che_plus_court)
-        self.dlg.btn_che_court.setFocusPolicy(NoFocus)
+        self.dlg.btn_che_court.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.add_all_widget()
         self.dlg.get_attributs_communs()

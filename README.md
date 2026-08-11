@@ -6,8 +6,8 @@ This plugin provides assistance for editing attribute values across different fi
 
 ## Pré-requis
 
-Mandatory : The "plugin\_maitre" must be installed.
-Link to the plugin maître : [maitre-qgis-plugin sur GitHub](https://github.com/IGNF/maitre-qgis-plugin)
+qgisMinimumVersion=3.34
+Mandatory : The "IGN PluginsManager" must be installed.
 
 ## Fonctionnalités
 

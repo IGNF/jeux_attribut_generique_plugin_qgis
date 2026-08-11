@@ -1,9 +1,9 @@
 from pathlib import Path
 
-from qgis.PyQt.QtCore import QObject, QSize, QDate, QTimer, QDateTime,QPoint
+from qgis.PyQt.QtCore import QObject, QSize, QDate, QTimer, QDateTime,QPoint,QEvent,Qt
 from qgis.PyQt.QtGui import QColor,QCursor
 from qgis.PyQt.QtWidgets import (QFormLayout, QHBoxLayout, QVBoxLayout,  QAbstractSpinBox,
-                                 QListView,QApplication)
+                                 QListView,QApplication,QFrame, QMessageBox)
 from qgis.PyQt.uic import loadUi
 from qgis.core import  Qgis
 from qgis.utils import plugins
@@ -12,7 +12,6 @@ from .filtre import FiltreDialog
 from .param import ParamDialog
 from .fonction import *
 from .formulaire import *
-from .mapping_version import *
 
 class FiltreClicDroit(QObject):
     def __init__(self, class_parent):
@@ -20,10 +19,15 @@ class FiltreClicDroit(QObject):
         self.class_parent = class_parent
 
     def eventFilter(self, obj, event):
-        if event.type() == MouseButtonPress and event.button() == LeftButton:
+        if event.type() == QEvent.Type.MouseButtonPress and event.button() == Qt.MouseButton.LeftButton:
             self._dragging = False
             self.widget_avant_move = obj
             self._press_pos = event.pos()
+
+            if hasattr(event, "globalPosition"): # Qt6
+                self.globalposition = event.globalPosition().toPoint()
+            else: # Qt5
+                self.globalposition = event.globalPos()
 
             # clic gauche sur un bouton
             if isinstance(obj, QPushButton):
@@ -49,12 +53,12 @@ class FiltreClicDroit(QObject):
                         self.class_parent.combo_avant_move_text = index.data()
             return False
 
-        if event.type() == MouseMove:
+        if event.type() == QEvent.Type.MouseMove:
             if getattr(self, "_press_pos", None):
-                if (event.globalPos() - self._press_pos).manhattanLength() > QApplication.startDragDistance():
+                if (self.globalposition - self._press_pos).manhattanLength() > QApplication.startDragDistance():
 
                     # recuperation du widget sous la souris
-                    widget_sous_souris = QApplication.widgetAt(event.globalPos())
+                    widget_sous_souris = QApplication.widgetAt(self.globalposition)
 
                     # on bouge un bouton sur une autre ligne ->
                     # - on affiche le fantome_interdit
@@ -114,9 +118,9 @@ class FiltreClicDroit(QObject):
                         self.class_parent._ghost_combo.hide()
             return False
 
-        if event.type() == MouseButtonRelease and event.button() == LeftButton:
+        if event.type() == QEvent.Type.MouseButtonRelease and event.button() == Qt.MouseButton.LeftButton:
             if getattr(self, "_dragging", False):
-                widget_apres_move = QApplication.widgetAt(event.globalPos())
+                widget_apres_move = QApplication.widgetAt(self.globalposition)
                 if isinstance(obj, QPushButton):
                     self.class_parent.relache_clic_gauche_btn(self.widget_avant_move, widget_apres_move)
                 elif isinstance(obj, QWidget):
@@ -138,8 +142,8 @@ class MainDialog(QDialog):
         # =====================================================
         # image fantôme qui suit la souris lors du drag and drop des boutons
         self._ghost = QLabel(None)
-        self._ghost.setAttribute(WA_TransparentForMouseEvents, True)
-        self._ghost.setWindowFlags(ToolTip | FramelessWindowHint)
+        self._ghost.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents, True)
+        self._ghost.setWindowFlags(Qt.WindowType.ToolTip | Qt.WindowType.FramelessWindowHint)
         self._ghost.setScaledContents(True)
         self._ghost.setStyleSheet("""
             background-color: rgb(30, 144, 255);  /* bleu semi-transparent */
@@ -151,8 +155,8 @@ class MainDialog(QDialog):
         # =================================
         # image fantôme pour l'item d'un combo
         self._ghost_combo = QLabel(None)
-        self._ghost_combo.setAttribute(WA_TransparentForMouseEvents, True)
-        self._ghost_combo.setWindowFlags(ToolTip | FramelessWindowHint)
+        self._ghost_combo.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents, True)
+        self._ghost_combo.setWindowFlags(Qt.WindowType.ToolTip | Qt.WindowType.FramelessWindowHint)
         self._ghost_combo.setScaledContents(True)
         self._ghost_combo.setStyleSheet("""
             color: black;
@@ -166,8 +170,8 @@ class MainDialog(QDialog):
         # image fantôme interdit
         self._ghost_interdit = QLabel(None)
         # éviter de détecter le survol de la souris sur le qlabel fantôme, prendre que les btn en compte
-        self._ghost_interdit.setAttribute(WA_TransparentForMouseEvents, True)
-        self._ghost_interdit.setWindowFlags(ToolTip | FramelessWindowHint)
+        self._ghost_interdit.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents, True)
+        self._ghost_interdit.setWindowFlags(Qt.WindowType.ToolTip | Qt.WindowType.FramelessWindowHint)
         self._ghost_interdit.setScaledContents(True)
         self.path_ghost_interdit = Path(__file__).parent / "icons" / "ghost_interdit.PNG"
         icon = QIcon(str(self.path_ghost_interdit))
@@ -209,7 +213,7 @@ class MainDialog(QDialog):
 
         self.setWindowTitle(f"{TITRE}")
         self.setWindowIcon(QIcon(PATHICON))
-        self.setWindowFlags(Window | WindowCloseButtonHint)
+        self.setWindowFlags(Qt.WindowType.Window | Qt.WindowType.WindowCloseButtonHint)
 
         self.filtre_clic_droit = FiltreClicDroit(self)
 
@@ -292,8 +296,8 @@ class MainDialog(QDialog):
         main_layout.addLayout(self.formlayout)
         # --- AJOUT DE LA LIGNE HORIZONTALE ---
         line = QFrame()
-        line.setFrameShape(HLine)
-        line.setFrameShadow(Sunken)
+        line.setFrameShape(QFrame.Shape.HLine)
+        line.setFrameShadow(QFrame.Shadow.Sunken)
         line.setStyleSheet("""color: #808080;background-color: #808080;""")
         main_layout.addWidget(line)
         # --------------------------------------
@@ -302,19 +306,19 @@ class MainDialog(QDialog):
 
         # Connexion des signaux
         self.btn_valider.clicked.connect(self.valide_modif)
-        self.btn_valider.setFocusPolicy(NoFocus)
+        self.btn_valider.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.btn_filtre.clicked.connect(self.gestionfiltre)
-        self.btn_filtre.setFocusPolicy(NoFocus)
+        self.btn_filtre.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.btn_apropos.clicked.connect(self.apropos)
-        self.btn_apropos.setFocusPolicy(NoFocus)
+        self.btn_apropos.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.btn_param.clicked.connect(self.show_param)
-        self.btn_param.setFocusPolicy(NoFocus)
+        self.btn_param.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.btn_importer.clicked.connect(lambda:importer_json(self)) # self -> pour lier le qmessage au dlg pour passer devant
-        self.btn_importer.setFocusPolicy(NoFocus)
+        self.btn_importer.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.btn_exporter.clicked.connect(lambda:exporter_json(self))
-        self.btn_exporter.setFocusPolicy(NoFocus)
+        self.btn_exporter.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.btn_sens_num.clicked.connect(self.affiche_sens_num)
-        self.btn_sens_num.setFocusPolicy(NoFocus)
+        self.btn_sens_num.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
     def affiche_sens_num(self):
         try:
@@ -338,7 +342,10 @@ class MainDialog(QDialog):
     def show_fantome_btn(self,event,obj):
         pix = obj.grab().scaled(obj.width(),obj.height() )
         self._ghost.setPixmap(pix)
-        self._ghost.move(event.globalPos() - QPoint(10, int(pix.height()/2)))
+        if hasattr(event, "globalPosition"): #Qt6
+            self._ghost.move(self.globalposition - QPoint(10, int(pix.height() / 2)))
+        else:# Qt5
+            self._ghost.move(event.globalPos() - QPoint(10, int(pix.height() / 2)))
         self._ghost.show()
 
     def show_fantome_item_combo(self,event,obj):
@@ -355,7 +362,7 @@ class MainDialog(QDialog):
         self._ghost_combo.show()
 
     def show_fantome_interdit(self, event):
-        self._ghost_interdit.move(event.globalPos() - QPoint(15, 15))
+        self._ghost_interdit.move(self.globalposition - QPoint(15, 15))
         self._ghost_interdit.show()
 
     def relache_clic_gauche_combo(self,obj_sous_mouse):
@@ -434,7 +441,7 @@ class MainDialog(QDialog):
 
     def get_position_combo(self, combo):
         for ligne in range(self.formlayout.rowCount()):
-            field_item = self.formlayout.itemAt(ligne,QFormLayout.FieldRole)
+            field_item = self.formlayout.itemAt(ligne,QFormLayout.ItemRole.FieldRole)
             if not field_item:
                 continue
             layout = field_item.layout()
@@ -448,7 +455,7 @@ class MainDialog(QDialog):
 
     def get_position_btn(self,obj):
         for ligne in range(self.formlayout.rowCount()):
-            field_item = self.formlayout.itemAt(ligne,QFormLayout.FieldRole)
+            field_item = self.formlayout.itemAt(ligne,QFormLayout.ItemRole.FieldRole)
             if field_item is None:
                 continue
             layout = field_item.layout()
@@ -470,7 +477,7 @@ class MainDialog(QDialog):
         btn.setProperty("valeur", val)
         btn.setProperty("iswidgetjson", True)
         btn.setToolTip(str(val))
-        btn.setFocusPolicy(NoFocus)
+        btn.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         # gestion clic droit
         btn.installEventFilter(self.filtre_clic_droit)
@@ -510,7 +517,7 @@ class MainDialog(QDialog):
             # bloque la saisie direct dans le lineedit (clic, molette,fleche)
             widgdatetime.lineEdit().setReadOnly(True)
             widgdatetime.setButtonSymbols(QAbstractSpinBox.NoButtons)
-            widgdatetime.setFocusPolicy(NoFocus)
+            widgdatetime.setFocusPolicy(Qt.FocusPolicy.NoFocus)
             widgdatetime.wheelEvent = lambda event: None
 
             # widgdatetime.editingFinished.connect(lambda c=champ: self.on_perte_focus_date(c))
@@ -529,7 +536,7 @@ class MainDialog(QDialog):
             font.setPointSize(self.taille_font)
             lineedit.setFont(font)
             # on désactive le menu contextuel d'un clic droit par défaut sur un lineedit
-            lineedit.setContextMenuPolicy(NoContextMenu)
+            lineedit.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
             lineedit.setReadOnly(read_only)
             lineedit.setEnabled(not read_only)
             lineedit.setFixedWidth(180)
@@ -571,7 +578,7 @@ class MainDialog(QDialog):
                 self.combo_widgets[champ] = combo
                 # combo.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Preferred)
                 hlayout.addWidget(combo)
-                combo.setFocusPolicy(NoFocus)
+                combo.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
                 # gestion clic droit
                 # eventfilter pas sur le combo directement mais sur le view (contenu)
@@ -705,7 +712,7 @@ class MainDialog(QDialog):
             model = combo.model()
             for i in range(model.rowCount()):
                 index = model.index(i, 0)
-                model.setData(index, QColor(color), BackgroundRole)
+                model.setData(index, QColor(color), Qt.ItemDataRole.BackgroundRole)
 
     # on modifie la couleur SAUF si l'item a la couleur : self.color_btn_commun'
     def set_color_itemcombo(self,champ,val=None,color = None):
@@ -718,15 +725,15 @@ class MainDialog(QDialog):
         for i in range(model.rowCount()):
             index = model.index(i, 0)
             texte = model.data(index)
-            current_color = model.data(index, BackgroundRole)
+            current_color = model.data(index, Qt.ItemDataRole.BackgroundRole)
             if current_color == QColor(self.color_btn_commun):
                 continue
-            model.setData(index, QColor("White"), BackgroundRole)
+            model.setData(index, QColor("White"), Qt.ItemDataRole.BackgroundRole)
             # if texte == val and style != f"background-color: {self.color_btn_commun}":
             if texte == val :
-                model.setData(index, QColor(color), BackgroundRole)
+                model.setData(index, QColor(color), Qt.ItemDataRole.BackgroundRole)
             else:
-                model.setData(index, QColor("White"), BackgroundRole)
+                model.setData(index, QColor("White"), Qt.ItemDataRole.BackgroundRole)
 
         # On colore aussi le fond visible du combo si la valeur est sélectionnée
         # ce qui est toujours le cas apres get_attributs_communs
@@ -848,7 +855,7 @@ class MainDialog(QDialog):
     # ajoute les boutons dans l'interface en fonction du filtre
     def gestionfiltre(self):
         self.dlgFiltre = FiltreDialog(self.layer)
-        if self.dlgFiltre.exec() == Accepted:
+        if self.dlgFiltre.exec() == QDialog.DialogCode.Accepted:
             # Récupère les filtres choisis par l'utilisateur
             self.dico_filtre = self.dlgFiltre.getcheckitem()
             # Rafraîchir les widgets selon les filtres
@@ -858,7 +865,7 @@ class MainDialog(QDialog):
     def apropos(self):
         dlgAProposDe = QDialog()
         loadUi(os.path.dirname(__file__) + "/aproposde.ui", dlgAProposDe)
-        dlgAProposDe.setWindowFlags(WindowStaysOnTopHint | WindowCloseButtonHint)
+        dlgAProposDe.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.WindowCloseButtonHint)
         dlgAProposDe.setWindowTitle(f"{TITRE}")
         dlgAProposDe.pushButtonAffichedoc.clicked.connect(afficheDoc)
         dlgAProposDe.exec()
