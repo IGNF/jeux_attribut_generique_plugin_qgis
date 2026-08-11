@@ -19,15 +19,18 @@ class FiltreClicDroit(QObject):
         self.class_parent = class_parent
 
     def eventFilter(self, obj, event):
+        if event.type() in (QEvent.Type.MouseButtonPress,QEvent.Type.MouseButtonRelease,QEvent.Type.MouseMove):
+            # position globale de la souris
+            if hasattr(event, "globalPosition"):  # Qt6
+                self.globalposition = event.globalPosition().toPoint()
+            else:  # Qt5
+                self.globalposition = event.globalPos()
+        else:
+            return False
         if event.type() == QEvent.Type.MouseButtonPress and event.button() == Qt.MouseButton.LeftButton:
             self._dragging = False
             self.widget_avant_move = obj
             self._press_pos = event.pos()
-
-            if hasattr(event, "globalPosition"): # Qt6
-                self.globalposition = event.globalPosition().toPoint()
-            else: # Qt5
-                self.globalposition = event.globalPos()
 
             # clic gauche sur un bouton
             if isinstance(obj, QPushButton):
@@ -342,10 +345,11 @@ class MainDialog(QDialog):
     def show_fantome_btn(self,event,obj):
         pix = obj.grab().scaled(obj.width(),obj.height() )
         self._ghost.setPixmap(pix)
-        if hasattr(event, "globalPosition"): #Qt6
-            self._ghost.move(self.globalposition - QPoint(10, int(pix.height() / 2)))
-        else:# Qt5
-            self._ghost.move(event.globalPos() - QPoint(10, int(pix.height() / 2)))
+        if hasattr(event, "globalPosition"):
+            globalposition = event.globalPosition().toPoint()  # Qt6
+        else:
+            globalposition = event.globalPos()  # Qt5
+        self._ghost.move(globalposition - QPoint(10, int(pix.height() / 2)))
         self._ghost.show()
 
     def show_fantome_item_combo(self,event,obj):
@@ -362,7 +366,11 @@ class MainDialog(QDialog):
         self._ghost_combo.show()
 
     def show_fantome_interdit(self, event):
-        self._ghost_interdit.move(self.globalposition - QPoint(15, 15))
+        if hasattr(event, "globalPosition"):
+            globalposition = event.globalPosition().toPoint()  # Qt6
+        else:
+            globalposition = event.globalPos()  # Qt5
+        self._ghost_interdit.move(globalposition - QPoint(15, 15))
         self._ghost_interdit.show()
 
     def relache_clic_gauche_combo(self,obj_sous_mouse):
